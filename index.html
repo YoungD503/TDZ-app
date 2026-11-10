@@ -76,7 +76,9 @@
   th { font-size: 12px; color: var(--muted); font-weight: 500; background: #fafafa; }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   tr:last-child td { border-bottom: 0; }
-  td.actions { text-align: right; white-space: normal; min-width: 150px; }
+  td.actions { text-align: right; white-space: normal; min-width: 250px; }
+  table.wrap td { white-space: normal; }
+  table.wrap td code { white-space: nowrap; }
   td.actions .btn { margin-top: 3px; margin-bottom: 3px; }
   td.actions .btn { margin-left: 6px; }
   .empty { padding: 36px; text-align: center; color: var(--muted); }
@@ -368,6 +370,7 @@ function go(view) {
   if (view === 'inicio') return viewHome();
   if (view === 'users') return viewUsers();
   if (view === 'sales') return viewSales();
+  if (view === 'subscribers') return viewSubscribers();
   if (view === 'integrations') return viewIntegrations();
   if (view === 'audit') return viewAudit();
   if (view === 'settings') return viewSettings();
@@ -395,7 +398,7 @@ async function viewHome() {
   main.innerHTML = pageHeader('Hola, ' + S.boot.user.name.split(' ')[0]) + `
     <div class="grid kpis">
       ${kpi('Clientes activos', d.customers)}${kpi('Prospectos', d.prospects)}
-      ${kpi('Productos', d.products)}${kpi('Servicios', d.services)}${kpi('Usuarios', d.users)}
+      ${kpi('Productos', d.products)}${kpi('Servicios', d.services)}${d.subscribers !== null && d.subscribers !== undefined ? kpi('Suscriptores activos', d.subscribers) : kpi('Usuarios', d.users)}
     </div>
     <div class="grid two">
       <div class="card pad"><h3>Clientes recientes</h3>
@@ -414,7 +417,7 @@ async function viewHome() {
 const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
   password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar' };
 const ENTITY_NAMES = { Customers: 'Cliente', Products: 'Producto/servicio', Users: 'Usuario', Tenants: 'Empresa', Leads: 'Prospecto',
-  Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido' };
+  Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor' };
 const actionLabel = a => ACTIONS[a] || a;
 const entityLabel = e => ENTITY_NAMES[e] || e;
 
@@ -742,9 +745,96 @@ async function showSale(id) {
   } catch (e) { toast(e.message, true); }
 }
 
+/* ============================ Suscriptores ============================ */
+
+const SUB_STATUS = { activo: 'Activo', pendiente: 'Pendiente', baja: 'Baja' };
+const SUB_LANG = { es: 'Español', en: 'English', ambos: 'Ambos' };
+
+async function viewSubscribers() {
+  const main = $('#main');
+  main.innerHTML = pageHeader('Suscriptores', '<button class="btn" id="csvBtn">Exportar CSV</button>') + '<div id="subBody"><div class="card empty">Cargando…</div></div>';
+  try {
+    S.subs = await api('apiSubscribers', S.token);
+    if (S.view === 'subscribers') drawSubscribers();
+  } catch (e) { $('#subBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
+}
+
+function drawSubscribers() {
+  const st = S.subs.stats;
+  const kpi = (l, v, hint) => `<div class="card pad kpi"><div class="l">${l}</div><div class="v">${v}</div>${hint ? '<div class="hint">' + hint + '</div>' : ''}</div>`;
+  if (!S.subs.rows.length) {
+    $('#subBody').innerHTML = `<div class="card empty">Aún no hay suscriptores.<br><br>Conecta la hoja de tu newsletter en <b>Integraciones → Conectar plataforma → Google Sheets</b>, o envíalos en tiempo real desde tu sitio.</div>`;
+    $('#csvBtn').disabled = true;
+    return;
+  }
+  $('#subBody').innerHTML = `
+    <div class="grid kpis">
+      ${kpi('Activos', st.activo, 'Reciben el correo')}${kpi('Pendientes', st.pendiente, 'Sin confirmar')}${kpi('Bajas', st.baja)}
+      ${kpi('Activos que ya son clientes', st.clientes, st.activo ? Math.round(st.clientes / st.activo * 100) + '% de los activos' : '')}
+      ${kpi('Activos por idioma', `<span style="font-size:16px;line-height:1.6">Español ${st.es}<br>English ${st.en} · Ambos ${st.ambos}</span>`)}
+    </div>
+    <div class="toolbar" style="flex-wrap:wrap">
+      <input class="input" id="q" placeholder="Buscar correo…">
+      <select class="input" id="fStatus" style="max-width:180px"><option value="">Todos los estados</option>${Object.keys(SUB_STATUS).map(k => `<option value="${k}">${SUB_STATUS[k]}</option>`).join('')}</select>
+      <select class="input" id="fLang" style="max-width:160px"><option value="">Todos los idiomas</option>${Object.keys(SUB_LANG).map(k => `<option value="${k}">${SUB_LANG[k]}</option>`).join('')}</select>
+      <select class="input" id="fCust" style="max-width:200px"><option value="">Clientes y no clientes</option><option value="si">Ya son clientes</option><option value="no">Aún no compran</option></select>
+    </div>
+    <div class="card tablewrap" id="list"></div>`;
+  ['#q', '#fStatus', '#fLang', '#fCust'].forEach(s => $(s).addEventListener('input', drawSubscriberRows));
+  $('#csvBtn').onclick = exportSubscribers;
+  drawSubscriberRows();
+}
+
+function filteredSubscribers() {
+  const q = ($('#q').value || '').toLowerCase().trim(), fs = $('#fStatus').value, fl = $('#fLang').value, fc = $('#fCust').value;
+  return S.subs.rows.filter(r => (!q || r.email.indexOf(q) >= 0) && (!fs || r.status === fs) && (!fl || r.language === fl) &&
+    (!fc || (fc === 'si' ? !!r.customer_id : !r.customer_id)));
+}
+
+function drawSubscriberRows() {
+  const rows = filteredSubscribers();
+  if (!rows.length) { $('#list').innerHTML = '<div class="empty">Sin resultados.</div>'; return; }
+  $('#list').innerHTML = `<table><thead><tr><th>Correo</th><th>Idioma</th><th>Estado</th><th>Registrado</th><th>Confirmado</th><th>En el CRM</th><th>Origen</th></tr></thead>
+    <tbody>${rows.map(r => `<tr><td>${esc(r.email)}</td><td>${esc(SUB_LANG[r.language] || '—')}</td>
+      <td><span class="tag ${r.status === 'activo' ? 'activo' : r.status === 'baja' ? 'cancelada' : 'pendiente'}">${esc(SUB_STATUS[r.status] || r.status)}</span></td>
+      <td class="muted">${esc(r.subscribed_at || '')}</td><td class="muted">${esc(r.confirmed_at || (r.unsubscribed_at ? 'Baja: ' + r.unsubscribed_at : '—'))}</td>
+      <td>${r.customer_id ? '<span class="tag activo">Cliente</span> ' + esc(r.customer_name) : r.lead_id ? '<span class="tag nuevo">Prospecto</span>' : '<span class="muted">—</span>'}</td>
+      <td class="muted">${esc(r.source || '')}</td></tr>`).join('')}</tbody></table>
+    <div class="muted" style="padding:10px 14px">${rows.length} de ${S.subs.rows.length}</div>`;
+}
+
+function exportSubscribers() {
+  const rows = filteredSubscribers();
+  const cols = ['email', 'language', 'status', 'subscribed_at', 'confirmed_at', 'unsubscribed_at', 'customer_name', 'source'];
+  const q = v => '"' + String(v === undefined || v === null ? '' : v).replace(/"/g, '""') + '"';
+  const csv = '﻿' + [cols.join(',')].concat(rows.map(r => cols.map(c => q(r[c])).join(','))).join('\r\n');
+  try {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'suscriptores-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    toast(rows.length + ' suscriptores exportados');
+  } catch (e) {
+    openModal('Exportar CSV', '<p class="muted">Tu navegador bloqueó la descarga. Copia el contenido:</p>' + codeBlock(csv.slice(1)), null, null, true);
+  }
+}
+
+function showSyncResult(r) {
+  const c = r.counts;
+  openModal('Hoja sincronizada', `
+    <div class="grid kpis" style="grid-template-columns:repeat(3,1fr)">
+      <div class="card pad kpi"><div class="l">Nuevos</div><div class="v">${c.creado}</div></div>
+      <div class="card pad kpi"><div class="l">Actualizados</div><div class="v">${c.actualizado}</div></div>
+      <div class="card pad kpi"><div class="l">Sin cambios</div><div class="v">${c['sin cambios']}</div></div>
+    </div>
+    <p>Pestaña <b>${esc(r.sheet)}</b>. Columnas reconocidas: ${r.columns.map(x => '<span class="tag">' + esc(x) + '</span>').join(' ')}</p>
+    ${r.errors.length ? '<div class="note">' + r.errors.map(esc).join('<br>') + '</div>' : ''}
+    <p class="muted">A partir de ahora se sincroniza sola cada hora. Puedes forzarla con <b>Sincronizar ahora</b>.</p>`, null);
+}
+
 /* ============================ Integraciones ============================ */
 
-const EV_STATUS = { creado: 'Creado', actualizado: 'Actualizado', duplicado: 'Duplicado', spam: 'Spam', ignorado: 'Ignorado',
+const EV_STATUS = { creado: 'Creado', actualizado: 'Actualizado', duplicado: 'Duplicado', spam: 'Spam', ignorado: 'Ignorado', 'sin cambios': 'Sin cambios',
   error: 'Error', rechazado: 'Rechazado', ok: 'OK', reprocesado: 'Reprocesado' };
 
 async function viewIntegrations() {
@@ -762,12 +852,12 @@ function drawIntegrations() {
   const needsRelay = d.integrations.some(i => i.needs_relay);
   const warnUrl = !d.webAppUrl ? '<div class="note">Publica la app (Implementar → Nueva implementación → Aplicación web) para obtener tu URL de integración.</div>' : '';
   $('#intBody').innerHTML = warnUrl + `
-    <div class="card tablewrap">${d.integrations.length ? `<table><thead><tr><th>Nombre</th><th>Plataforma</th><th>Clave</th><th>Estado</th><th class="num">Eventos</th><th>Último</th><th></th></tr></thead>
+    <div class="card tablewrap">${d.integrations.length ? `<table class="wrap"><thead><tr><th>Nombre</th><th>Plataforma</th><th>Clave</th><th>Estado</th><th class="num">Eventos</th><th>Último</th><th></th></tr></thead>
       <tbody>${d.integrations.map(i => `<tr><td>${esc(i.name)}</td><td>${esc(i.platform_label)}${i.supports_signature ? (i.has_secret ? ' <span class="tag activo">firmado</span>' : ' <span class="tag pendiente">sin firma</span>') : ''}</td>
-        <td><code>${esc(i.key_hint)}</code></td><td><span class="tag ${i.status === 'activo' ? 'activo' : 'inactivo'}">${i.status === 'activo' ? 'Activa' : 'Pausada'}</span></td>
+        <td>${i.is_pull ? '<span class="muted" title="' + esc(i.last_sync_result || '') + '">Cada hora</span>' : '<code>' + esc(i.key_hint) + '</code>'}</td><td><span class="tag ${i.status === 'activo' ? 'activo' : 'inactivo'}">${i.status === 'activo' ? 'Activa' : 'Pausada'}</span></td>
         <td class="num">${esc(i.events_count)}</td><td class="muted">${i.last_event_at ? fmtDate(i.last_event_at) : 'Nunca'}</td>
-        <td class="actions"><button class="btn sm" data-guide="${esc(i.id)}">Cómo conectar</button>${w ? `<button class="btn sm" data-edit="${esc(i.id)}">Editar</button>
-          <button class="btn sm" data-rotate="${esc(i.id)}">Nueva clave</button><button class="btn sm danger" data-del="${esc(i.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table>`
+        <td class="actions">${i.is_pull && w ? `<button class="btn sm primary" data-sync="${esc(i.id)}">Sincronizar ahora</button>` : ''}<button class="btn sm" data-guide="${esc(i.id)}">${i.is_pull ? 'Cómo funciona' : 'Cómo conectar'}</button>${w ? `<button class="btn sm" data-edit="${esc(i.id)}">Editar</button>
+          ${i.is_pull ? '' : `<button class="btn sm" data-rotate="${esc(i.id)}">Nueva clave</button>`}<button class="btn sm danger" data-del="${esc(i.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table>`
       : `<div class="empty">Conecta tu primer formulario, tienda o plataforma de pagos.<br><br>${w ? '<button class="btn primary" id="newInt2">+ Conectar plataforma</button>' : ''}</div>`}</div>
 
     <div class="section card pad">
@@ -794,7 +884,7 @@ function drawIntegrations() {
     <div class="section card">
       <div class="pad" style="padding:16px 18px 0"><h3>Actividad reciente</h3></div>
       ${d.events.length ? `<div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Integración</th><th>Tipo</th><th>Resultado</th><th>Detalle</th><th></th></tr></thead>
-        <tbody>${d.events.map(e => `<tr><td class="muted">${fmtDate(e.created_at)}</td><td>${esc(e.integration)}</td><td>${esc({ lead: 'Prospecto', order: 'Venta', customer: 'Cliente', ping: 'Prueba' }[e.kind] || e.kind || '—')}</td>
+        <tbody>${d.events.map(e => `<tr><td class="muted">${fmtDate(e.created_at)}</td><td>${esc(e.integration)}</td><td>${esc({ lead: 'Prospecto', order: 'Venta', customer: 'Cliente', ping: 'Prueba', subscriber: 'Suscriptor', sync: 'Sincronización' }[e.kind] || e.kind || '—')}</td>
           <td><span class="tag ${esc(e.status)}">${esc(EV_STATUS[e.status] || e.status)}</span></td><td style="white-space:normal">${esc([e.external_id, e.message].filter(Boolean).join(' · '))}</td>
           <td class="actions">${e.can_reprocess && w ? `<button class="btn sm" data-re="${esc(e.id)}">Reprocesar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`
         : '<div class="empty">Aquí verás cada formulario, pedido o pago recibido, y cualquier error.</div>'}
@@ -805,6 +895,11 @@ function drawIntegrations() {
   on('[data-guide]', b => showGuide(d.integrations.find(i => i.id === b.dataset.guide), null));
   on('[data-edit]', b => editIntegration(d.integrations.find(i => i.id === b.dataset.edit)));
   on('[data-rotate]', b => rotateKey(d.integrations.find(i => i.id === b.dataset.rotate)));
+  on('[data-sync]', async b => {
+    b.disabled = true; b.textContent = 'Sincronizando…';
+    try { const r = await api('apiIntegrationSync', S.token, b.dataset.sync); S.int = await api('apiIntegrations', S.token); drawIntegrations(); showSyncResult(r); }
+    catch (e) { toast(e.message, true); b.disabled = false; b.textContent = 'Sincronizar ahora'; }
+  });
   on('[data-del]', b => deleteIntegration(d.integrations.find(i => i.id === b.dataset.del)));
   on('[data-re]', async b => { b.disabled = true; try { const st = await api('apiIntegrationReprocess', S.token, b.dataset.re); toast('Reprocesado: ' + st); viewIntegrations(); } catch (e) { toast(e.message, true); b.disabled = false; } });
   on('[data-htest]', async b => { b.disabled = true; try { await api('apiWebhookTest', S.token, b.dataset.htest); toast('El destino respondió correctamente'); viewIntegrations(); } catch (e) { toast(e.message, true); b.disabled = false; } });
@@ -821,6 +916,7 @@ function drawIntegrations() {
 function integrationFields(rec) {
   const d = S.int;
   const fields = d.fields.map(f => Object.assign({}, f, rec && f.name === 'platform' ? { lock: true } : {}));
+  if (!rec || rec.is_pull) fields.splice(rec ? 1 : 2, 0, ...d.sheetFields);
   const sig = !rec || rec.supports_signature;
   if (sig) fields.splice(2, 0, {
     name: 'webhook_secret', label: 'Secreto de firma (Shopify, WooCommerce, Stripe)', type: 'text',
@@ -831,6 +927,7 @@ function integrationFields(rec) {
 }
 
 function editIntegration(rec) {
+  setTimeout(() => togglePlatformFields(rec), 0);
   openForm({
     title: rec ? 'Editar integración' : 'Conectar plataforma', fields: integrationFields(rec), record: rec,
     onSave: async values => {
@@ -838,9 +935,26 @@ function editIntegration(rec) {
       const r = await api('apiIntegrationSave', S.token, values);
       S.int = await api('apiIntegrations', S.token);
       drawIntegrations();
-      if (r.key) setTimeout(() => showGuide(r.integration, r.key), 0); else toast('Integración actualizada');
+      if (r.sync) setTimeout(() => showSyncResult(r.sync), 0);
+      else if (r.key) setTimeout(() => showGuide(r.integration, r.key), 0);
+      else toast('Integración actualizada');
     },
   });
+}
+
+/** Muestra solo los campos que aplican a la plataforma elegida. */
+function togglePlatformFields(rec) {
+  const form = $('#recForm');
+  if (!form) return;
+  const sel = form.elements.platform;
+  const wrap = n => form.elements[n] ? form.elements[n].closest('div') : null;
+  const apply = () => {
+    const p = S.int.platforms[sel.value] || {};
+    [['webhook_secret', !!p.signature], ['source_url', !!p.pull], ['source_sheet', !!p.pull], ['notify_email', !p.pull]]
+      .forEach(([n, show]) => { const w = wrap(n); if (w) w.style.display = show ? '' : 'none'; });
+  };
+  sel.addEventListener('change', apply);
+  apply();
 }
 
 function rotateKey(i) {
@@ -885,6 +999,7 @@ function showGuide(i, key) {
   const k = key || i.public_key || '';
   const K = k || 'TU_CLAVE_SECRETA';
   const relay = (d.relayUrl || 'https:\/\/TU-RELEVO.workers.dev') + '/in/' + K;
+  if (i.is_pull) { openModal('Cómo funciona: ' + i.name, GUIDES.google_sheet({ base, i }), null, null, true); return; }
   let html = '';
   if (key) html += `<div class="note ok-note"><b>Tu clave${i.is_public ? '' : ' secreta'}:</b><div class="secret" style="margin-top:8px">${esc(key)}</div>
     ${i.is_public ? 'Es pública: puede ir en tu página web, solo sirve para ' + (i.platform === 'catalog' ? 'leer el catálogo' : 'enviar prospectos') + '.' : '<b>Cópiala ahora:</b> por seguridad no se volverá a mostrar. Ya va incluida en las instrucciones de abajo.'}</div>`;
@@ -992,6 +1107,7 @@ document.getElementById('nexo-form').addEventListener('submit', async function (
     <h3>Prospecto</h3>${codeBlock(`{ "type": "lead", "name": "Ana Torres", "email": "ana@correo.com", "phone": "+52 555 123 4567",
   "message": "Quiero una cotización", "utm_campaign": "facebook-noviembre" }`)}
     <h3>Cliente</h3>${codeBlock(`{ "type": "customer", "name": "Carlos Rivera", "email": "carlos@empresa.com", "company": "Rivera SA" }`)}
+    <h3>Suscriptor de newsletter</h3>${codeBlock(`{ "type": "subscriber", "email": "lector@correo.com", "language": "es", "status": "active" }`)}
     <h3>Venta / pedido</h3>${codeBlock(`{
   "type": "order", "id": "A-1029", "number": "1029", "status": "paid",
   "currency": "USD", "total": 448.0, "tax": 48.0, "payment_method": "Square",
@@ -1002,6 +1118,20 @@ document.getElementById('nexo-form').addEventListener('submit', async function (
   ]
 }`)}
     <p class="muted"><code>status</code>: paid · pending · partial · cancelled · refunded. Si envías el mismo <code>id</code> otra vez, la venta se <b>actualiza</b> (no se duplica): úsalo para avisar pagos o cancelaciones.</p>`,
+
+  google_sheet: ({ base, i }) => `
+    <p>El sistema lee tu hoja <b>cada hora</b> (y cuando pulsas <b>Sincronizar ahora</b>). No tienes que tocar la hoja ni tu sitio.</p>
+    ${i.source_url ? '<p>Hoja conectada: <a href="' + esc(i.source_url) + '" target="_blank" rel="noopener">abrir</a>' + (i.source_sheet ? ' · pestaña <b>' + esc(i.source_sheet) + '</b>' : '') + '</p>' : ''}
+    <ul class="steps">
+      <li><b>Columnas que reconoce:</b> Email / Correo (obligatoria), ID, Idioma (es, en, both/ambos), Estado (active, pending, unsubscribed, activo, pendiente, baja…), Registrado, Confirmado y Baja.</li>
+      <li><b>No duplica:</b> cada correo es un solo suscriptor. Si cambia de pendiente a activo, o se da de baja, se actualiza.</li>
+      <li><b>No borra:</b> si alguien desaparece de la hoja, se conserva en el CRM con su último estado.</li>
+      <li>Cada suscriptor se liga solo con su ficha si ya es <b>cliente</b> o <b>prospecto</b> (mismo correo).</li>
+    </ul>
+    <h3>¿Quieres tiempo real?</h3>
+    <p class="muted">La hoja solo se actualiza cuando tu sitio la exporta. Si tu sitio puede avisar en el momento de cada alta, confirmación o baja, crea una integración <b>Zapier / Make / otros</b> y envía:</p>
+    ${codeBlock(`POST ${base}?key=TU_CLAVE_sk&format=json
+{ "type": "subscriber", "id": 4, "email": "lector@correo.com", "language": "es", "status": "pending" }`)}`,
 
   catalog: ({ base, key }) => `
     <p>Tu catálogo (productos y servicios activos, con precio y disponibilidad) en JSON:</p>${codeBlock(`${base}?action=catalog&key=${key}`)}
