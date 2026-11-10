@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nexo ERP</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f766e'/%3E%3Ctext x='16' y='21' font-family='Arial' font-weight='700' font-size='13' fill='white' text-anchor='middle'%3ENx%3C/text%3E%3C/svg%3E">
+<script>
+  // ⬇️ La URL de tu Web App de Apps Script (Implementar → Administrar implementaciones). Termina en /exec
+  window.NEXO_API_URL = 'https://script.google.com/macros/s/AKfycby5LWM73dCEKGmDvc1LJBrw_eQYuLRLcZUCm_XJwXJt365-TEtkeKhr1N4GfkWFfiLT/exec';
+</script>
+<style>
+  :root {
+    --bg: #f5f6f8; --panel: #ffffff; --ink: #111827; --muted: #6b7280; --line: #e5e7eb;
+    --brand: #0f766e; --brand-ink: #ffffff; --brand-soft: #e6f4f2; --danger: #b91c1c; --warn: #b45309;
+    --side: #0b1220; --side-ink: #cbd5e1; --radius: 10px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-size: 14px; }
+  button { font: inherit; cursor: pointer; }
+  input, select, textarea { font: inherit; color: inherit; }
+  .btn { border: 1px solid var(--line); background: var(--panel); padding: 8px 14px; border-radius: 8px; }
+  .btn:hover { border-color: #cbd5e1; }
+  .btn.primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+  .btn.danger { color: var(--danger); }
+  .btn.sm { padding: 4px 10px; font-size: 13px; }
+  .btn:disabled { opacity: .6; cursor: wait; }
+  .input { width: 100%; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  .input:focus { outline: 2px solid var(--brand-soft); border-color: var(--brand); }
+  label.f { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .hint { font-size: 11px; color: var(--muted); margin-top: 3px; }
+  .muted { color: var(--muted); }
+
+  /* Login */
+  .center { min-height: 100vh; display: grid; place-items: center; padding: 20px; }
+  .auth { width: 100%; max-width: 380px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 28px; }
+  .auth h1 { margin: 0 0 4px; font-size: 22px; }
+  .auth .row { margin-top: 14px; }
+  .err { color: var(--danger); font-size: 13px; margin-top: 10px; min-height: 18px; }
+  .logo { display: inline-grid; place-items: center; width: 36px; height: 36px; border-radius: 9px; background: var(--brand); color: #fff; font-weight: 700; margin-bottom: 14px; }
+
+  /* Shell */
+  .shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+  .side { background: var(--side); color: var(--side-ink); padding: 18px 12px; display: flex; flex-direction: column; gap: 2px; }
+  .side .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 18px; color: #fff; font-weight: 600; }
+  .side .brand .logo { margin: 0; width: 30px; height: 30px; font-size: 13px; }
+  .side .group { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: #64748b; padding: 16px 10px 6px; }
+  .nav { display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left; background: none; border: 0; color: inherit; padding: 9px 10px; border-radius: 8px; }
+  .nav:hover { background: rgba(255,255,255,.06); color: #fff; }
+  .nav.on { background: rgba(20,184,166,.16); color: #fff; }
+  .nav.soon { opacity: .55; }
+  .pill { font-size: 10px; padding: 2px 7px; border-radius: 99px; background: rgba(255,255,255,.08); }
+  .side .foot { margin-top: auto; padding: 12px 10px 0; border-top: 1px solid rgba(255,255,255,.08); font-size: 13px; }
+  .side .foot b { color: #fff; display: block; }
+  .side .foot a { color: var(--side-ink); cursor: pointer; text-decoration: underline; margin-right: 10px; }
+  main { padding: 26px 30px; min-width: 0; }
+  .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+  .top h2 { margin: 0; font-size: 22px; }
+  .mobilebar { display: none; }
+
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); }
+  .card.pad { padding: 18px; }
+  .card h3 { margin: 0 0 12px; font-size: 15px; }
+  .grid { display: grid; gap: 14px; }
+  .kpis { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 14px; }
+  .kpi .v { font-size: 28px; font-weight: 650; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .kpi .l { color: var(--muted); font-size: 13px; }
+  .two { grid-template-columns: 1fr 1fr; }
+
+  .toolbar { display: flex; gap: 10px; margin-bottom: 12px; }
+  .toolbar .input { max-width: 340px; }
+  .tablewrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  th { font-size: 12px; color: var(--muted); font-weight: 500; background: #fafafa; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:last-child td { border-bottom: 0; }
+  td.actions { text-align: right; white-space: normal; min-width: 150px; }
+  td.actions .btn { margin-top: 3px; margin-bottom: 3px; }
+  td.actions .btn { margin-left: 6px; }
+  .empty { padding: 36px; text-align: center; color: var(--muted); }
+  .tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 99px; background: #f1f5f9; }
+  .tag.activo { background: #dcfce7; color: #166534; }
+  .tag.prospecto { background: #e0f2fe; color: #075985; }
+  .tag.inactivo { background: #f3f4f6; color: #6b7280; }
+  .tag.servicio { background: #ede9fe; color: #5b21b6; }
+  .tag.producto { background: #fef3c7; color: #92400e; }
+  .list { list-style: none; margin: 0; padding: 0; }
+  .list li { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .list li:last-child { border-bottom: 0; }
+  .phase { display: flex; gap: 10px; align-items: center; padding: 7px 0; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #d1d5db; flex: none; }
+  .dot.done { background: var(--brand); }
+
+  /* Modal */
+  .backdrop { position: fixed; inset: 0; background: rgba(15,23,42,.45); display: grid; place-items: center; padding: 16px; z-index: 50; }
+  .modal { background: var(--panel); border-radius: 14px; width: 100%; max-width: 640px; max-height: 92vh; display: flex; flex-direction: column; }
+  .modal header { padding: 16px 20px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+  .modal header h3 { margin: 0; font-size: 17px; }
+  .modal .body { padding: 18px 20px; overflow-y: auto; }
+  .modal footer { padding: 14px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; gap: 8px; align-items: center; }
+  .modal footer .err { margin: 0 auto 0 0; }
+  .form { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .form .wide { grid-column: 1 / -1; }
+  .check { display: flex; align-items: center; gap: 8px; padding-top: 22px; }
+  .secret { font-family: ui-monospace, Menlo, monospace; font-size: 18px; background: var(--brand-soft); padding: 12px; border-radius: 8px; text-align: center; letter-spacing: .04em; user-select: all; }
+
+  pre.code { background: #0b1220; color: #e2e8f0; padding: 12px 14px; border-radius: 8px; overflow-x: auto; font-size: 12.5px; line-height: 1.5; margin: 6px 0 4px; white-space: pre; }
+  .codebox { position: relative; }
+  .codebox .copy { position: absolute; top: 6px; right: 6px; background: #1e293b; color: #e2e8f0; border-color: #334155; }
+  .steps { padding-left: 20px; margin: 6px 0 12px; } .steps li { margin: 5px 0; }
+  .note { background: #fffbeb; border: 1px solid #fde68a; color: #78350f; padding: 10px 12px; border-radius: 8px; font-size: 13px; margin: 10px 0; }
+  .ok-note { background: #ecfdf5; border-color: #a7f3d0; color: #065f46; }
+  .section { margin-top: 22px; }
+  .section h3 { display: flex; justify-content: space-between; align-items: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .modal.wide { max-width: 860px; }
+  .tag.pagada, .tag.creado, .tag.enviado, .tag.ganado, .tag.ok, .tag.reprocesado { background: #dcfce7; color: #166534; }
+  .tag.pendiente, .tag.parcial, .tag.nuevo, .tag.actualizado, .tag.duplicado { background: #e0f2fe; color: #075985; }
+  .tag.cancelada, .tag.reembolsada, .tag.error, .tag.rechazado, .tag.fallido, .tag.perdido { background: #fee2e2; color: #991b1b; }
+  .tag.spam, .tag.ignorado, .tag.descartado { background: #f3f4f6; color: #6b7280; }
+  .tag.contactado, .tag.calificado, .tag.cotizado { background: #fef3c7; color: #92400e; }
+  #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 10px 16px; border-radius: 8px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60; }
+  #toast.show { opacity: 1; }
+  #toast.bad { background: var(--danger); }
+
+  @media (max-width: 860px) {
+    .shell { grid-template-columns: 1fr; }
+    .side { position: fixed; inset: 0 auto 0 0; width: 260px; z-index: 40; transform: translateX(-100%); transition: transform .2s; }
+    .side.open { transform: none; }
+    .mobilebar { display: flex; align-items: center; gap: 10px; background: var(--side); color: #fff; padding: 10px 14px; }
+    .mobilebar button { background: none; border: 0; color: #fff; font-size: 20px; }
+    main { padding: 18px 14px; }
+    .two, .form { grid-template-columns: 1fr; }
+    td.actions { white-space: nowrap; min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast"></div>
+
+<script>
+/* ============================ Utilidades ============================ */
+const mem = {};
+const store = {
+  get(k) { try { return sessionStorage.getItem(k); } catch (e) { return mem[k] || null; } },
+  set(k, v) { try { sessionStorage.setItem(k, v); } catch (e) { mem[k] = v; } },
+  del(k) { try { sessionStorage.removeItem(k); } catch (e) { delete mem[k]; } },
+};
+
+const S = { token: store.get('nx_token'), boot: null, view: 'inicio', rows: [], users: [] };
+const $ = sel => document.querySelector(sel);
+const app = () => $('#app');
+
+function esc(v) {
+  return String(v === null || v === undefined ? '' : v)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function toast(msg, bad) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.className = 'show' + (bad ? ' bad' : '');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { t.className = ''; }, 3200);
+}
+
+/*
+ * La misma página funciona en dos lugares:
+ *  - Servida por Google (URL /exec): usa google.script.run.
+ *  - En tu propio dominio (GitHub Pages u otro): usa fetch() contra la URL /exec,
+ *    definida en window.NEXO_API_URL.
+ */
+const API_URL = String(window.NEXO_API_URL || '').trim();
+const ON_GOOGLE = !!(window.google && google.script && google.script.run);
+
+function callServer(fn, args) {
+  if (ON_GOOGLE) {
+    return new Promise((resolve, reject) => {
+      google.script.run.withSuccessHandler(resolve)
+        .withFailureHandler(e => reject(e instanceof Error ? e : new Error(String(e))))[fn].apply(null, args);
+    });
+  }
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(API_URL)) {
+    return Promise.reject(new Error('Falta configurar la URL de tu sistema (NEXO_API_URL) en este archivo.'));
+  }
+  return fetch(API_URL + '?rpc=1', { method: 'POST', body: JSON.stringify({ fn: fn, args: args }), redirect: 'follow' })
+    .then(r => { if (!r.ok) throw new Error('El servidor respondió ' + r.status); return r.json(); })
+    .catch(e => { throw new Error(e.message === 'Failed to fetch' ? 'Sin conexión con el servidor. Revisa tu internet.' : e.message); });
+}
+
+function api(fn) {
+  const args = Array.prototype.slice.call(arguments, 1);
+  return callServer(fn, args).then(res => {
+    if (res && res.ok) return res.data;
+    const err = new Error(res ? res.error : 'Sin respuesta del servidor.');
+    err.code = res && res.code;
+    if (err.code === 'AUTH') { endSession(); toast(err.message, true); }
+    else if (err.code === 'PWD_CHANGE') { renderPasswordChange(true); }
+    throw err;
+  });
+}
+
+function can(perm) {
+  const parts = perm.split(':');
+  return (S.boot ? S.boot.perms : []).some(p =>
+    p === '*' || p === perm || p === parts[0] + ':*' || p === '*:' + parts[1]);
+}
+
+function money(v) {
+  if (v === '' || v === null || v === undefined) return '';
+  const cur = (S.boot && S.boot.tenant && S.boot.tenant.currency) || 'USD';
+  try { return new Intl.NumberFormat('es', { style: 'currency', currency: cur }).format(Number(v)); }
+  catch (e) { return Number(v).toFixed(2); }
+}
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  if (isNaN(d)) return esc(iso);
+  return d.toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+function optLabel(field, value) {
+  const o = (field.options || []).find(x => x[0] === value);
+  return o ? o[1] : value;
+}
+
+function cell(field, value) {
+  if (!field) return esc(value);
+  if (field.type === 'select') {
+    if (value === '' || value === undefined) return '<span class="muted">—</span>';
+    return '<span class="tag ' + esc(value) + '">' + esc(optLabel(field, value)) + '</span>';
+  }
+  if (field.type === 'checkbox') return value === true ? 'Sí' : 'No';
+  if (field.format === 'money') return esc(money(value));
+  if (field.format === 'datetime') return '<span class="muted">' + fmtDate(value) + '</span>';
+  if (field.format === 'number') return value === '' || value === undefined ? '<span class="muted">—</span>' : esc(Number(value).toLocaleString('es'));
+  return esc(value);
+}
+
+/* ============================ Sesión ============================ */
+
+function endSession() {
+  S.token = null; S.boot = null;
+  store.del('nx_token');
+  renderLogin();
+}
+
+async function start() {
+  if (!S.token) return renderLogin();
+  app().innerHTML = '<div class="center muted">Cargando…</div>';
+  try {
+    S.boot = await api('apiBootstrap', S.token);
+    if (S.boot.user.must_change_password) return renderPasswordChange(true);
+    renderShell();
+  } catch (e) {
+    if (e.code !== 'AUTH' && e.code !== 'PWD_CHANGE') { toast(e.message, true); renderLogin(); }
+  }
+}
+
+function renderLogin() {
+  app().innerHTML = `
+    <div class="center"><form class="auth" id="loginForm">
+      <div class="logo">Nx</div>
+      <h1>Iniciar sesión</h1>
+      <div class="muted">ERP + CRM para tu negocio</div>
+      <div class="row"><label class="f">Correo</label><input class="input" name="email" type="email" autocomplete="username" required></div>
+      <div class="row"><label class="f">Contraseña</label><input class="input" name="password" type="password" autocomplete="current-password" required></div>
+      <div class="err" id="loginErr"></div>
+      <div class="row"><button class="btn primary" style="width:100%" type="submit">Entrar</button></div>
+    </form></div>`;
+  $('#loginForm').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const f = ev.target, btn = f.querySelector('button');
+    btn.disabled = true; $('#loginErr').textContent = '';
+    try {
+      const r = await api('apiLogin', f.email.value, f.password.value);
+      S.token = r.token; store.set('nx_token', r.token);
+      await start();
+    } catch (e) {
+      $('#loginErr').textContent = e.message; btn.disabled = false;
+    }
+  });
+  $('#loginForm [name=email]').focus();
+}
+
+function renderPasswordChange(forced) {
+  const html = `
+    <form class="${forced ? 'auth' : ''}" id="pwdForm">
+      ${forced ? '<div class="logo">Nx</div><h1>Crea tu contraseña</h1><div class="muted">Por seguridad, cambia la contraseña temporal.</div>' : ''}
+      <div class="row" style="margin-top:14px"><label class="f">Contraseña actual</label><input class="input" name="current" type="password" autocomplete="current-password" required></div>
+      <div class="row" style="margin-top:14px"><label class="f">Nueva contraseña</label><input class="input" name="next" type="password" autocomplete="new-password" required><div class="hint">Mínimo 8 caracteres, con letras y números.</div></div>
+      <div class="row" style="margin-top:14px"><label class="f">Repite la nueva contraseña</label><input class="input" name="again" type="password" autocomplete="new-password" required></div>
+      <div class="err" id="pwdErr"></div>
+      <div class="row" style="margin-top:14px;display:flex;gap:8px;justify-content:flex-end">
+        ${forced ? '<button class="btn" type="button" id="pwdOut">Salir</button>' : ''}
+        <button class="btn primary" type="submit">Guardar contraseña</button>
+      </div>
+    </form>`;
+  if (forced) {
+    app().innerHTML = '<div class="center">' + html + '</div>';
+    $('#pwdOut').onclick = logout;
+  } else {
+    openModal('Cambiar contraseña', html, null);
+  }
+  $('#pwdForm').addEventListener('submit', async ev => {
+    ev.preventDefault();
+    const f = ev.target;
+    if (f.next.value !== f.again.value) { $('#pwdErr').textContent = 'Las contraseñas no coinciden.'; return; }
+    f.querySelector('[type=submit]').disabled = true;
+    try {
+      await api('apiChangePassword', S.token, f.current.value, f.next.value);
+      toast('Contraseña actualizada');
+      if (forced) start(); else closeModal();
+    } catch (e) {
+      $('#pwdErr').textContent = e.message;
+      f.querySelector('[type=submit]').disabled = false;
+    }
+  });
+}
+
+async function logout() {
+  try { await api('apiLogout', S.token); } catch (e) { /* sin importancia */ }
+  endSession();
+}
+
+/* ============================ Estructura ============================ */
+
+function renderShell() {
+  const b = S.boot;
+  const item = m => `<button class="nav ${m.soon ? 'soon' : ''}" data-view="${m.id}">
+      <span>${esc(m.label)}</span>${m.soon ? '<span class="pill">Fase ' + m.phase + '</span>' : ''}</button>`;
+  const main = b.menu.filter(m => m.group !== 'admin').map(item).join('');
+  const admin = b.menu.filter(m => m.group === 'admin').map(item).join('');
+  app().innerHTML = `
+    <div class="mobilebar"><button id="menuBtn" aria-label="Menú">☰</button><b>${esc(b.tenant.name)}</b></div>
+    <div class="shell">
+      <aside class="side" id="side">
+        <div class="brand"><span class="logo">Nx</span><span>${esc(b.tenant.name)}</span></div>
+        ${main}
+        ${admin ? '<div class="group">Administración</div>' + admin : ''}
+        <div class="foot">
+          <b>${esc(b.user.name)}</b><span class="muted">${esc(b.user.role_label)}</span>
+          <div style="margin-top:8px"><a id="pwdLink">Contraseña</a><a id="outLink">Salir</a></div>
+        </div>
+      </aside>
+      <main id="main"></main>
+    </div>`;
+  document.querySelectorAll('.nav').forEach(n => n.addEventListener('click', () => {
+    $('#side').classList.remove('open');
+    go(n.dataset.view);
+  }));
+  $('#menuBtn').onclick = () => $('#side').classList.toggle('open');
+  $('#pwdLink').onclick = () => renderPasswordChange(false);
+  $('#outLink').onclick = logout;
+  go(b.menu.some(m => m.id === S.view) ? S.view : 'inicio');
+}
+
+function go(view) {
+  S.view = view;
+  document.querySelectorAll('.nav').forEach(n => n.classList.toggle('on', n.dataset.view === view));
+  const m = S.boot.menu.find(x => x.id === view);
+  if (m && m.soon) return viewSoon(m);
+  if (view === 'inicio') return viewHome();
+  if (view === 'users') return viewUsers();
+  if (view === 'sales') return viewSales();
+  if (view === 'integrations') return viewIntegrations();
+  if (view === 'audit') return viewAudit();
+  if (view === 'settings') return viewSettings();
+  if (S.boot.entities[view]) return viewEntity(view);
+  viewHome();
+}
+
+function pageHeader(title, actions) {
+  return `<div class="top"><h2>${esc(title)}</h2><div>${actions || ''}</div></div>`;
+}
+
+/* ============================ Inicio ============================ */
+
+async function viewHome() {
+  const main = $('#main');
+  main.innerHTML = pageHeader('Hola, ' + S.boot.user.name.split(' ')[0]) + '<div class="muted">Cargando indicadores…</div>';
+  let d;
+  try { d = await api('apiDashboard', S.token); } catch (e) { main.innerHTML = pageHeader('Inicio') + '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  const kpi = (l, v) => `<div class="card pad kpi"><div class="l">${l}</div><div class="v">${v}</div></div>`;
+  const phases = [
+    ['Base de datos, usuarios y permisos', true], ['CRM, prospectos e integraciones', true],
+    ['Inventario por movimientos', false], ['POS, facturas y cobro con QR', false],
+    ['Finanzas: ingresos, gastos, flujo de caja', false], ['Marketing y automatizaciones', false],
+  ];
+  main.innerHTML = pageHeader('Hola, ' + S.boot.user.name.split(' ')[0]) + `
+    <div class="grid kpis">
+      ${kpi('Clientes activos', d.customers)}${kpi('Prospectos', d.prospects)}
+      ${kpi('Productos', d.products)}${kpi('Servicios', d.services)}${kpi('Usuarios', d.users)}
+    </div>
+    <div class="grid two">
+      <div class="card pad"><h3>Clientes recientes</h3>
+        ${d.recentCustomers.length ? '<ul class="list">' + d.recentCustomers.map(c =>
+          `<li><span>${esc(c.name)}<br><span class="muted">${esc(c.email || c.phone || '')}</span></span><span class="tag ${esc(c.status)}">${esc(c.status)}</span></li>`).join('') + '</ul>'
+          : '<div class="muted">Aún no hay clientes.</div>'}
+      </div>
+      <div class="card pad"><h3>${d.activity.length ? 'Actividad reciente' : 'Hoja de ruta'}</h3>
+        ${d.activity.length ? '<ul class="list">' + d.activity.map(a =>
+          `<li><span>${esc(actionLabel(a.action))} · ${esc(entityLabel(a.entity))}<br><span class="muted">${esc(a.user_email)}</span></span><span class="muted">${fmtDate(a.created_at)}</span></li>`).join('') + '</ul>'
+          : phases.map((p, i) => `<div class="phase"><span class="dot ${p[1] ? 'done' : ''}"></span>Fase ${i + 1}: ${p[0]}</div>`).join('')}
+      </div>
+    </div>`;
+}
+
+const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
+  password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar' };
+const ENTITY_NAMES = { Customers: 'Cliente', Products: 'Producto/servicio', Users: 'Usuario', Tenants: 'Empresa', Leads: 'Prospecto',
+  Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido' };
+const actionLabel = a => ACTIONS[a] || a;
+const entityLabel = e => ENTITY_NAMES[e] || e;
+
+/* ============================ Módulos CRUD ============================ */
+
+async function viewEntity(key) {
+  const def = S.boot.entities[key];
+  const main = $('#main');
+  main.innerHTML = pageHeader(def.label, can(def.resource + ':write') ? '<button class="btn primary" id="newBtn">+ Nuevo</button>' : '') +
+    `<div class="toolbar"><input class="input" id="q" placeholder="Buscar ${esc(def.label.toLowerCase())}…"></div>
+     <div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>`;
+  if ($('#newBtn')) $('#newBtn').onclick = () => editRecord(key, null);
+  $('#q').addEventListener('input', () => drawTable(key));
+  try {
+    S.rows = await api('apiList', S.token, key, '');
+    if (S.view === key) drawTable(key);
+  } catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+}
+
+function drawTable(key) {
+  const def = S.boot.entities[key];
+  const q = ($('#q').value || '').toLowerCase().trim();
+  const rows = q ? S.rows.filter(r => def.search.some(f => String(r[f] || '').toLowerCase().indexOf(q) >= 0)) : S.rows;
+  const fields = def.columns.map(c => def.fields.find(f => f.name === c) ||
+    Object.assign({ name: c, label: c }, (def.extraColumns || {})[c] || {}));
+  if (!rows.length) {
+    $('#list').innerHTML = `<div class="empty">${q ? 'Sin resultados.' : 'Aún no hay registros.'}</div>`;
+    return;
+  }
+  const canW = can(def.resource + ':write'), canD = can(def.resource + ':delete');
+  $('#list').innerHTML = `<table><thead><tr>${fields.map(f => `<th class="${f.format === 'money' ? 'num' : ''}">${esc(f.label)}</th>`).join('')}<th></th></tr></thead>
+    <tbody>${rows.map(r => `<tr>${fields.map(f => `<td class="${f.format === 'money' ? 'num' : ''}">${cell(f, r[f.name])}</td>`).join('')}
+      <td class="actions">${canW ? `<button class="btn sm" data-edit="${esc(r.id)}">Editar</button>` : `<button class="btn sm" data-edit="${esc(r.id)}">Ver</button>`}
+      ${key === 'leads' && !r.customer_id && canW && can('customers:write') ? `<button class="btn sm" data-convert="${esc(r.id)}">Hacer cliente</button>` : ''}
+      ${key === 'leads' && r.customer_id ? '<span class="tag activo">cliente</span>' : ''}
+      ${canD ? `<button class="btn sm danger" data-del="${esc(r.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table>`;
+  $('#list').querySelectorAll('[data-convert]').forEach(b => b.onclick = () => convertLead(S.rows.find(r => r.id === b.dataset.convert)));
+  $('#list').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editRecord(key, S.rows.find(r => r.id === b.dataset.edit)));
+  $('#list').querySelectorAll('[data-del]').forEach(b => b.onclick = () => deleteRecord(key, S.rows.find(r => r.id === b.dataset.del)));
+}
+
+function editRecord(key, rec) {
+  const def = S.boot.entities[key];
+  const readOnly = !can(def.resource + ':write');
+  openForm({
+    title: (rec ? (readOnly ? '' : 'Editar ') : 'Nuevo ') + def.singular,
+    fields: def.fields, record: rec, readOnly: readOnly,
+    onSave: async values => {
+      if (rec) values.id = rec.id;
+      const saved = await api('apiSave', S.token, key, values);
+      const i = S.rows.findIndex(r => r.id === saved.id);
+      if (i >= 0) S.rows[i] = saved; else S.rows.unshift(saved);
+      drawTable(key);
+      toast(rec ? 'Cambios guardados' : 'Registro creado');
+    },
+  });
+}
+
+async function convertLead(lead) {
+  try {
+    const r = await api('apiLeadConvert', S.token, lead.id);
+    const i = S.rows.findIndex(x => x.id === lead.id);
+    if (i >= 0) S.rows[i] = r.lead;
+    drawTable('leads');
+    toast(r.created ? 'Cliente creado: ' + r.customer.name : 'Ligado al cliente existente: ' + r.customer.name);
+  } catch (e) { toast(e.message, true); }
+}
+
+function deleteRecord(key, rec) {
+  if (!rec) return;
+  openModal('Eliminar', `<p>¿Eliminar <b>${esc(rec.name)}</b>? El registro se conserva en el historial de auditoría.</p>`,
+    async () => {
+      await api('apiDelete', S.token, key, rec.id);
+      S.rows = S.rows.filter(r => r.id !== rec.id);
+      drawTable(key);
+      toast('Registro eliminado');
+    }, 'Eliminar');
+}
+
+/* ============================ Formularios y modales ============================ */
+
+function fieldHtml(f, value, readOnly) {
+  const v = value === undefined || value === null || value === '' ? (f.default !== undefined && value === undefined ? f.default : value) : value;
+  const dis = readOnly || f.lock ? 'disabled' : '';
+  const req = f.required ? ' *' : '';
+  const hint = f.hint ? `<div class="hint">${esc(f.hint)}</div>` : '';
+  const wide = f.type === 'textarea' ? 'wide' : '';
+  if (f.type === 'checkbox') {
+    return `<div class="check"><input type="checkbox" id="f_${f.name}" name="${f.name}" ${v === true ? 'checked' : ''} ${dis}><label for="f_${f.name}">${esc(f.label)}</label></div>`;
+  }
+  let input;
+  if (f.type === 'select') {
+    input = `<select class="input" name="${f.name}" ${dis}>${f.options.map(o => `<option value="${esc(o[0])}" ${String(v === undefined ? '' : v) === o[0] ? 'selected' : ''}>${esc(o[1])}</option>`).join('')}</select>`;
+  } else if (f.type === 'textarea') {
+    input = `<textarea class="input" name="${f.name}" rows="3" ${dis}>${esc(v)}</textarea>`;
+  } else {
+    const type = f.type === 'number' ? 'number" step="any' : f.type;
+    input = `<input class="input" name="${f.name}" type="${type}" value="${esc(v)}" ${f.placeholder ? 'placeholder="' + esc(f.placeholder) + '"' : ''} ${f.min !== undefined ? 'min="' + f.min + '"' : ''} ${f.max !== undefined ? 'max="' + f.max + '"' : ''} ${f.required ? 'required' : ''} ${dis}>`;
+  }
+  return `<div class="${wide}"><label class="f">${esc(f.label)}${req}</label>${input}${hint}</div>`;
+}
+
+function readFormValues(form, fields) {
+  const out = {};
+  fields.forEach(f => {
+    const el = form.elements[f.name];
+    if (!el) return;
+    out[f.name] = f.type === 'checkbox' ? el.checked : el.value;
+  });
+  return out;
+}
+
+function openForm(opts) {
+  const rec = opts.record || {};
+  const body = `<form class="form" id="recForm">${opts.fields.map(f => fieldHtml(f, opts.record ? rec[f.name] : undefined, opts.readOnly)).join('')}</form>`;
+  openModal(opts.title, body, opts.readOnly ? null : async () => {
+    const form = $('#recForm');
+    if (!form.reportValidity()) throw new Error('Revisa los campos marcados.');
+    await opts.onSave(readFormValues(form, opts.fields));
+  }, 'Guardar');
+}
+
+function openModal(title, bodyHtml, onOk, okLabel, wide) {
+  closeModal();
+  const el = document.createElement('div');
+  el.className = 'backdrop';
+  el.id = 'modal';
+  el.innerHTML = `<div class="modal${wide ? ' wide' : ''}" role="dialog" aria-modal="true">
+    <header><h3>${esc(title)}</h3><button class="btn sm" data-close>✕</button></header>
+    <div class="body">${bodyHtml}</div>
+    ${onOk ? `<footer><div class="err" id="modalErr"></div><button class="btn" data-close>Cancelar</button><button class="btn primary" id="modalOk">${esc(okLabel || 'Aceptar')}</button></footer>` : ''}
+  </div>`;
+  document.body.appendChild(el);
+  el.addEventListener('click', ev => { if (ev.target === el || ev.target.hasAttribute('data-close')) closeModal(); });
+  bindCopy(el);
+  if (onOk) {
+    const ok = $('#modalOk');
+    const run = async () => {
+      ok.disabled = true; $('#modalErr').textContent = '';
+      try { await onOk(); closeModal(); }
+      catch (e) { $('#modalErr').textContent = e.message; ok.disabled = false; }
+    };
+    ok.onclick = run;
+    const form = el.querySelector('form');
+    if (form) form.addEventListener('submit', ev => { ev.preventDefault(); run(); });
+  }
+  const first = el.querySelector('.body input:not([disabled]), .body select:not([disabled])');
+  if (first) first.focus();
+}
+
+function closeModal() {
+  const m = $('#modal');
+  if (m) m.remove();
+}
+
+function showSecret(title, intro, secret) {
+  openModal(title, `<p>${intro}</p><div class="secret">${esc(secret)}</div>
+    <p class="muted">Compártela por un medio seguro. Se pedirá cambiarla en el primer acceso y no se volverá a mostrar.</p>`, null);
+}
+
+/* ============================ Usuarios ============================ */
+
+async function viewUsers() {
+  const main = $('#main');
+  main.innerHTML = pageHeader('Usuarios', can('users:write') ? '<button class="btn primary" id="newUser">+ Nuevo usuario</button>' : '') +
+    '<div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>';
+  if ($('#newUser')) $('#newUser').onclick = () => editUser(null);
+  try { S.users = await api('apiUsers', S.token); drawUsers(); }
+  catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+}
+
+function drawUsers() {
+  const w = can('users:write');
+  $('#list').innerHTML = `<table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Último acceso</th><th></th></tr></thead>
+    <tbody>${S.users.map(u => `<tr><td>${esc(u.name)}${u.id === S.boot.user.id ? ' <span class="muted">(tú)</span>' : ''}</td><td>${esc(u.email)}</td>
+      <td>${esc(u.role_label)}</td><td><span class="tag ${esc(u.status)}">${esc(u.status)}</span>${u.must_change_password ? ' <span class="tag">clave temporal</span>' : ''}</td>
+      <td class="muted">${u.last_login ? fmtDate(u.last_login) : 'Nunca'}</td>
+      <td class="actions">${w ? `<button class="btn sm" data-edit="${esc(u.id)}">Editar</button>${u.id !== S.boot.user.id ? `<button class="btn sm" data-reset="${esc(u.id)}">Nueva clave</button>` : ''}` : ''}</td></tr>`).join('')}</tbody></table>`;
+  $('#list').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editUser(S.users.find(u => u.id === b.dataset.edit)));
+  $('#list').querySelectorAll('[data-reset]').forEach(b => b.onclick = () => resetUser(S.users.find(u => u.id === b.dataset.reset)));
+}
+
+function editUser(u) {
+  openForm({
+    title: u ? 'Editar usuario' : 'Nuevo usuario', fields: S.boot.userFields, record: u,
+    onSave: async values => {
+      if (u) values.id = u.id;
+      const r = await api('apiUserSave', S.token, values);
+      const i = S.users.findIndex(x => x.id === r.user.id);
+      if (i >= 0) S.users[i] = r.user; else S.users.push(r.user);
+      drawUsers();
+      if (r.tempPassword) setTimeout(() => showSecret('Usuario creado', `Contraseña temporal para <b>${esc(r.user.email)}</b>:`, r.tempPassword), 0);
+      else toast('Usuario actualizado');
+    },
+  });
+}
+
+function resetUser(u) {
+  openModal('Nueva contraseña', `<p>¿Generar una contraseña temporal para <b>${esc(u.name)}</b>? La actual dejará de funcionar.</p>`, async () => {
+    const r = await api('apiUserResetPassword', S.token, u.id);
+    u.must_change_password = true; drawUsers();
+    setTimeout(() => showSecret('Contraseña restablecida', `Nueva contraseña temporal para <b>${esc(u.email)}</b>:`, r.tempPassword), 0);
+  }, 'Generar');
+}
+
+/* ============================ Auditoría ============================ */
+
+async function viewAudit() {
+  const main = $('#main');
+  main.innerHTML = pageHeader('Auditoría') + '<div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>';
+  try {
+    const rows = await api('apiAudit', S.token, 300);
+    if (!rows.length) { $('#list').innerHTML = '<div class="empty">Sin actividad.</div>'; return; }
+    $('#list').innerHTML = `<table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Módulo</th><th>Cambios</th></tr></thead>
+      <tbody>${rows.map(r => `<tr><td class="muted">${fmtDate(r.created_at)}</td><td>${esc(r.user_email)}</td><td>${esc(actionLabel(r.action))}</td>
+        <td>${esc(entityLabel(r.entity))} <span class="muted">${esc(r.entity_id)}</span></td><td style="white-space:normal">${summarize(r.changes)}</td></tr>`).join('')}</tbody></table>`;
+  } catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+}
+
+function summarize(json) {
+  if (!json) return '<span class="muted">—</span>';
+  try {
+    const c = JSON.parse(json);
+    const parts = Object.keys(c).slice(0, 4).map(k => Array.isArray(c[k])
+      ? `<b>${esc(k)}</b>: ${esc(c[k][0])} → ${esc(c[k][1])}` : `<b>${esc(k)}</b>: ${esc(c[k])}`);
+    const more = Object.keys(c).length - 4;
+    return parts.join(' · ') + (more > 0 ? ` <span class="muted">+${more}</span>` : '');
+  } catch (e) { return esc(json); }
+}
+
+/* ============================ Ajustes ============================ */
+
+function viewSettings() {
+  const fields = S.boot.tenantFields;
+  $('#main').innerHTML = pageHeader('Ajustes de empresa') + `
+    <div class="card pad" style="max-width:720px">
+      <form class="form" id="tenantForm">${fields.map(f => fieldHtml(f, S.boot.tenant[f.name], false)).join('')}</form>
+      <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:16px">
+        <div class="err" id="tErr" style="margin:0"></div><button class="btn primary" id="tSave">Guardar</button>
+      </div>
+    </div>`;
+  $('#tSave').onclick = async () => {
+    const form = $('#tenantForm');
+    if (!form.reportValidity()) return;
+    $('#tSave').disabled = true; $('#tErr').textContent = '';
+    try {
+      S.boot.tenant = await api('apiTenantSave', S.token, readFormValues(form, fields));
+      toast('Ajustes guardados');
+      renderShell();
+    } catch (e) { $('#tErr').textContent = e.message; $('#tSave').disabled = false; }
+  };
+}
+
+/* ============================ Copiar ============================ */
+
+function codeBlock(text) {
+  return `<div class="codebox"><pre class="code">${esc(text)}</pre><button class="btn sm copy" type="button">Copiar</button></div>`;
+}
+
+function bindCopy(root) {
+  root.querySelectorAll('.codebox .copy').forEach(b => b.onclick = () => {
+    const pre = b.parentNode.querySelector('pre');
+    const done = () => { b.textContent = '¡Copiado!'; setTimeout(() => { b.textContent = 'Copiar'; }, 1500); };
+    const fallback = () => {
+      const r = document.createRange(); r.selectNodeContents(pre);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+      try { document.execCommand('copy'); done(); } catch (e) { b.textContent = 'Usa Ctrl+C'; }
+    };
+    if (navigator.clipboard) navigator.clipboard.writeText(pre.textContent).then(done, fallback); else fallback();
+  });
+}
+
+/* ============================ Ventas ============================ */
+
+const SALE_STATUS = { pagada: 'Pagada', pendiente: 'Pendiente', parcial: 'Pago parcial', cancelada: 'Cancelada', reembolsada: 'Reembolsada' };
+const SOURCE_NAMES = { shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: 'Stripe', webhook: 'Automatización' };
+
+async function viewSales() {
+  const main = $('#main');
+  main.innerHTML = pageHeader('Ventas') +
+    `<div class="toolbar"><input class="input" id="q" placeholder="Buscar por folio, pedido, cliente…"></div>
+     <div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>`;
+  $('#q').addEventListener('input', drawSales);
+  try { S.sales = await api('apiSales', S.token, ''); if (S.view === 'sales') drawSales(); }
+  catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+}
+
+function drawSales() {
+  const q = ($('#q').value || '').toLowerCase();
+  const rows = S.sales.filter(s => !q || ['number', 'external_number', 'customer_name', 'source', 'channel', 'status']
+    .some(f => String(s[f] || '').toLowerCase().indexOf(q) >= 0));
+  if (!rows.length) {
+    $('#list').innerHTML = `<div class="empty">${q ? 'Sin resultados.' : 'Aún no hay ventas. Conecta tu tienda en línea desde <b>Integraciones</b> y aparecerán aquí automáticamente.'}</div>`;
+    return;
+  }
+  $('#list').innerHTML = `<table><thead><tr><th>Folio</th><th>Pedido</th><th>Fecha</th><th>Canal</th><th>Cliente</th><th class="num">Total</th><th>Estado</th><th></th></tr></thead>
+    <tbody>${rows.map(s => `<tr><td>${esc(s.number)}</td><td>${esc(s.external_number || '—')}</td><td class="muted">${fmtDate(s.created_at)}</td>
+      <td>${esc(SOURCE_NAMES[s.source] || s.source || '')}<br><span class="muted">${esc(s.channel || '')}</span></td><td>${esc(s.customer_name || '—')}</td>
+      <td class="num">${esc(moneyIn(s.total, s.currency))}</td><td><span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span></td>
+      <td class="actions"><button class="btn sm" data-sale="${esc(s.id)}">Ver</button></td></tr>`).join('')}</tbody></table>`;
+  $('#list').querySelectorAll('[data-sale]').forEach(b => b.onclick = () => showSale(b.dataset.sale));
+}
+
+function moneyIn(v, cur) {
+  try { return new Intl.NumberFormat('es', { style: 'currency', currency: cur || S.boot.tenant.currency || 'USD' }).format(Number(v || 0)); }
+  catch (e) { return Number(v || 0).toFixed(2) + ' ' + (cur || ''); }
+}
+
+async function showSale(id) {
+  try {
+    const d = await api('apiSale', S.token, id);
+    const s = d.sale, m = v => esc(moneyIn(v, s.currency));
+    openModal('Venta ' + s.number + (s.external_number ? ' · pedido ' + s.external_number : ''), `
+      <p><span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span>
+        <span class="muted">${fmtDate(s.created_at)} · ${esc(SOURCE_NAMES[s.source] || s.source)} · ${esc(s.channel)}</span></p>
+      <p><b>Cliente:</b> ${esc(s.customer_name || '—')} ${s.payment_method ? '· <b>Pago:</b> ' + esc(s.payment_method) : ''}</p>
+      <div class="card tablewrap"><table><thead><tr><th>Artículo</th><th>SKU</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num">Total</th></tr></thead>
+        <tbody>${d.items.map(i => `<tr><td>${esc(i.description)}${i.product_id ? '' : ' <span class="tag">fuera de catálogo</span>'}</td><td>${esc(i.sku || '')}</td>
+          <td class="num">${esc(i.qty)}</td><td class="num">${m(i.unit_price)}</td><td class="num">${m(i.total)}</td></tr>`).join('')}</tbody></table></div>
+      <table style="margin-top:10px;max-width:320px;margin-left:auto">
+        <tr><td>Subtotal</td><td class="num">${m(s.subtotal)}</td></tr><tr><td>Impuestos</td><td class="num">${m(s.tax)}</td></tr>
+        <tr><td><b>Total</b></td><td class="num"><b>${m(s.total)}</b></td></tr><tr><td>Pagado</td><td class="num">${m(s.paid)}</td></tr>
+        <tr><td>Saldo</td><td class="num">${m(s.balance)}</td></tr></table>
+      ${s.notes ? '<p class="muted">' + esc(s.notes) + '</p>' : ''}`, null, null, true);
+  } catch (e) { toast(e.message, true); }
+}
+
+/* ============================ Integraciones ============================ */
+
+const EV_STATUS = { creado: 'Creado', actualizado: 'Actualizado', duplicado: 'Duplicado', spam: 'Spam', ignorado: 'Ignorado',
+  error: 'Error', rechazado: 'Rechazado', ok: 'OK', reprocesado: 'Reprocesado' };
+
+async function viewIntegrations() {
+  const main = $('#main');
+  const w = can('integrations:write');
+  main.innerHTML = pageHeader('Integraciones', w ? '<button class="btn primary" id="newInt">+ Conectar plataforma</button>' : '') +
+    '<div id="intBody"><div class="card empty">Cargando…</div></div>';
+  if ($('#newInt')) $('#newInt').onclick = () => editIntegration(null);
+  try { S.int = await api('apiIntegrations', S.token); if (S.view === 'integrations') drawIntegrations(); }
+  catch (e) { $('#intBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
+}
+
+function drawIntegrations() {
+  const d = S.int, w = can('integrations:write');
+  const needsRelay = d.integrations.some(i => i.needs_relay);
+  const warnUrl = !d.webAppUrl ? '<div class="note">Publica la app (Implementar → Nueva implementación → Aplicación web) para obtener tu URL de integración.</div>' : '';
+  $('#intBody').innerHTML = warnUrl + `
+    <div class="card tablewrap">${d.integrations.length ? `<table><thead><tr><th>Nombre</th><th>Plataforma</th><th>Clave</th><th>Estado</th><th class="num">Eventos</th><th>Último</th><th></th></tr></thead>
+      <tbody>${d.integrations.map(i => `<tr><td>${esc(i.name)}</td><td>${esc(i.platform_label)}${i.supports_signature ? (i.has_secret ? ' <span class="tag activo">firmado</span>' : ' <span class="tag pendiente">sin firma</span>') : ''}</td>
+        <td><code>${esc(i.key_hint)}</code></td><td><span class="tag ${i.status === 'activo' ? 'activo' : 'inactivo'}">${i.status === 'activo' ? 'Activa' : 'Pausada'}</span></td>
+        <td class="num">${esc(i.events_count)}</td><td class="muted">${i.last_event_at ? fmtDate(i.last_event_at) : 'Nunca'}</td>
+        <td class="actions"><button class="btn sm" data-guide="${esc(i.id)}">Cómo conectar</button>${w ? `<button class="btn sm" data-edit="${esc(i.id)}">Editar</button>
+          <button class="btn sm" data-rotate="${esc(i.id)}">Nueva clave</button><button class="btn sm danger" data-del="${esc(i.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table>`
+      : `<div class="empty">Conecta tu primer formulario, tienda o plataforma de pagos.<br><br>${w ? '<button class="btn primary" id="newInt2">+ Conectar plataforma</button>' : ''}</div>`}</div>
+
+    <div class="section card pad">
+      <h3>Relevo para Shopify, WooCommerce y Stripe</h3>
+      <p class="muted" style="margin-top:0">Estas plataformas no aceptan la redirección que hace Google ni dejan leer sus firmas. Un pequeño relevo gratuito en Cloudflare recibe sus avisos y los pasa a tu sistema. ${needsRelay && !d.relayUrl ? '<b style="color:var(--warn)">Tienes integraciones que lo necesitan.</b>' : ''}</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="input" id="relayUrl" style="max-width:420px" placeholder="https:\/\/nexo-relay.tu-cuenta.workers.dev" value="${esc(d.relayUrl)}" ${w ? '' : 'disabled'}>
+        ${w ? '<button class="btn" id="relaySave">Guardar</button>' : ''}<button class="btn" id="relayGuide">Cómo instalarlo</button></div>
+    </div>
+
+    <div class="section card pad">
+      <h3><span>Webhooks de salida <span class="muted" style="font-weight:400">— avisa a Zapier, Make, n8n u otro sistema</span></span>
+        <span>${w ? '<button class="btn sm" id="runOutbox">Enviar pendientes</button> <button class="btn sm primary" id="newHook">+ Webhook</button>' : ''}</span></h3>
+      ${d.webhooks.length ? `<div class="tablewrap"><table><thead><tr><th>Nombre</th><th>Eventos</th><th>Estado</th><th>Última respuesta</th><th class="num">En cola</th><th></th></tr></thead>
+        <tbody>${d.webhooks.map(h => `<tr><td>${esc(h.name)}<br><span class="muted">${esc(h.url.slice(0, 60))}</span></td>
+          <td><div class="chips">${h.events.map(e => '<span class="tag">' + esc(e) + '</span>').join('')}</div></td>
+          <td><span class="tag ${h.status === 'activo' ? 'activo' : 'inactivo'}">${h.status === 'activo' ? 'Activo' : 'Pausado'}</span></td>
+          <td class="muted">${h.last_status ? esc(h.last_status) + ' · ' + fmtDate(h.last_sent_at) : '—'}</td>
+          <td class="num">${h.pending}${h.failed ? ' <span class="tag fallido">' + h.failed + ' fallidos</span>' : ''}</td>
+          <td class="actions">${w ? `<button class="btn sm" data-htest="${esc(h.id)}">Probar</button><button class="btn sm" data-hedit="${esc(h.id)}">Editar</button><button class="btn sm danger" data-hdel="${esc(h.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`
+        : '<p class="muted">Sin webhooks. Úsalos para que cada prospecto o venta dispare acciones en otras herramientas (Slack, WhatsApp, correo, hojas, facturación…).</p>'}
+      <p><a href="#" id="hookGuide">Formato de los avisos y cómo verificar la firma</a></p>
+    </div>
+
+    <div class="section card">
+      <div class="pad" style="padding:16px 18px 0"><h3>Actividad reciente</h3></div>
+      ${d.events.length ? `<div class="tablewrap"><table><thead><tr><th>Fecha</th><th>Integración</th><th>Tipo</th><th>Resultado</th><th>Detalle</th><th></th></tr></thead>
+        <tbody>${d.events.map(e => `<tr><td class="muted">${fmtDate(e.created_at)}</td><td>${esc(e.integration)}</td><td>${esc({ lead: 'Prospecto', order: 'Venta', customer: 'Cliente', ping: 'Prueba' }[e.kind] || e.kind || '—')}</td>
+          <td><span class="tag ${esc(e.status)}">${esc(EV_STATUS[e.status] || e.status)}</span></td><td style="white-space:normal">${esc([e.external_id, e.message].filter(Boolean).join(' · '))}</td>
+          <td class="actions">${e.can_reprocess && w ? `<button class="btn sm" data-re="${esc(e.id)}">Reprocesar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`
+        : '<div class="empty">Aquí verás cada formulario, pedido o pago recibido, y cualquier error.</div>'}
+    </div>`;
+
+  const on = (sel, fn) => document.querySelectorAll(sel).forEach(b => b.onclick = fn.bind(null, b));
+  if ($('#newInt2')) $('#newInt2').onclick = () => editIntegration(null);
+  on('[data-guide]', b => showGuide(d.integrations.find(i => i.id === b.dataset.guide), null));
+  on('[data-edit]', b => editIntegration(d.integrations.find(i => i.id === b.dataset.edit)));
+  on('[data-rotate]', b => rotateKey(d.integrations.find(i => i.id === b.dataset.rotate)));
+  on('[data-del]', b => deleteIntegration(d.integrations.find(i => i.id === b.dataset.del)));
+  on('[data-re]', async b => { b.disabled = true; try { const st = await api('apiIntegrationReprocess', S.token, b.dataset.re); toast('Reprocesado: ' + st); viewIntegrations(); } catch (e) { toast(e.message, true); b.disabled = false; } });
+  on('[data-htest]', async b => { b.disabled = true; try { await api('apiWebhookTest', S.token, b.dataset.htest); toast('El destino respondió correctamente'); viewIntegrations(); } catch (e) { toast(e.message, true); b.disabled = false; } });
+  on('[data-hedit]', b => editWebhook(d.webhooks.find(h => h.id === b.dataset.hedit)));
+  on('[data-hdel]', b => { const h = d.webhooks.find(x => x.id === b.dataset.hdel);
+    openModal('Eliminar webhook', `<p>¿Eliminar <b>${esc(h.name)}</b>? Dejará de recibir avisos.</p>`, async () => { await api('apiWebhookDelete', S.token, h.id); viewIntegrations(); }, 'Eliminar'); });
+  if ($('#newHook')) $('#newHook').onclick = () => editWebhook(null);
+  if ($('#runOutbox')) $('#runOutbox').onclick = async () => { try { const n = await api('apiOutboxRun', S.token); toast(n ? n + ' avisos procesados' : 'No hay avisos pendientes'); viewIntegrations(); } catch (e) { toast(e.message, true); } };
+  if ($('#relaySave')) $('#relaySave').onclick = async () => { try { S.int.relayUrl = await api('apiRelaySave', S.token, $('#relayUrl').value); toast('Relevo guardado'); } catch (e) { toast(e.message, true); } };
+  $('#relayGuide').onclick = () => openModal('Instalar el relevo en Cloudflare (gratis, 5 minutos)', relayGuideHtml(), null, null, true);
+  $('#hookGuide').onclick = ev => { ev.preventDefault(); openModal('Webhooks de salida', hookGuideHtml(), null, null, true); };
+}
+
+function integrationFields(rec) {
+  const d = S.int;
+  const fields = d.fields.map(f => Object.assign({}, f, rec && f.name === 'platform' ? { lock: true } : {}));
+  const sig = !rec || rec.supports_signature;
+  if (sig) fields.splice(2, 0, {
+    name: 'webhook_secret', label: 'Secreto de firma (Shopify, WooCommerce, Stripe)', type: 'text',
+    placeholder: rec && rec.has_secret ? '•••••• guardado — escribe otro para reemplazarlo' : 'Pégalo después de crear el webhook en la plataforma',
+    hint: 'Con él se verifica que cada pedido o pago venga realmente de tu tienda.',
+  });
+  return fields;
+}
+
+function editIntegration(rec) {
+  openForm({
+    title: rec ? 'Editar integración' : 'Conectar plataforma', fields: integrationFields(rec), record: rec,
+    onSave: async values => {
+      if (rec) values.id = rec.id;
+      const r = await api('apiIntegrationSave', S.token, values);
+      S.int = await api('apiIntegrations', S.token);
+      drawIntegrations();
+      if (r.key) setTimeout(() => showGuide(r.integration, r.key), 0); else toast('Integración actualizada');
+    },
+  });
+}
+
+function rotateKey(i) {
+  openModal('Nueva clave', `<p>Se generará una clave nueva para <b>${esc(i.name)}</b>. <b>La actual dejará de funcionar</b> y tendrás que actualizarla en la plataforma.</p>`, async () => {
+    const r = await api('apiIntegrationRotate', S.token, i.id);
+    S.int = await api('apiIntegrations', S.token); drawIntegrations();
+    setTimeout(() => showGuide(r.integration, r.key), 0);
+  }, 'Generar');
+}
+
+function deleteIntegration(i) {
+  openModal('Eliminar integración', `<p>¿Eliminar <b>${esc(i.name)}</b>? Su clave dejará de funcionar de inmediato. El historial se conserva.</p>`, async () => {
+    await api('apiIntegrationDelete', S.token, i.id);
+    S.int = await api('apiIntegrations', S.token); drawIntegrations();
+  }, 'Eliminar');
+}
+
+function editWebhook(h) {
+  const events = S.int.webhookEvents;
+  const checks = `<div class="wide"><label class="f">Eventos *</label>${events.map(e => `<label style="display:flex;gap:8px;align-items:center;margin:6px 0">
+    <input type="checkbox" name="ev_${e[0]}" ${!h || h.events.indexOf(e[0]) >= 0 ? 'checked' : ''}> ${esc(e[1])} <code class="muted">${e[0]}</code></label>`).join('')}</div>`;
+  const body = `<form class="form" id="recForm">${S.int.webhookFields.map(f => fieldHtml(f, h ? h[f.name] : undefined, false)).join('')}${checks}</form>`;
+  openModal(h ? 'Editar webhook' : 'Nuevo webhook de salida', body, async () => {
+    const form = $('#recForm');
+    if (!form.reportValidity()) throw new Error('Revisa los campos marcados.');
+    const values = readFormValues(form, S.int.webhookFields);
+    values.events = events.map(e => e[0]).filter(k => form.elements['ev_' + k].checked);
+    if (h) values.id = h.id;
+    const r = await api('apiWebhookSave', S.token, values);
+    S.int = await api('apiIntegrations', S.token); drawIntegrations();
+    if (r.secret) setTimeout(() => openModal('Webhook creado', `<p>Secreto para verificar la firma <code>X-Nexo-Signature</code>:</p>
+      <div class="secret">${esc(r.secret)}</div><p class="muted">Guárdalo: no se volverá a mostrar. Los avisos se envían en menos de un minuto.</p>`, null), 0);
+    else toast('Webhook actualizado');
+  }, 'Guardar');
+}
+
+/* ---------- Guías por plataforma ---------- */
+
+function showGuide(i, key) {
+  const d = S.int;
+  const base = d.webAppUrl || 'https:\/\/script.google.com/macros/s/TU_ID/exec';
+  const k = key || i.public_key || '';
+  const K = k || 'TU_CLAVE_SECRETA';
+  const relay = (d.relayUrl || 'https:\/\/TU-RELEVO.workers.dev') + '/in/' + K;
+  let html = '';
+  if (key) html += `<div class="note ok-note"><b>Tu clave${i.is_public ? '' : ' secreta'}:</b><div class="secret" style="margin-top:8px">${esc(key)}</div>
+    ${i.is_public ? 'Es pública: puede ir en tu página web, solo sirve para ' + (i.platform === 'catalog' ? 'leer el catálogo' : 'enviar prospectos') + '.' : '<b>Cópiala ahora:</b> por seguridad no se volverá a mostrar. Ya va incluida en las instrucciones de abajo.'}</div>`;
+  else if (!k) html += `<div class="note">La clave secreta solo se muestra al crearla. Donde diga <code>TU_CLAVE_SECRETA</code> usa la que guardaste, o genera una con "Nueva clave".</div>`;
+  if (i.needs_relay && !d.relayUrl) html += `<div class="note">Antes, instala el <b>relevo</b> (sección "Relevo" en esta pantalla) y guarda su URL.</div>`;
+  html += (GUIDES[i.platform] || (() => ''))({ base, key: K, relay, i });
+  openModal('Conectar: ' + i.name, html, null, null, true);
+}
+
+const fieldsHint = '<p class="muted">El sistema reconoce automáticamente campos como <code>name / nombre</code>, <code>email / correo</code>, <code>phone / telefono / whatsapp</code>, <code>company / empresa</code>, <code>message / mensaje</code> y los parámetros <code>utm_*</code>. Cualquier otro campo se guarda en el mensaje del prospecto.</p>';
+
+const GUIDES = {
+  web_form: ({ base, key }) => `
+    <h3>Opción A — Formulario listo (lo más fácil)</h3>
+    <p>Pega esto en tu página (WordPress: bloque "HTML personalizado"; Wix: "Insertar código"; Shopify: sección "HTML personalizado"; Webflow/Squarespace: "Embed"):</p>
+    ${codeBlock(`<iframe src="${base}?action=form&key=${key}&title=Cont%C3%A1ctanos&utm_source=web"
+  style="width:100%;max-width:520px;height:560px;border:0" loading="lazy"></iframe>`)}
+    <p class="muted">Parámetros opcionales en la URL: <code>fields=name,email,phone,company,message</code> · <code>button=Quiero%20info</code> · <code>thanks=…</code> · <code>color=0f766e</code> · <code>utm_campaign=promo-noviembre</code>.</p>
+    <h3>Opción B — Tu propio formulario con tu diseño</h3>
+    <p>Mantén tu HTML y agrega este script. Captura también los <code>utm_</code> de la URL:</p>
+    ${codeBlock(`<form id="nexo-form">
+  <input name="name" placeholder="Nombre" required>
+  <input name="email" type="email" placeholder="Correo">
+  <input name="phone" placeholder="Teléfono">
+  <textarea name="message" placeholder="¿En qué te ayudamos?"></textarea>
+  <input name="_hp" style="display:none" tabindex="-1" autocomplete="off">
+  <button>Enviar</button>
+</form>
+<script>
+document.getElementById('nexo-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  var data = Object.fromEntries(new FormData(this));
+  new URLSearchParams(location.search).forEach(function (v, k) { if (k.indexOf('utm_') === 0) data[k] = v; });
+  data.page_url = location.href;
+  this.querySelector('button').disabled = true;
+  await fetch('${base}?key=${key}', { method: 'POST', body: JSON.stringify(data) });
+  this.innerHTML = '<p>¡Gracias! Te contactaremos pronto.</p>';
+});
+<\/script>`)}
+    <h3>Opción C — Formulario HTML sin JavaScript</h3>
+    ${codeBlock(`<form method="post" action="${base}?key=${key}&redirect=https:\/\/tusitio.com">`)}
+    <p class="muted">Muestra una página de "Gracias" con un enlace para volver a tu sitio.</p>${fieldsHint}`,
+
+  wordpress: ({ base, key }) => `
+    <p>URL del webhook para tu plugin de formularios:</p>${codeBlock(`${base}?key=${key}&format=json`)}
+    <ul class="steps">
+      <li><b>Contact Form 7:</b> instala el plugin gratuito <i>CF7 to Webhook</i>, abre tu formulario → pestaña <i>Webhook</i> → pega la URL.</li>
+      <li><b>Elementor Pro:</b> en el formulario → <i>Acciones después de enviar</i> → agrega <i>Webhook</i> → pega la URL. Activa "Datos avanzados".</li>
+      <li><b>WPForms:</b> complemento <i>Webhooks</i> (licencia Elite) → Método POST, formato JSON → pega la URL.</li>
+      <li><b>Gravity Forms / Fluent Forms / Forminator:</b> usa su complemento de Webhooks con método POST.</li>
+    </ul>${fieldsHint}`,
+
+  google_forms: ({ base, key }) => `
+    <ol class="steps">
+      <li>Abre tu Google Form → menú ⋮ → <b>Editor de secuencias de comandos</b>.</li>
+      <li>Pega este código y guarda:</li></ol>
+    ${codeBlock(`function enviarANexo(e) {
+  var data = { form_name: FormApp.getActiveForm().getTitle() };
+  e.response.getItemResponses().forEach(function (r) {
+    var v = r.getResponse();
+    data[r.getItem().getTitle()] = Array.isArray(v) ? v.join(', ') : v;
+  });
+  if (e.response.getRespondentEmail()) data.email = data.email || e.response.getRespondentEmail();
+  UrlFetchApp.fetch('${base}?key=${key}&format=json', {
+    method: 'post', contentType: 'application/json',
+    payload: JSON.stringify(data), followRedirects: true, muteHttpExceptions: true
+  });
+}`)}
+    <ol class="steps" start="3"><li>Ve a <b>Activadores</b> (reloj) → <b>Agregar activador</b> → función <code>enviarANexo</code> → evento <b>Al enviar el formulario</b> → guarda y autoriza.</li>
+      <li>Nombra tus preguntas como "Nombre", "Correo", "Teléfono", "Mensaje" para que se reconozcan solas.</li></ol>`,
+
+  shopify: ({ relay }) => `
+    <ol class="steps">
+      <li>En Shopify: <b>Configuración → Notificaciones → Webhooks</b> → <b>Crear webhook</b>.</li>
+      <li>Formato <b>JSON</b>, versión de la API la más reciente, y esta URL:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>Crea un webhook con esa misma URL para cada evento: <b>Creación de pedido</b>, <b>Pago de pedido</b>, <b>Cancelación de pedido</b>, <b>Actualización de pedido</b> y (opcional) <b>Creación de cliente</b>.</li>
+      <li>Abajo de la lista Shopify muestra <i>"Tus webhooks se firmarán con…"</i>. Copia ese valor y pégalo en <b>Editar → Secreto de firma</b> de esta integración.</li>
+      <li>Usa los <b>mismos SKU</b> en Shopify y en "Productos y servicios" para que se descuente el inventario.</li>
+      <li>Prueba con "Enviar notificación de prueba" y revisa la <b>Actividad reciente</b>.</li></ol>`,
+
+  woocommerce: ({ relay }) => `
+    <ol class="steps">
+      <li>En WordPress: <b>WooCommerce → Ajustes → Avanzado → Webhooks → Añadir webhook</b>.</li>
+      <li>Estado <b>Activo</b>, tema <b>Pedido creado</b>, versión de la API <b>WP REST API v3</b>, y URL de entrega:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>En <b>Secreto</b> escribe una frase larga e inventada. Pega <b>la misma</b> en <b>Editar → Secreto de firma</b> de esta integración.</li>
+      <li>Repite con el tema <b>Pedido actualizado</b> (para pagos, cancelaciones y reembolsos), con la misma URL y secreto.</li>
+      <li>Usa los <b>mismos SKU</b> en WooCommerce y en "Productos y servicios".</li></ol>`,
+
+  stripe: ({ relay }) => `
+    <ol class="steps">
+      <li>En Stripe: <b>Desarrolladores → Webhooks → Agregar destino</b> (endpoint) con esta URL:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="2">
+      <li>Eventos: <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.async_payment_failed</code> y <code>charge.refunded</code>.</li>
+      <li>Copia el <b>Secreto de firma</b> (<code>whsec_…</code>) y pégalo en <b>Editar → Secreto de firma</b>.</li>
+      <li>Funciona con <b>Payment Links</b> y <b>Checkout</b>. Para ligar el pago a tu catálogo, agrega metadatos <code>sku</code> y <code>product</code> al enlace de pago.</li></ol>`,
+
+  webhook: ({ base, key }) => `
+    <p>URL para Zapier, Make, n8n, Wix Automations o tu propio sistema (método <b>POST</b>, cuerpo <b>JSON</b>):</p>${codeBlock(`${base}?key=${key}&format=json`)}
+    <p class="muted">Zapier: "Webhooks by Zapier → POST", tipo de carga JSON. Make: módulo HTTP "Make a request" con "Follow redirect" activado. n8n: nodo "HTTP Request". Wix: Automatizaciones → "Enviar solicitud HTTP".</p>
+    <h3>Prospecto</h3>${codeBlock(`{ "type": "lead", "name": "Ana Torres", "email": "ana@correo.com", "phone": "+52 555 123 4567",
+  "message": "Quiero una cotización", "utm_campaign": "facebook-noviembre" }`)}
+    <h3>Cliente</h3>${codeBlock(`{ "type": "customer", "name": "Carlos Rivera", "email": "carlos@empresa.com", "company": "Rivera SA" }`)}
+    <h3>Venta / pedido</h3>${codeBlock(`{
+  "type": "order", "id": "A-1029", "number": "1029", "status": "paid",
+  "currency": "USD", "total": 448.0, "tax": 48.0, "payment_method": "Square",
+  "customer": { "name": "Laura Méndez", "email": "laura@correo.com", "phone": "555 101 2020" },
+  "items": [
+    { "sku": "0001", "name": "Camiseta básica", "qty": 2, "price": 100 },
+    { "sku": "S-001", "name": "Personalización", "qty": 1, "price": 200 }
+  ]
+}`)}
+    <p class="muted"><code>status</code>: paid · pending · partial · cancelled · refunded. Si envías el mismo <code>id</code> otra vez, la venta se <b>actualiza</b> (no se duplica): úsalo para avisar pagos o cancelaciones.</p>`,
+
+  catalog: ({ base, key }) => `
+    <p>Tu catálogo (productos y servicios activos, con precio y disponibilidad) en JSON:</p>${codeBlock(`${base}?action=catalog&key=${key}`)}
+    <p>Ejemplo para mostrarlo en tu sitio:</p>${codeBlock(`<div id="catalogo"></div>
+<script>
+fetch('${base}?action=catalog&key=${key}')
+  .then(function (r) { return r.json(); })
+  .then(function (d) {
+    var fmt = new Intl.NumberFormat('es', { style: 'currency', currency: d.currency });
+    document.getElementById('catalogo').innerHTML = d.products.map(function (p) {
+      return '<div><b>' + p.name + '</b> — ' + fmt.format(p.price) + (p.available ? '' : ' (agotado)') + '</div>';
+    }).join('');
+  });
+<\/script>`)}
+    <p class="muted">Se actualiza solo: cambia un precio en el sistema y en menos de un minuto cambia en tu web.</p>`,
+};
+
+function relayGuideHtml() {
+  const base = S.int.webAppUrl || 'https:\/\/script.google.com/macros/s/TU_ID/exec';
+  return `<p>El relevo es un programa pequeño que corre gratis en Cloudflare (hasta 100,000 avisos al día). No guarda datos ni secretos.</p>
+    <ol class="steps">
+      <li>Crea una cuenta gratuita en <b>dash.cloudflare.com</b>.</li>
+      <li>Ve a <b>Workers y Pages → Crear → Worker</b>, nómbralo <code>nexo-relay</code> y pulsa <b>Implementar</b>.</li>
+      <li>Pulsa <b>Editar código</b>, borra todo y pega el contenido del archivo <code>relay/worker.js</code> que viene con el sistema. Pulsa <b>Implementar</b>.</li>
+      <li>En <b>Configuración → Variables y secretos</b> agrega la variable <code>APPS_SCRIPT_URL</code> con este valor:</li></ol>
+    ${codeBlock(base)}
+    <ol class="steps" start="5"><li>Copia la URL del Worker (algo como <code>https:\/\/nexo-relay.tu-cuenta.workers.dev</code>) y guárdala en la sección <b>Relevo</b> de esta pantalla.</li>
+      <li>Ábrela en el navegador: debe decir <i>Nexo relay OK</i>.</li></ol>`;
+}
+
+function hookGuideHtml() {
+  return `<p>Cada aviso es un <b>POST JSON</b> con esta forma:</p>
+    ${codeBlock(`{
+  "id": "OBX-…", "event": "sale.created", "created_at": "2026-11-03T16:40:00Z",
+  "data": { "number": "V-000123", "external_number": "#1029", "status": "pagada",
+            "total": 448, "currency": "USD", "customer": { "name": "…", "email": "…" }, "items": [ … ] }
+}`)}
+    <p>Eventos: <code>lead.created</code>, <code>customer.created</code>, <code>sale.created</code>, <code>sale.updated</code>. Se envían en menos de un minuto, con hasta 6 reintentos si el destino falla.</p>
+    <p>Para verificar que el aviso viene de tu sistema, compara el encabezado <code>X-Nexo-Signature</code> (Node.js):</p>
+    ${codeBlock(`const crypto = require('crypto');
+const expected = crypto.createHmac('sha256', process.env.NEXO_SECRET).update(rawBody).digest('hex');
+const valido = crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(req.headers['x-nexo-signature']));`)}`;
+}
+
+/* ============================ Próximamente ============================ */
+
+function viewSoon(m) {
+  const notes = {
+    pos: 'Venta en mostrador con escaneo QR, carrito, impuestos, descuentos, facturas con folio y pagos parciales. Las ventas en línea ya llegan solas a "Ventas".',
+    inventory: 'Entradas de mercancía, ajustes, alertas de stock mínimo y etiquetas QR. Las ventas en línea ya descuentan existencias automáticamente.',
+    finance: 'Ingresos y gastos, cuentas por cobrar y por pagar, flujo de caja y ganancia bruta y neta.',
+    marketing: 'Campañas, cupones, embudo de prospectos, conversiones y retorno de inversión.',
+  };
+  $('#main').innerHTML = pageHeader(m.label) + `<div class="card pad" style="max-width:640px">
+    <span class="tag">Fase ${m.phase}</span><p>${esc(notes[m.id] || '')}</p>
+    <p class="muted">Las tablas de este módulo ya existen en la base de datos, así que se conectará sin migraciones.</p></div>`;
+}
+
+start();
+</script>
+</body>
+</html>
