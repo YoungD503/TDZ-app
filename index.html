@@ -720,7 +720,7 @@ function bindCopy(root) {
 /* ============================ Ventas ============================ */
 
 const SALE_STATUS = { pagada: 'Pagada', pendiente: 'Pendiente', parcial: 'Pago parcial', cancelada: 'Cancelada', reembolsada: 'Reembolsada' };
-const SOURCE_NAMES = { shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: 'Stripe', webhook: 'Automatización' };
+const SOURCE_NAMES = { shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: 'Stripe', wompi: 'Wompi', n1co: 'N1co', webhook: 'Automatización' };
 
 async function viewSales() {
   const main = $('#main');
@@ -935,7 +935,7 @@ function deleteSubscriber(r) {
 
 function showSyncResult(r) {
   const c = r.counts;
-  openModal('Hoja sincronizada', `
+  openModal('Sincronización completa', `
     <div class="grid kpis" style="grid-template-columns:repeat(3,1fr)">
       <div class="card pad kpi"><div class="l">Nuevos</div><div class="v">${c.creado}</div></div>
       <div class="card pad kpi"><div class="l">Actualizados</div><div class="v">${c.actualizado}</div></div>
@@ -975,7 +975,7 @@ function drawIntegrations() {
       : `<div class="empty">Conecta tu primer formulario, tienda o plataforma de pagos.<br><br>${w ? '<button class="btn primary" id="newInt2">+ Conectar plataforma</button>' : ''}</div>`}</div>
 
     <div class="section card pad">
-      <h3>Relevo para Shopify, WooCommerce y Stripe</h3>
+      <h3>Relevo para Shopify, WooCommerce, Stripe, Wompi y N1co</h3>
       <p class="muted" style="margin-top:0">Estas plataformas no aceptan la redirección que hace Google ni dejan leer sus firmas. Un pequeño relevo gratuito en Cloudflare recibe sus avisos y los pasa a tu sistema. ${needsRelay && !d.relayUrl ? '<b style="color:var(--warn)">Tienes integraciones que lo necesitan.</b>' : ''}</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap"><input class="input" id="relayUrl" style="max-width:420px" placeholder="https:\/\/nexo-relay.tu-cuenta.workers.dev" value="${esc(d.relayUrl)}" ${w ? '' : 'disabled'}>
         ${w ? '<button class="btn" id="relaySave">Guardar</button>' : ''}<button class="btn" id="relayGuide">Cómo instalarlo</button></div>
@@ -1035,7 +1035,7 @@ function integrationFields(rec) {
     ? Object.assign({}, f, { placeholder: rec.has_token ? '•••••• guardado — pega otro para reemplazarlo' : 'Falta el token: pégalo aquí' }) : f));
   const sig = !rec || rec.supports_signature;
   if (sig) fields.splice(2, 0, {
-    name: 'webhook_secret', label: 'Secreto de firma (Shopify, WooCommerce, Stripe)', type: 'text',
+    name: 'webhook_secret', label: 'Secreto de firma', type: 'text',
     placeholder: rec && rec.has_secret ? '•••••• guardado — escribe otro para reemplazarlo' : 'Pégalo después de crear el webhook en la plataforma',
     hint: 'Con él se verifica que cada pedido o pago venga realmente de tu tienda.',
   });
@@ -1217,6 +1217,27 @@ document.getElementById('nexo-form').addEventListener('submit', async function (
       <li>Eventos: <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.async_payment_failed</code> y <code>charge.refunded</code>.</li>
       <li>Copia el <b>Secreto de firma</b> (<code>whsec_…</code>) y pégalo en <b>Editar → Secreto de firma</b>.</li>
       <li>Funciona con <b>Payment Links</b> y <b>Checkout</b>. Para ligar el pago a tu catálogo, agrega metadatos <code>sku</code> y <code>product</code> al enlace de pago.</li></ol>`,
+
+  wompi: ({ relay }) => `
+    <ol class="steps">
+      <li>Entra a <b>panel.wompi.sv</b> → <b>Aplicativos</b> → edita el aplicativo con el que cobras.</li>
+      <li>En <b>"Notifica vía Webhook"</b> pega esta URL y guarda:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>En el mismo aplicativo copia el <b>API Secret</b> y pégalo en <b>Editar → Secreto de firma</b> de esta integración. Con él se verifica el encabezado <code>wompi_hash</code> de cada aviso.</li>
+      <li><b>Liga el pago a tu catálogo:</b> al crear un enlace de pago, usa como <b>Identificador del comercio</b> el <b>SKU</b> del producto o servicio. Así la venta descuenta inventario y aparece con su producto.</li>
+      <li>Haz un pago de prueba. Las transacciones de <b>prueba</b> aparecen en la actividad como "conexión funciona" y <b>no</b> se registran como venta. Los pagos reales se registran como venta <b>pagada</b>.</li></ol>
+    <p class="muted">Si creas enlaces por API, también puedes poner esta URL en <code>configuracion.urlWebhook</code> de cada enlace.</p>`,
+
+  n1co: ({ relay }) => `
+    <ol class="steps">
+      <li>Entra al portal <b>n1co Business</b> → <b>Configuración</b> (menú arriba a la derecha) → <b>Opciones para desarrolladores</b> → <b>Webhook</b>.</li>
+      <li>Pega esta URL:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>Pulsa <b>generar clave secreta</b>, guarda, y pega esa clave en <b>Editar → Secreto de firma</b> de esta integración. Con ella se verifica el encabezado <code>X-H4B-Hmac-Sha256</code>.</li>
+      <li>Usa los <b>mismos SKU</b> en n1co y en "Productos y servicios" para que se descuente inventario.</li></ol>
+    <p class="muted">Qué se registra: <b>pago exitoso</b> → venta pagada con sus productos y cliente · <b>cancelación</b> → venta cancelada (devuelve inventario) · <b>reversión</b> → venta reembolsada. Funciona con n1co Links, tienda, API y QR.</p>`,
 
   webhook: ({ base, key }) => `
     <p>URL para Zapier, Make, n8n, Wix Automations o tu propio sistema (método <b>POST</b>, cuerpo <b>JSON</b>):</p>${codeBlock(`${base}?key=${key}&format=json`)}
