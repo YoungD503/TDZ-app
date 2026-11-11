@@ -79,6 +79,7 @@
   td.actions { text-align: right; white-space: normal; min-width: 250px; }
   table.wrap td { white-space: normal; }
   table.wrap td code { white-space: nowrap; }
+  table.wrap td.actions { min-width: 0; white-space: nowrap; }
   td.actions .btn { margin-top: 3px; margin-bottom: 3px; }
   td.actions .btn { margin-left: 6px; }
   .empty { padding: 36px; text-align: center; color: var(--muted); }
@@ -123,6 +124,10 @@
   .tag.cancelada, .tag.reembolsada, .tag.error, .tag.rechazado, .tag.fallido, .tag.perdido { background: #fee2e2; color: #991b1b; }
   .tag.spam, .tag.ignorado, .tag.descartado { background: #f3f4f6; color: #6b7280; }
   .tag.contactado, .tag.calificado, .tag.cotizado { background: #fef3c7; color: #92400e; }
+  .ic { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; margin-left: 4px; border-radius: 6px; color: var(--muted); vertical-align: middle; text-decoration: none; }
+  .ic:hover { background: var(--brand-soft); color: var(--brand); }
+  .ic svg { width: 16px; height: 16px; }
+  .drift { display: block; font-size: 11px; color: var(--warn); margin-top: 2px; }
   #toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #111827; color: #fff; padding: 10px 16px; border-radius: 8px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60; }
   #toast.show { opacity: 1; }
   #toast.bad { background: var(--danger); }
@@ -226,6 +231,26 @@ function fmtDate(iso) {
   return d.toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' });
 }
 
+const ICONS = {
+  mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8.5 8.5 0 0 1-12.4 7.6L3 21l1.4-5.4A8.5 8.5 0 1 1 21 12z"/></svg>',
+  phone: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
+};
+
+/** Íconos de contacto rápido: correo, WhatsApp y llamada. */
+function contactIcons(email, phone) {
+  let out = '';
+  if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    out += `<a class="ic" href="mailto:${esc(email)}" title="Enviar correo a ${esc(email)}" aria-label="Enviar correo">${ICONS.mail}</a>`;
+  }
+  const digits = String(phone || '').replace(/\D/g, '');
+  if (digits.length >= 7) {
+    out += `<a class="ic" href="https:\/\/wa.me/${digits}" target="_blank" rel="noopener" title="WhatsApp ${esc(phone)}" aria-label="WhatsApp">${ICONS.chat}</a>`;
+    out += `<a class="ic" href="tel:${esc(String(phone).replace(/[^\d+]/g, ''))}" title="Llamar a ${esc(phone)}" aria-label="Llamar">${ICONS.phone}</a>`;
+  }
+  return out;
+}
+
 function optLabel(field, value) {
   const o = (field.options || []).find(x => x[0] === value);
   return o ? o[1] : value;
@@ -239,6 +264,8 @@ function cell(field, value) {
   }
   if (field.type === 'checkbox') return value === true ? 'Sí' : 'No';
   if (field.format === 'money') return esc(money(value));
+  if (field.type === 'email') return value ? esc(value) + contactIcons(value, '') : '<span class="muted">—</span>';
+  if (field.type === 'tel') return value ? esc(value) + contactIcons('', value) : '<span class="muted">—</span>';
   if (field.format === 'datetime') return '<span class="muted">' + fmtDate(value) + '</span>';
   if (field.format === 'number') return value === '' || value === undefined ? '<span class="muted">—</span>' : esc(Number(value).toLocaleString('es'));
   return esc(value);
@@ -414,7 +441,7 @@ async function viewHome() {
     </div>`;
 }
 
-const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
+const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', invite: 'Invitación', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
   password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar' };
 const ENTITY_NAMES = { Customers: 'Cliente', Products: 'Producto/servicio', Users: 'Usuario', Tenants: 'Empresa', Leads: 'Prospecto',
   Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor' };
@@ -752,10 +779,14 @@ const SUB_LANG = { es: 'Español', en: 'English', ambos: 'Ambos' };
 
 async function viewSubscribers() {
   const main = $('#main');
-  main.innerHTML = pageHeader('Suscriptores', '<button class="btn" id="csvBtn">Exportar CSV</button>') + '<div id="subBody"><div class="card empty">Cargando…</div></div>';
+  main.innerHTML = pageHeader('Suscriptores', '<button class="btn" id="csvBtn">Exportar CSV</button>' +
+    (can('marketing:write') ? ' <button class="btn primary" id="addSub">+ Agregar</button>' : '')) + '<div id="subBody"><div class="card empty">Cargando…</div></div>';
+  setTimeout(() => { if ($('#addSub') && S.subs && S.subs.connected) $('#addSub').textContent = '+ Invitar'; }, 0);
+  if ($('#addSub')) $('#addSub').onclick = () => editSubscriber(null);
   try {
     S.subs = await api('apiSubscribers', S.token);
     if (S.view === 'subscribers') drawSubscribers();
+    if ($('#addSub') && S.subs.connected) $('#addSub').textContent = '+ Invitar';
   } catch (e) { $('#subBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
 }
 
@@ -763,7 +794,7 @@ function drawSubscribers() {
   const st = S.subs.stats;
   const kpi = (l, v, hint) => `<div class="card pad kpi"><div class="l">${l}</div><div class="v">${v}</div>${hint ? '<div class="hint">' + hint + '</div>' : ''}</div>`;
   if (!S.subs.rows.length) {
-    $('#subBody').innerHTML = `<div class="card empty">Aún no hay suscriptores.<br><br>Conecta la hoja de tu newsletter en <b>Integraciones → Conectar plataforma → Google Sheets</b>, o envíalos en tiempo real desde tu sitio.</div>`;
+    $('#subBody').innerHTML = `<div class="card empty">Aún no hay suscriptores.<br><br>Conecta la hoja de tu newsletter en <b>Integraciones → Conectar plataforma → Google Sheets</b>, agrégalos con <b>+ Agregar</b>, o envíalos en tiempo real desde tu sitio.</div>`;
     $('#csvBtn').disabled = true;
     return;
   }
@@ -773,6 +804,7 @@ function drawSubscribers() {
       ${kpi('Activos que ya son clientes', st.clientes, st.activo ? Math.round(st.clientes / st.activo * 100) + '% de los activos' : '')}
       ${kpi('Activos por idioma', `<span style="font-size:16px;line-height:1.6">Español ${st.es}<br>English ${st.en} · Ambos ${st.ambos}</span>`)}
     </div>
+    ${S.subs.connected ? `<div class="note ok-note" style="margin:0 0 12px">Conectado con tu newsletter (<b>${esc(S.subs.connected.name)}</b>): las bajas, invitaciones y cambios de idioma se aplican en la lista real.</div>` : ''}
     <div class="toolbar" style="flex-wrap:wrap">
       <input class="input" id="q" placeholder="Buscar correo…">
       <select class="input" id="fStatus" style="max-width:180px"><option value="">Todos los estados</option>${Object.keys(SUB_STATUS).map(k => `<option value="${k}">${SUB_STATUS[k]}</option>`).join('')}</select>
@@ -794,18 +826,24 @@ function filteredSubscribers() {
 function drawSubscriberRows() {
   const rows = filteredSubscribers();
   if (!rows.length) { $('#list').innerHTML = '<div class="empty">Sin resultados.</div>'; return; }
-  $('#list').innerHTML = `<table><thead><tr><th>Correo</th><th>Idioma</th><th>Estado</th><th>Registrado</th><th>Confirmado</th><th>En el CRM</th><th>Origen</th></tr></thead>
-    <tbody>${rows.map(r => `<tr><td>${esc(r.email)}</td><td>${esc(SUB_LANG[r.language] || '—')}</td>
-      <td><span class="tag ${r.status === 'activo' ? 'activo' : r.status === 'baja' ? 'cancelada' : 'pendiente'}">${esc(SUB_STATUS[r.status] || r.status)}</span></td>
-      <td class="muted">${esc(r.subscribed_at || '')}</td><td class="muted">${esc(r.confirmed_at || (r.unsubscribed_at ? 'Baja: ' + r.unsubscribed_at : '—'))}</td>
+  const w = can('marketing:write'), del = can('marketing:delete');
+  $('#list').innerHTML = `<table class="wrap"><thead><tr><th>Correo</th><th>Idioma</th><th>Estado</th><th>Fechas</th><th>En el CRM</th><th>Origen</th>${w || del ? '<th></th>' : ''}</tr></thead>
+    <tbody>${rows.map(r => `<tr><td style="white-space:nowrap">${esc(r.email)}${contactIcons(r.email, r.phone)}</td><td>${esc(SUB_LANG[r.language] || '—')}</td>
+      <td><span class="tag ${r.status === 'activo' ? 'activo' : r.status === 'baja' ? 'cancelada' : 'pendiente'}">${esc(SUB_STATUS[r.status] || r.status)}</span>
+        ${r.status_source === 'manual' && r.sheet_status && r.sheet_status !== r.status ? '<span class="drift" title="Cambiado a mano en el CRM">En tu hoja: ' + esc(SUB_STATUS[r.sheet_status] || r.sheet_status) + '</span>' : ''}</td>
+      <td class="muted" style="white-space:nowrap;font-size:13px">Alta: ${esc(r.subscribed_at || '—')}<br>${r.unsubscribed_at && r.status === 'baja' ? 'Baja: ' + esc(r.unsubscribed_at) : 'Confirmó: ' + esc(r.confirmed_at || '—')}
+        ${r.consent_at ? `<br><span style="color:var(--brand)" title="${esc(r.consent_method || '')}">✓ Consentimiento ${esc(String(r.consent_at).slice(0, 10))}</span>` : ''}</td>
       <td>${r.customer_id ? '<span class="tag activo">Cliente</span> ' + esc(r.customer_name) : r.lead_id ? '<span class="tag nuevo">Prospecto</span>' : '<span class="muted">—</span>'}</td>
-      <td class="muted">${esc(r.source || '')}</td></tr>`).join('')}</tbody></table>
+      <td class="muted">${esc(r.source || '')}</td>
+      ${w || del ? `<td class="actions">${w ? `<button class="btn sm" data-sedit="${esc(r.id)}">Editar</button>` : ''}${del ? `<button class="btn sm danger" data-sdel="${esc(r.id)}">Eliminar</button>` : ''}</td>` : ''}</tr>`).join('')}</tbody></table>
     <div class="muted" style="padding:10px 14px">${rows.length} de ${S.subs.rows.length}</div>`;
+  $('#list').querySelectorAll('[data-sedit]').forEach(b => b.onclick = () => editSubscriber(S.subs.rows.find(r => r.id === b.dataset.sedit)));
+  $('#list').querySelectorAll('[data-sdel]').forEach(b => b.onclick = () => deleteSubscriber(S.subs.rows.find(r => r.id === b.dataset.sdel)));
 }
 
 function exportSubscribers() {
   const rows = filteredSubscribers();
-  const cols = ['email', 'language', 'status', 'subscribed_at', 'confirmed_at', 'unsubscribed_at', 'customer_name', 'source'];
+  const cols = ['email', 'language', 'status', 'subscribed_at', 'confirmed_at', 'unsubscribed_at', 'consent_at', 'consent_method', 'customer_name', 'source'];
   const q = v => '"' + String(v === undefined || v === null ? '' : v).replace(/"/g, '""') + '"';
   const csv = '﻿' + [cols.join(',')].concat(rows.map(r => cols.map(c => q(r[c])).join(','))).join('\r\n');
   try {
@@ -819,6 +857,82 @@ function exportSubscribers() {
   }
 }
 
+function editSubscriber(r) {
+  if (S.subs.connected) return editSubscriberConnected(r);
+  const langOpts = [['es', 'Español'], ['en', 'English'], ['ambos', 'Ambos'], ['', '—']];
+  const statusOpts = r ? [['activo', 'Activo'], ['pendiente', 'Pendiente de confirmar'], ['baja', 'Dado de baja']]
+                       : [['activo', 'Activo'], ['pendiente', 'Pendiente de confirmar']];
+  const sel = (name, opts, v) => `<select class="input" name="${name}">${opts.map(o => `<option value="${o[0]}" ${o[0] === v ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>`;
+  const body = `<form class="form" id="recForm">
+      <div class="wide"><label class="f">Correo *</label><input class="input" name="email" type="email" value="${esc(r ? r.email : '')}" ${r ? 'disabled' : 'required'}></div>
+      <div><label class="f">Idioma</label>${sel('language', langOpts, r ? r.language : 'es')}</div>
+      <div><label class="f">Estado *</label>${sel('status', statusOpts, r ? r.status : 'activo')}</div>
+      ${r ? '' : `<div class="wide"><label style="display:flex;gap:8px;align-items:flex-start"><input type="checkbox" name="consent" style="margin-top:3px">
+        <span>Esta persona aceptó recibir mis correos (por ejemplo, se inscribió en persona, en un evento o me lo pidió por escrito).</span></label></div>`}
+      <div class="wide note" style="margin:0">Este cambio queda en el CRM y la sincronización con tu hoja lo respeta. <b>Tu plataforma de envío del newsletter no se entera</b>:
+        para que alguien deje de recibir (o empiece a recibir) el correo, cámbialo también allí.</div>
+    </form>`;
+  openModal(r ? 'Editar suscriptor' : 'Agregar suscriptor', body, async () => {
+    const f = $('#recForm');
+    if (!f.reportValidity()) throw new Error('Revisa los campos marcados.');
+    const values = { language: f.elements.language.value, status: f.elements.status.value };
+    if (r) values.id = r.id; else { values.email = f.elements.email.value; values.consent = f.elements.consent.checked; }
+    await api('apiSubscriberSave', S.token, values);
+    S.subs = await api('apiSubscribers', S.token);
+    drawSubscribers();
+    toast(r ? 'Suscriptor actualizado' : 'Suscriptor agregado');
+  }, r ? 'Guardar' : 'Agregar');
+}
+
+function editSubscriberConnected(r) {
+  const langOpts = [['es', 'Español'], ['en', 'English'], ['ambos', 'Ambos']];
+  const sel = (name, opts, v) => `<select class="input" name="${name}">${opts.map(o => `<option value="${o[0]}" ${o[0] === v ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>`;
+  const actions = !r ? null : r.status === 'activo'
+    ? [['', 'Sigue suscrito'], ['baja', 'Darlo de baja del newsletter']]
+    : r.status === 'pendiente'
+      ? [['', 'Esperar su confirmación'], ['invite', 'Reenviar el correo de confirmación'], ['baja', 'Darlo de baja']]
+      : [['', 'Sigue dado de baja'], ['invite', 'Invitarlo a suscribirse de nuevo']];
+  const canInvite = S.subs.connected.canInvite;
+  const body = `<form class="form" id="recForm">
+      <div class="wide"><label class="f">Correo *</label><input class="input" name="email" type="email" value="${esc(r ? r.email : '')}" ${r ? 'disabled' : 'required'}></div>
+      <div><label class="f">Idioma del newsletter</label>${sel('language', langOpts, r ? (r.language || 'ambos') : 'es')}</div>
+      ${r ? `<div><label class="f">Acción</label>${sel('action', actions, '')}</div>` : ''}
+      <div class="wide note ok-note" style="margin:0">${r
+        ? 'Los cambios se aplican en tu newsletter. Una baja surte efecto de inmediato. Para reactivar a alguien, el newsletter le envía su correo de confirmación.'
+        : 'Le enviaremos el <b>correo de confirmación de tu newsletter</b>. Aparecerá como <b>activo</b> cuando lo confirme, y su consentimiento quedará registrado solo.'}</div>
+      ${!canInvite && (!r || r.status !== 'activo') ? '<div class="wide note" style="margin:0">Para invitar, configura la página de suscripción en <b>Integraciones → Editar</b>.</div>' : ''}
+    </form>`;
+  openModal(r ? 'Editar suscriptor' : 'Invitar al newsletter', body, async () => {
+    const f = $('#recForm');
+    if (!f.reportValidity()) throw new Error('Revisa los campos marcados.');
+    const values = { language: f.elements.language.value };
+    if (r) {
+      values.id = r.id;
+      const a = f.elements.action.value;
+      values.status = a === 'baja' ? 'baja' : r.status;
+      if (a === 'invite') values.invite = true;
+    } else { values.email = f.elements.email.value; values.status = 'pendiente'; }
+    const res = await api('apiSubscriberSave', S.token, values);
+    S.subs = await api('apiSubscribers', S.token);
+    drawSubscribers();
+    toast(res.note || 'Listo');
+  }, r ? 'Guardar' : 'Enviar invitación');
+}
+
+function deleteSubscriber(r) {
+  const connected = !!S.subs.connected;
+  openModal('Eliminar suscriptor', `<p>¿Eliminar a <b>${esc(r.email)}</b> de la lista?</p>
+    <p class="muted">${connected && r.status !== 'baja'
+      ? 'Se dará de <b>baja en tu newsletter</b> (deja de recibir el correo) y desaparecerá de esta pantalla. Si solo quieres darlo de baja y conservar el registro, usa <b>Editar → Darlo de baja</b>.'
+      : 'Desaparece de esta pantalla y la sincronización <b>no lo volverá a agregar</b>. Si solo dejó de querer el newsletter, es mejor <b>Editar → Dado de baja</b>, así queda el registro de su baja.'}</p>`,
+    async () => {
+      await api('apiSubscriberDelete', S.token, r.id);
+      S.subs = await api('apiSubscribers', S.token);
+      drawSubscribers();
+      toast('Suscriptor eliminado');
+    }, 'Eliminar');
+}
+
 function showSyncResult(r) {
   const c = r.counts;
   openModal('Hoja sincronizada', `
@@ -827,9 +941,9 @@ function showSyncResult(r) {
       <div class="card pad kpi"><div class="l">Actualizados</div><div class="v">${c.actualizado}</div></div>
       <div class="card pad kpi"><div class="l">Sin cambios</div><div class="v">${c['sin cambios']}</div></div>
     </div>
-    <p>Pestaña <b>${esc(r.sheet)}</b>. Columnas reconocidas: ${r.columns.map(x => '<span class="tag">' + esc(x) + '</span>').join(' ')}</p>
+    <p>Fuente: <b>${esc(r.source || r.sheet)}</b>. Datos reconocidos: ${r.columns.map(x => '<span class="tag">' + esc(x) + '</span>').join(' ')}</p>
     ${r.errors.length ? '<div class="note">' + r.errors.map(esc).join('<br>') + '</div>' : ''}
-    <p class="muted">A partir de ahora se sincroniza sola cada hora. Puedes forzarla con <b>Sincronizar ahora</b>.</p>`, null);
+    <p class="muted">A partir de ahora se sincroniza sola cada 10 minutos. Puedes forzarla con <b>Sincronizar ahora</b>.</p>`, null);
 }
 
 /* ============================ Integraciones ============================ */
@@ -854,7 +968,7 @@ function drawIntegrations() {
   $('#intBody').innerHTML = warnUrl + `
     <div class="card tablewrap">${d.integrations.length ? `<table class="wrap"><thead><tr><th>Nombre</th><th>Plataforma</th><th>Clave</th><th>Estado</th><th class="num">Eventos</th><th>Último</th><th></th></tr></thead>
       <tbody>${d.integrations.map(i => `<tr><td>${esc(i.name)}</td><td>${esc(i.platform_label)}${i.supports_signature ? (i.has_secret ? ' <span class="tag activo">firmado</span>' : ' <span class="tag pendiente">sin firma</span>') : ''}</td>
-        <td>${i.is_pull ? '<span class="muted" title="' + esc(i.last_sync_result || '') + '">Cada hora</span>' : '<code>' + esc(i.key_hint) + '</code>'}</td><td><span class="tag ${i.status === 'activo' ? 'activo' : 'inactivo'}">${i.status === 'activo' ? 'Activa' : 'Pausada'}</span></td>
+        <td>${i.is_pull ? '<span class="muted" title="' + esc(i.last_sync_result || '') + '">Cada 10 min</span>' : '<code>' + esc(i.key_hint) + '</code>'}</td><td><span class="tag ${i.status === 'activo' ? 'activo' : 'inactivo'}">${i.status === 'activo' ? 'Activa' : 'Pausada'}</span></td>
         <td class="num">${esc(i.events_count)}</td><td class="muted">${i.last_event_at ? fmtDate(i.last_event_at) : 'Nunca'}</td>
         <td class="actions">${i.is_pull && w ? `<button class="btn sm primary" data-sync="${esc(i.id)}">Sincronizar ahora</button>` : ''}<button class="btn sm" data-guide="${esc(i.id)}">${i.is_pull ? 'Cómo funciona' : 'Cómo conectar'}</button>${w ? `<button class="btn sm" data-edit="${esc(i.id)}">Editar</button>
           ${i.is_pull ? '' : `<button class="btn sm" data-rotate="${esc(i.id)}">Nueva clave</button>`}<button class="btn sm danger" data-del="${esc(i.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table>`
@@ -916,7 +1030,9 @@ function drawIntegrations() {
 function integrationFields(rec) {
   const d = S.int;
   const fields = d.fields.map(f => Object.assign({}, f, rec && f.name === 'platform' ? { lock: true } : {}));
-  if (!rec || rec.is_pull) fields.splice(rec ? 1 : 2, 0, ...d.sheetFields);
+  if (!rec || (rec.is_pull && !rec.is_d1)) fields.splice(rec ? 1 : 2, 0, ...d.sheetFields);
+  if (!rec || rec.is_d1) fields.splice(rec ? 1 : 2, 0, ...d.d1Fields.map(f => f.name === 'api_token' && rec
+    ? Object.assign({}, f, { placeholder: rec.has_token ? '•••••• guardado — pega otro para reemplazarlo' : 'Falta el token: pégalo aquí' }) : f));
   const sig = !rec || rec.supports_signature;
   if (sig) fields.splice(2, 0, {
     name: 'webhook_secret', label: 'Secreto de firma (Shopify, WooCommerce, Stripe)', type: 'text',
@@ -950,7 +1066,8 @@ function togglePlatformFields(rec) {
   const wrap = n => form.elements[n] ? form.elements[n].closest('div') : null;
   const apply = () => {
     const p = S.int.platforms[sel.value] || {};
-    [['webhook_secret', !!p.signature], ['source_url', !!p.pull], ['source_sheet', !!p.pull], ['notify_email', !p.pull]]
+    [['webhook_secret', !!p.signature], ['source_url', !!p.pull && !p.d1], ['source_sheet', !!p.pull && !p.d1], ['notify_email', !p.pull],
+     ['api_token', !!p.d1], ['d1_database_id', !!p.d1], ['d1_account_id', !!p.d1], ['site_url', !!p.d1]]
       .forEach(([n, show]) => { const w = wrap(n); if (w) w.style.display = show ? '' : 'none'; });
   };
   sel.addEventListener('change', apply);
@@ -999,7 +1116,7 @@ function showGuide(i, key) {
   const k = key || i.public_key || '';
   const K = k || 'TU_CLAVE_SECRETA';
   const relay = (d.relayUrl || 'https:\/\/TU-RELEVO.workers.dev') + '/in/' + K;
-  if (i.is_pull) { openModal('Cómo funciona: ' + i.name, GUIDES.google_sheet({ base, i }), null, null, true); return; }
+  if (i.is_pull) { openModal('Cómo funciona: ' + i.name, (i.is_d1 ? GUIDES.cloudflare_d1 : GUIDES.google_sheet)({ base, i }), null, null, true); return; }
   let html = '';
   if (key) html += `<div class="note ok-note"><b>Tu clave${i.is_public ? '' : ' secreta'}:</b><div class="secret" style="margin-top:8px">${esc(key)}</div>
     ${i.is_public ? 'Es pública: puede ir en tu página web, solo sirve para ' + (i.platform === 'catalog' ? 'leer el catálogo' : 'enviar prospectos') + '.' : '<b>Cópiala ahora:</b> por seguridad no se volverá a mostrar. Ya va incluida en las instrucciones de abajo.'}</div>`;
@@ -1120,7 +1237,7 @@ document.getElementById('nexo-form').addEventListener('submit', async function (
     <p class="muted"><code>status</code>: paid · pending · partial · cancelled · refunded. Si envías el mismo <code>id</code> otra vez, la venta se <b>actualiza</b> (no se duplica): úsalo para avisar pagos o cancelaciones.</p>`,
 
   google_sheet: ({ base, i }) => `
-    <p>El sistema lee tu hoja <b>cada hora</b> (y cuando pulsas <b>Sincronizar ahora</b>). No tienes que tocar la hoja ni tu sitio.</p>
+    <p>El sistema lee tu hoja <b>cada 10 minutos</b> (y cuando pulsas <b>Sincronizar ahora</b>). No tienes que tocar la hoja ni tu sitio.</p>
     ${i.source_url ? '<p>Hoja conectada: <a href="' + esc(i.source_url) + '" target="_blank" rel="noopener">abrir</a>' + (i.source_sheet ? ' · pestaña <b>' + esc(i.source_sheet) + '</b>' : '') + '</p>' : ''}
     <ul class="steps">
       <li><b>Columnas que reconoce:</b> Email / Correo (obligatoria), ID, Idioma (es, en, both/ambos), Estado (active, pending, unsubscribed, activo, pendiente, baja…), Registrado, Confirmado y Baja.</li>
@@ -1132,6 +1249,24 @@ document.getElementById('nexo-form').addEventListener('submit', async function (
     <p class="muted">La hoja solo se actualiza cuando tu sitio la exporta. Si tu sitio puede avisar en el momento de cada alta, confirmación o baja, crea una integración <b>Zapier / Make / otros</b> y envía:</p>
     ${codeBlock(`POST ${base}?key=TU_CLAVE_sk&format=json
 { "type": "subscriber", "id": 4, "email": "lector@correo.com", "language": "es", "status": "pending" }`)}`,
+
+  cloudflare_d1: ({ i }) => `
+    <p>El CRM está conectado <b>directamente a la base de datos de tu newsletter</b>: la lee cada 10 minutos y actúa sobre la lista real.</p>
+    <ul class="steps">
+      <li><b>Dar de baja o eliminar</b> a alguien en <b>Suscriptores</b> lo da de baja en el newsletter al instante (deja de recibir el correo).</li>
+      <li><b>Agregar</b> a alguien le envía el <b>correo de confirmación</b> de tu newsletter. Aparece como activo cuando lo confirma.</li>
+      <li>El <b>consentimiento se registra solo</b> con la fecha en que la persona confirmó por correo.</li>
+      <li>Cambiar el <b>idioma</b> en el CRM también lo cambia en el newsletter.</li>
+      <li>El CRM nunca activa a nadie sin su confirmación.</li>
+    </ul>
+    ${i.site_url ? '<p class="muted">Invitaciones desde: ' + esc(i.site_url) + '</p>' : '<div class="note">Para poder invitar desde el CRM, edita la integración y escribe la página de suscripción de tu newsletter.</div>'}
+    <h3>Crear el token de Cloudflare</h3>
+    <ol class="steps">
+      <li>En <b>dash.cloudflare.com</b> → tu perfil (arriba a la derecha) → <b>API Tokens</b> → <b>Create Token</b> → <b>Create Custom Token</b>.</li>
+      <li>Nombre: <code>CRM newsletter</code>. Permisos: <b>Account · D1 · Edit</b>. Recursos: tu cuenta.</li>
+      <li><b>Continue to summary → Create Token</b>, copia el token y pégalo en <b>Editar → Token de API de Cloudflare</b>.</li>
+    </ol>
+    <p class="muted">El token solo puede leer y editar bases D1. Se guarda en las propiedades privadas del script, no en la hoja de cálculo.</p>`,
 
   catalog: ({ base, key }) => `
     <p>Tu catálogo (productos y servicios activos, con precio y disponibilidad) en JSON:</p>${codeBlock(`${base}?action=catalog&key=${key}`)}
