@@ -724,11 +724,23 @@ const SOURCE_NAMES = { shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: '
 
 async function viewSales() {
   const main = $('#main');
-  main.innerHTML = pageHeader('Ventas') +
+  main.innerHTML = pageHeader('Ventas', can('sales:delete') ? '<button class="btn danger" id="purgeTests" style="display:none"></button>' : '') +
     `<div class="toolbar"><input class="input" id="q" placeholder="Buscar por folio, pedido, cliente…"></div>
      <div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>`;
   $('#q').addEventListener('input', drawSales);
-  try { S.sales = await api('apiSales', S.token, ''); if (S.view === 'sales') drawSales(); }
+  try {
+    S.sales = await api('apiSales', S.token, '');
+    if (S.view !== 'sales') return;
+    drawSales();
+    const nTests = S.sales.filter(s => s.is_test === true).length;
+    const pb = $('#purgeTests');
+    if (pb && nTests) {
+      pb.style.display = ''; pb.textContent = 'Borrar ventas de prueba (' + nTests + ')';
+      pb.onclick = () => openModal('Borrar ventas de prueba', `<p>Se borrarán <b>${nTests}</b> ventas marcadas como <b>PRUEBA</b>.</p>
+        <p class="muted">Se devuelve su inventario y se eliminan los clientes que solo existían por esas pruebas. Las ventas reales no se tocan.</p>`,
+        async () => { const r = await api('apiSalesPurgeTests', S.token); toast(r.sales + ' ventas de prueba borradas' + (r.customers ? ' y ' + r.customers + ' clientes de prueba' : '')); viewSales(); }, 'Borrar');
+    }
+  }
   catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
 }
 
@@ -742,7 +754,7 @@ function drawSales() {
   }
   $('#list').innerHTML = `<table><thead><tr><th>Folio</th><th>Pedido</th><th>Fecha</th><th>Canal</th><th>Cliente</th><th class="num">Total</th><th>Estado</th><th></th></tr></thead>
     <tbody>${rows.map(s => `<tr><td>${esc(s.number)}</td><td>${esc(s.external_number || '—')}</td><td class="muted">${fmtDate(s.created_at)}</td>
-      <td>${esc(SOURCE_NAMES[s.source] || s.source || '')}<br><span class="muted">${esc(s.channel || '')}</span></td><td>${esc(s.customer_name || '—')}</td>
+      <td>${esc(SOURCE_NAMES[s.source] || s.source || '')}${s.is_test === true ? ' <span class="tag pendiente">PRUEBA</span>' : ''}<br><span class="muted">${esc(s.channel || '')}</span></td><td>${esc(s.customer_name || '—')}</td>
       <td class="num">${esc(moneyIn(s.total, s.currency))}</td><td><span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span></td>
       <td class="actions"><button class="btn sm" data-sale="${esc(s.id)}">Ver</button></td></tr>`).join('')}</tbody></table>`;
   $('#list').querySelectorAll('[data-sale]').forEach(b => b.onclick = () => showSale(b.dataset.sale));
@@ -758,7 +770,7 @@ async function showSale(id) {
     const d = await api('apiSale', S.token, id);
     const s = d.sale, m = v => esc(moneyIn(v, s.currency));
     openModal('Venta ' + s.number + (s.external_number ? ' · pedido ' + s.external_number : ''), `
-      <p><span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span>
+      <p>${s.is_test === true ? '<span class="tag pendiente">PRUEBA</span> ' : ''}<span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span>
         <span class="muted">${fmtDate(s.created_at)} · ${esc(SOURCE_NAMES[s.source] || s.source)} · ${esc(s.channel)}</span></p>
       <p><b>Cliente:</b> ${esc(s.customer_name || '—')} ${s.payment_method ? '· <b>Pago:</b> ' + esc(s.payment_method) : ''}</p>
       <div class="card tablewrap"><table><thead><tr><th>Artículo</th><th>SKU</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num">Total</th></tr></thead>
@@ -1067,7 +1079,7 @@ function togglePlatformFields(rec) {
   const apply = () => {
     const p = S.int.platforms[sel.value] || {};
     [['webhook_secret', !!p.signature], ['source_url', !!p.pull && !p.d1], ['source_sheet', !!p.pull && !p.d1], ['notify_email', !p.pull],
-     ['api_token', !!p.d1], ['d1_database_id', !!p.d1], ['d1_account_id', !!p.d1], ['site_url', !!p.d1]]
+     ['api_token', !!p.d1], ['d1_database_id', !!p.d1], ['d1_account_id', !!p.d1], ['site_url', !!p.d1], ['record_tests', !!p.testable]]
       .forEach(([n, show]) => { const w = wrap(n); if (w) w.style.display = show ? '' : 'none'; });
   };
   sel.addEventListener('change', apply);
