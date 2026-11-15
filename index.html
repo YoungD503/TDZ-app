@@ -746,16 +746,16 @@ async function viewSales() {
 
 function drawSales() {
   const q = ($('#q').value || '').toLowerCase();
-  const rows = S.sales.filter(s => !q || ['number', 'external_number', 'customer_name', 'source', 'channel', 'status']
+  const rows = S.sales.filter(s => !q || ['number', 'external_number', 'customer_name', 'source', 'channel', 'status', 'items_summary']
     .some(f => String(s[f] || '').toLowerCase().indexOf(q) >= 0));
   if (!rows.length) {
     $('#list').innerHTML = `<div class="empty">${q ? 'Sin resultados.' : 'Aún no hay ventas. Conecta tu tienda en línea desde <b>Integraciones</b> y aparecerán aquí automáticamente.'}</div>`;
     return;
   }
-  $('#list').innerHTML = `<table><thead><tr><th>Folio</th><th>Pedido</th><th>Fecha</th><th>Canal</th><th>Cliente</th><th class="num">Total</th><th>Estado</th><th></th></tr></thead>
-    <tbody>${rows.map(s => `<tr><td>${esc(s.number)}</td><td>${esc(s.external_number || '—')}</td><td class="muted">${fmtDate(s.created_at)}</td>
-      <td>${esc(SOURCE_NAMES[s.source] || s.source || '')}${s.is_test === true ? ' <span class="tag pendiente">PRUEBA</span>' : ''}<br><span class="muted">${esc(s.channel || '')}</span></td><td>${esc(s.customer_name || '—')}</td>
-      <td class="num">${esc(moneyIn(s.total, s.currency))}</td><td><span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span></td>
+  $('#list').innerHTML = `<table class="wrap"><thead><tr><th>Folio</th><th>Fecha</th><th>Canal</th><th>Cliente</th><th>Artículos</th><th class="num">Total</th><th>Estado</th><th></th></tr></thead>
+    <tbody>${rows.map(s => `<tr><td style="white-space:nowrap">${esc(s.number)}${s.external_number ? '<br><span class="muted">' + esc(s.external_number) + '</span>' : ''}</td><td class="muted" style="white-space:nowrap">${fmtDate(s.created_at)}</td>
+      <td>${esc(SOURCE_NAMES[s.source] || s.source || '')}${s.is_test === true ? ' <span class="tag pendiente">PRUEBA</span>' : ''}<br><span class="muted">${esc(s.channel || '')}</span></td><td>${esc(s.customer_name || '—')}</td><td>${esc(s.items_summary || '—')}</td>
+      <td class="num" style="white-space:nowrap">${esc(moneyIn(s.total, s.currency))}</td><td><span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span></td>
       <td class="actions"><button class="btn sm" data-sale="${esc(s.id)}">Ver</button></td></tr>`).join('')}</tbody></table>`;
   $('#list').querySelectorAll('[data-sale]').forEach(b => b.onclick = () => showSale(b.dataset.sale));
 }
@@ -1043,6 +1043,11 @@ function integrationFields(rec) {
   const d = S.int;
   const fields = d.fields.map(f => Object.assign({}, f, rec && f.name === 'platform' ? { lock: true } : {}));
   if (!rec || (rec.is_pull && !rec.is_d1)) fields.splice(rec ? 1 : 2, 0, ...d.sheetFields);
+  if (!rec || rec.platform === 'stripe') {
+    const keyFields = d.stripeFields.map(f => rec ? Object.assign({}, f, {
+      placeholder: (f.name === 'stripe_key_test' ? rec.has_stripe_test_key : rec.has_stripe_live_key) ? '•••••• guardada — pega otra para reemplazarla' : 'Sin configurar' }) : f);
+    fields.splice(fields.findIndex(f => f.name === 'status'), 0, ...keyFields);
+  }
   if (!rec || rec.is_d1) fields.splice(rec ? 1 : 2, 0, ...d.d1Fields.map(f => f.name === 'api_token' && rec
     ? Object.assign({}, f, { placeholder: rec.has_token ? '•••••• guardado — pega otro para reemplazarlo' : 'Falta el token: pégalo aquí' }) : f));
   const sig = !rec || rec.supports_signature;
@@ -1079,7 +1084,8 @@ function togglePlatformFields(rec) {
   const apply = () => {
     const p = S.int.platforms[sel.value] || {};
     [['webhook_secret', !!p.signature], ['source_url', !!p.pull && !p.d1], ['source_sheet', !!p.pull && !p.d1], ['notify_email', !p.pull],
-     ['api_token', !!p.d1], ['d1_database_id', !!p.d1], ['d1_account_id', !!p.d1], ['site_url', !!p.d1], ['record_tests', !!p.testable]]
+     ['api_token', !!p.d1], ['d1_database_id', !!p.d1], ['d1_account_id', !!p.d1], ['site_url', !!p.d1], ['record_tests', !!p.testable],
+     ['stripe_key_test', sel.value === 'stripe'], ['stripe_key_live', sel.value === 'stripe']]
       .forEach(([n, show]) => { const w = wrap(n); if (w) w.style.display = show ? '' : 'none'; });
   };
   sel.addEventListener('change', apply);
@@ -1228,7 +1234,14 @@ document.getElementById('nexo-form').addEventListener('submit', async function (
     <ol class="steps" start="2">
       <li>Eventos: <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.async_payment_failed</code> y <code>charge.refunded</code>.</li>
       <li>Copia el <b>Secreto de firma</b> (<code>whsec_…</code>) y pégalo en <b>Editar → Secreto de firma</b>.</li>
-      <li>Funciona con <b>Payment Links</b> y <b>Checkout</b>. Para ligar el pago a tu catálogo, agrega metadatos <code>sku</code> y <code>product</code> al enlace de pago.</li></ol>`,
+      <li>Funciona con <b>Payment Links</b> y <b>Checkout</b>.</li></ol>
+    <h3>Ver qué productos se compraron</h3>
+    <p class="muted">El aviso de Stripe no trae los productos; el CRM se los pregunta a Stripe con una clave de <b>solo lectura</b>.</p>
+    <ol class="steps">
+      <li>En Stripe: <b>Developers → API keys → Create restricted key</b> (hazlo en el modo que estés usando: prueba o real).</li>
+      <li>Nombre: <code>CRM</code>. Permisos en <b>Read</b>: <b>Checkout Sessions</b>, <b>Products</b> y <b>Prices</b>. Todo lo demás en <b>None</b>.</li>
+      <li>Crea la clave, cópiala (<code>rk_test_…</code> o <code>rk_live_…</code>) y pégala en <b>Editar → Clave de lectura de Stripe</b> del modo correspondiente.</li>
+      <li><b>Para ligar con tu catálogo e inventario:</b> en cada producto de Stripe agrega en <b>Metadata</b> la clave <code>sku</code> con el SKU de ese producto en tu CRM.</li></ol>`,
 
   wompi: ({ relay }) => `
     <ol class="steps">
