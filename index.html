@@ -199,6 +199,13 @@
   table.no-cards th { padding: 8px; }
   table.no-cards td { padding: 8px 10px; }
 
+  /* Barra fina mientras se actualizan datos en segundo plano */
+  #busy { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity .2s .15s;
+          background: linear-gradient(90deg, transparent, var(--brand), transparent) 0 0 / 40% 100% no-repeat; }
+  #busy.on { opacity: 1; animation: busy 1.1s linear infinite; }
+  @keyframes busy { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+  @media (prefers-reduced-motion: reduce) { #busy.on { animation: none; background: var(--brand); opacity: .6; } }
+
   /* ============ Inventario ============ */
   .muted.sm, .sm { font-size: 12.5px; }
   td .muted.sm { display: block; margin-top: 1px; }
@@ -275,6 +282,14 @@
   .hist-tools #hQ { max-width: 300px; }
   .hist-modal table td:last-child { white-space: normal; min-width: 180px; }
 
+  .rf-head { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 8px; }
+  .rf-items { border: 1px solid var(--line); border-radius: var(--radius); }
+  .rf-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .rf-item:last-child { border-bottom: 0; }
+  .rf-restock { display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; padding: 0; color: var(--muted); }
+  .rf-restock input { width: 18px; height: 18px; accent-color: var(--brand); }
+  .tag.reembolso_parcial { background: var(--sand-soft); color: var(--sand); }
+  .btn.danger#modalOk { background: var(--danger); color: #1a0806; border-color: var(--danger); }
   .ss-link { border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
   .ss-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 12px; background: var(--raised); }
   .ss-head a { color: var(--muted); overflow-wrap: anywhere; }
@@ -519,6 +534,7 @@ function callServer(fn, args) {
 function api(fn) {
   const args = Array.prototype.slice.call(arguments, 1);
   return callServer(fn, args).then(res => {
+    if (!SWR_READS.has(fn) && !NO_SIDE_EFFECTS.has(fn)) swrClear(); // algo cambió: la memoria ya no vale
     if (res && res.ok) return res.data;
     const err = new Error(res ? res.error : 'Sin respuesta del servidor.');
     err.code = res && res.code;
@@ -526,6 +542,96 @@ function api(fn) {
     else if (err.code === 'PWD_CHANGE') { renderPasswordChange(true); }
     throw err;
   });
+}
+
+/* ---------- Datos con memoria: las pestañas muestran lo último que viste y se actualizan solas ---------- */
+
+const SWR = { mem: null, busy: 0, prefetched: false };
+// Lecturas que se pueden guardar. Cualquier otra llamada (guardar, borrar, mover…) borra la memoria.
+const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory', 'apiSubscribers', 'apiIntegrations', 'apiAudit', 'apiUsers']);
+const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
+  'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing']);
+
+function swrLoad() {
+  if (SWR.mem) return SWR.mem;
+  SWR.mem = {};
+  try { const raw = sessionStorage.getItem('nx_swr'); if (raw) { const o = JSON.parse(raw); if (o.t === S.token) SWR.mem = o.m || {}; } } catch (e) { /* sin memoria */ }
+  return SWR.mem;
+}
+let swrSaveTimer = null;
+function swrSave() {
+  clearTimeout(swrSaveTimer);
+  swrSaveTimer = setTimeout(() => {
+    try { sessionStorage.setItem('nx_swr', JSON.stringify({ t: S.token, m: SWR.mem })); }
+    catch (e) { try { sessionStorage.removeItem('nx_swr'); } catch (x) { /* lleno */ } }
+  }, 300);
+}
+function swrClear() { SWR.mem = {}; try { sessionStorage.removeItem('nx_swr'); } catch (e) { /* nada */ } }
+
+function setBusy(delta) {
+  SWR.busy = Math.max(0, SWR.busy + delta);
+  const bar = $('#busy');
+  if (bar) bar.classList.toggle('on', SWR.busy > 0);
+}
+
+/** Conserva el campo donde el usuario está escribiendo cuando la pantalla se vuelve a dibujar. */
+function keepFocus(fn) {
+  const a = document.activeElement;
+  const id = a && a.id && (a.tagName === 'INPUT' || a.tagName === 'TEXTAREA') ? a.id : '';
+  const val = id ? a.value : '', start = id ? a.selectionStart : 0, end = id ? a.selectionEnd : 0;
+  fn();
+  if (!id) return;
+  const b = document.getElementById(id);
+  if (b && b !== a) { b.value = val; b.focus(); try { b.setSelectionRange(start, end); } catch (e) { /* tipo sin cursor */ } }
+}
+
+/**
+ * Lee con memoria: si ya hay datos guardados, onData(datos, true) se llama al instante;
+ * luego se piden al servidor y, si cambiaron, onData(datos, false) vuelve a dibujar.
+ */
+async function apiFresh(fn, args, onData) {
+  const mem = swrLoad();
+  const key = fn + '|' + JSON.stringify(args);
+  const hit = mem[key];
+  if (hit) onData(hit.d, true);
+  setBusy(+1);
+  try {
+    const data = await api.apply(null, [fn, S.token].concat(args));
+    const json = JSON.stringify(data);
+    if (!hit || hit.j !== json) {
+      swrLoad()[key] = { d: data, j: json };
+      swrSave();
+      if (hit) keepFocus(() => onData(data, false)); else onData(data, false);
+    }
+    return data;
+  } catch (e) {
+    if (!hit) throw e;
+    toast('No se pudo actualizar: ' + e.message, true);
+    return hit.d;
+  } finally { setBusy(-1); }
+}
+
+/** Después de abrir Inicio, carga en silencio las pestañas más usadas para que abran al instante. */
+async function prefetch() {
+  if (SWR.prefetched) return;
+  SWR.prefetched = true;
+  const jobs = [
+    ['apiSales', [''], 'sales:read'], ['apiInventory', [{ location: '' }], 'inventory:read'],
+    ['apiList', ['leads', ''], 'leads:read'], ['apiList', ['customers', ''], 'customers:read'], ['apiList', ['products', ''], 'products:read'],
+  ];
+  const token = S.token;
+  for (const [fn, args, perm] of jobs) {
+    if (S.token !== token) return;
+    if (!can(perm)) continue;
+    const key = fn + '|' + JSON.stringify(args);
+    if (swrLoad()[key]) continue;
+    try {
+      const data = await api.apply(null, [fn, S.token].concat(args));
+      if (S.token !== token) return;
+      swrLoad()[key] = { d: data, j: JSON.stringify(data) };
+      swrSave();
+    } catch (e) { return; }
+  }
 }
 
 function can(perm) {
@@ -594,6 +700,7 @@ function cell(field, value) {
 /* ============================ Sesión ============================ */
 
 function endSession() {
+  swrClear(); SWR.prefetched = false;
   S.token = null; S.boot = null;
   store.del('nx_token');
   renderLogin();
@@ -700,6 +807,7 @@ function renderShell() {
         </div>
       </aside>
       <main id="main"></main>
+      <div id="busy" aria-hidden="true"></div>
     </div>`;
   document.querySelectorAll('.nav').forEach(n => n.addEventListener('click', () => {
     setDrawer(false);
@@ -800,8 +908,13 @@ function pageHeader(title, actions) {
 async function viewHome() {
   const main = $('#main');
   main.innerHTML = pageHeader('Hola, ' + S.boot.user.name.split(' ')[0]) + '<div class="muted">Cargando indicadores…</div>';
-  let d;
-  try { d = await api('apiDashboard', S.token); } catch (e) { main.innerHTML = pageHeader('Inicio') + '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  try { await apiFresh('apiDashboard', [], d => { if (S.view === 'inicio') drawHome(d); }); }
+  catch (e) { main.innerHTML = pageHeader('Inicio') + '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  setTimeout(prefetch, 400);
+}
+
+function drawHome(d) {
+  const main = $('#main');
   const kpi = (l, v) => `<div class="card pad kpi"><div class="l">${l}</div><div class="v">${v}</div></div>`;
   const phases = [
     ['Base de datos, usuarios y permisos', true], ['CRM, prospectos e integraciones', true],
@@ -835,7 +948,7 @@ async function viewHome() {
 
 const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', invite: 'Invitación', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
   password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar',
-  import: 'Importación', stock_entrada: 'Entrada de inventario', stock_ajuste: 'Ajuste de inventario', stock_conteo: 'Conteo de inventario', stock_traslado: 'Traslado de inventario', stock_sync: 'Inventario → Stripe' };
+  import: 'Importación', stock_entrada: 'Entrada de inventario', stock_ajuste: 'Ajuste de inventario', stock_conteo: 'Conteo de inventario', stock_traslado: 'Traslado de inventario', stock_sync: 'Inventario → Stripe', refund: 'Reembolso' };
 const ENTITY_NAMES = { Customers: 'Cliente', Products: 'Producto/servicio', Users: 'Usuario', Tenants: 'Empresa', Leads: 'Prospecto',
   Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor', Stock_Movements: 'Inventario' };
 const actionLabel = a => ACTIONS[a] || a;
@@ -856,10 +969,8 @@ async function viewEntity(key) {
   if ($('#qrBtn')) $('#qrBtn').onclick = openQr;
   if ($('#impBtn')) $('#impBtn').onclick = openImport;
   $('#q').addEventListener('input', () => drawTable(key));
-  try {
-    S.rows = await api('apiList', S.token, key, '');
-    if (S.view === key) drawTable(key);
-  } catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+  try { await apiFresh('apiList', [key, ''], rows => { if (S.view !== key) return; S.rows = rows; drawTable(key); }); }
+  catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
 }
 
 function drawTable(key) {
@@ -1025,7 +1136,7 @@ async function viewUsers() {
   main.innerHTML = pageHeader('Usuarios', can('users:write') ? '<button class="btn primary" id="newUser">+ Nuevo usuario</button>' : '') +
     '<div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>';
   if ($('#newUser')) $('#newUser').onclick = () => editUser(null);
-  try { S.users = await api('apiUsers', S.token); drawUsers(); }
+  try { await apiFresh('apiUsers', [], u => { if (S.view !== 'users') return; S.users = u; drawUsers(); }); }
   catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
 }
 
@@ -1069,11 +1180,13 @@ async function viewAudit() {
   const main = $('#main');
   main.innerHTML = pageHeader('Auditoría') + '<div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>';
   try {
-    const rows = await api('apiAudit', S.token, 300);
+    await apiFresh('apiAudit', [300], rows => {
+    if (S.view !== 'audit') return;
     if (!rows.length) { $('#list').innerHTML = '<div class="empty">Sin actividad.</div>'; return; }
     $('#list').innerHTML = `<table><thead><tr><th>Fecha</th><th>Usuario</th><th>Acción</th><th>Módulo</th><th>Cambios</th></tr></thead>
       <tbody>${rows.map(r => `<tr><td class="muted">${fmtDate(r.created_at)}</td><td>${esc(r.user_email)}</td><td>${esc(actionLabel(r.action))}</td>
         <td>${esc(entityLabel(r.entity))} <span class="muted">${esc(r.entity_id)}</span></td><td style="white-space:normal">${summarize(r.changes)}</td></tr>`).join('')}</tbody></table>`;
+    });
   } catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
 }
 
@@ -1132,7 +1245,7 @@ function bindCopy(root) {
 
 /* ============================ Ventas ============================ */
 
-const SALE_STATUS = { pagada: 'Pagada', pendiente: 'Pendiente', parcial: 'Pago parcial', cancelada: 'Cancelada', reembolsada: 'Reembolsada' };
+const SALE_STATUS = { pagada: 'Pagada', pendiente: 'Pendiente', parcial: 'Pago parcial', cancelada: 'Cancelada', reembolsada: 'Reembolsada', reembolso_parcial: 'Reembolso parcial' };
 const SOURCE_NAMES = { shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: 'Stripe', wompi: 'Wompi', n1co: 'N1co', webhook: 'Automatización' };
 
 async function viewSales() {
@@ -1142,9 +1255,13 @@ async function viewSales() {
      <div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>`;
   $('#q').addEventListener('input', drawSales);
   try {
-    S.sales = await api('apiSales', S.token, '');
-    if (S.view !== 'sales') return;
-    drawSales();
+    await apiFresh('apiSales', [''], data => { if (S.view !== 'sales') return; S.sales = data; drawSales(); salesPurgeButton(); });
+  }
+  catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
+}
+
+function salesPurgeButton() {
+  {
     const nTests = S.sales.filter(s => s.is_test === true).length;
     const pb = $('#purgeTests');
     if (pb && nTests) {
@@ -1152,9 +1269,8 @@ async function viewSales() {
       pb.onclick = () => openModal('Borrar ventas de prueba', `<p>Se borrarán <b>${nTests}</b> ventas marcadas como <b>PRUEBA</b>.</p>
         <p class="muted">Se devuelve su inventario y se eliminan los clientes que solo existían por esas pruebas. Las ventas reales no se tocan.</p>`,
         async () => { const r = await api('apiSalesPurgeTests', S.token); toast(r.sales + ' ventas de prueba borradas' + (r.customers ? ' y ' + r.customers + ' clientes de prueba' : '')); viewSales(); }, 'Borrar');
-    }
+    } else if (pb) pb.style.display = 'none';
   }
-  catch (e) { $('#list').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; }
 }
 
 function drawSales() {
@@ -1188,13 +1304,81 @@ async function showSale(id) {
       <p><b>Cliente:</b> ${esc(s.customer_name || '—')} ${s.payment_method ? '· <b>Pago:</b> ' + esc(s.payment_method) : ''}</p>
       <div class="card tablewrap"><table><thead><tr><th>Artículo</th><th>SKU</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num">Total</th></tr></thead>
         <tbody>${d.items.map(i => `<tr><td>${esc(i.description)}${i.product_id ? '' : ' <span class="tag">fuera de catálogo</span>'}</td><td>${esc(i.sku || '')}</td>
-          <td class="num">${esc(i.qty)}</td><td class="num">${m(i.unit_price)}</td><td class="num">${m(i.total)}</td></tr>`).join('')}</tbody></table></div>
+          <td class="num">${esc(i.qty)}${Number(i.refunded_qty) ? '<br><span class="muted sm">' + esc(i.refunded_qty) + ' reembolsada(s)</span>' : ''}</td><td class="num">${m(i.unit_price)}</td><td class="num">${m(i.total)}</td></tr>`).join('')}</tbody></table></div>
       <table style="margin-top:10px;max-width:320px;margin-left:auto">
         <tr><td>Subtotal</td><td class="num">${m(s.subtotal)}</td></tr><tr><td>Impuestos</td><td class="num">${m(s.tax)}</td></tr>
         <tr><td><b>Total</b></td><td class="num"><b>${m(s.total)}</b></td></tr><tr><td>Pagado</td><td class="num">${m(s.paid)}</td></tr>
-        <tr><td>Saldo</td><td class="num">${m(s.balance)}</td></tr></table>
-      ${s.notes ? '<p class="muted">' + esc(s.notes) + '</p>' : ''}`, null, null, true);
+        <tr><td>Saldo</td><td class="num">${m(s.balance)}</td></tr>
+        ${Number(s.refunded) ? `<tr><td>Reembolsado</td><td class="num neg">−${m(s.refunded)}</td></tr>` : ''}</table>
+      ${d.payments.length ? `<h3 style="margin:16px 0 6px">Pagos y reembolsos</h3><ul class="list">${d.payments.map(p => `<li>
+          <span>${esc(p.method || '')}${p.notes ? '<br><span class="muted sm">' + esc(p.notes) + '</span>' : ''}<br><span class="muted sm">${fmtDate(p.received_at || p.created_at)}${p.provider_ref ? ' · ' + esc(String(p.provider_ref).split(':').pop()) : ''}</span></span>
+          <b class="${Number(p.amount) < 0 ? 'neg' : ''}">${Number(p.amount) < 0 ? '−' + m(-p.amount) : m(p.amount)}</b></li>`).join('')}</ul>` : ''}
+      ${s.notes ? '<p class="muted">' + esc(s.notes) + '</p>' : ''}
+      ${can('sales:refund') && ['pagada', 'parcial', 'reembolso_parcial'].indexOf(s.status) >= 0 && Number(s.paid) - Number(s.refunded || 0) > 0
+        ? '<div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn danger" id="refundBtn">Reembolsar</button></div>' : ''}`, null, null, true);
+    if ($('#refundBtn')) $('#refundBtn').onclick = () => openRefund(id);
   } catch (e) { toast(e.message, true); }
+}
+
+async function openRefund(id) {
+  let d;
+  try { d = await api('apiSaleRefundInfo', S.token, id); } catch (e) { toast(e.message, true); return; }
+  const s = d.sale, r = d.refundable, m = v => moneyIn(v, s.currency);
+  const st = { qty: {}, restock: {}, amountTouched: false };
+  r.items.forEach(i => { st.qty[i.id] = 0; st.restock[i.id] = i.tracked; });
+  const stripe = d.via === 'stripe';
+  openModal('Reembolsar ' + s.number, `
+    <div class="note">${stripe
+      ? `El dinero se devuelve a la tarjeta del cliente <b>en Stripe</b>${s.is_test === true ? ' (modo prueba)' : ''}. Stripe no permite deshacerlo.`
+      : `Haz el reembolso en el portal de <b>${esc(d.gateway || 'tu pasarela')}</b> y regístralo aquí: el CRM ajusta la venta y el inventario.`}</div>
+    <div class="rf-head"><b>¿Qué se devuelve?</b><button type="button" class="btn sm" id="rfAll">Todo</button></div>
+    <div class="rf-items">${r.items.map(i => `<div class="rf-item" data-id="${esc(i.id)}">
+        <span><b>${esc(i.description)}</b><br><span class="muted sm">${i.refunded_qty ? i.refunded_qty + ' ya reembolsado(s) · ' : ''}quedan ${i.left} · ${esc(m(i.unit_refund))} c/u</span>
+          ${i.tracked ? `<label class="check sm rf-restock"><input type="checkbox" checked data-restock> Regresa al inventario</label>` : ''}</span>
+        ${i.left ? `<div class="stepper sm"><button type="button" data-d="-1" aria-label="Menos">−</button><input class="input" inputmode="numeric" value="0" aria-label="Cantidad"><button type="button" data-d="1" aria-label="Más">+</button></div>` : '<span class="muted sm">Reembolsado</span>'}
+      </div>`).join('')}</div>
+    <form class="form" id="rfForm" style="margin-top:14px">
+      <div><label class="f">Motivo *</label><select class="input" name="reason" required><option value="">Elige…</option>${Object.keys(d.reasons).map(k => `<option value="${k}">${esc(d.reasons[k])}</option>`).join('')}</select></div>
+      <div><label class="f">Monto a reembolsar</label><input class="input" name="amount" inputmode="decimal" placeholder="0.00"><div class="hint">Máximo ${esc(m(r.amount))}. Puedes escribir otro monto (por ejemplo, una compensación).</div></div>
+      <div class="wide"><label class="f">Nota</label><input class="input" name="notes" placeholder="Opcional"></div>
+      ${stripe ? '<div class="wide check"><input type="checkbox" id="rfManual" name="manual"><label for="rfManual">Ya lo reembolsé en Stripe: solo registrarlo aquí</label></div>' : ''}
+    </form>`, async () => {
+    const f = $('#rfForm');
+    if (!f.reason.value) throw new Error('Elige el motivo del reembolso.');
+    const items = r.items.filter(i => st.qty[i.id] > 0).map(i => ({ id: i.id, qty: st.qty[i.id], restock: st.restock[i.id] }));
+    const amount = f.amount.value.trim() === '' ? '' : Number(f.amount.value.replace(',', '.'));
+    if (!items.length && !(amount > 0)) throw new Error('Elige qué artículos se devuelven o escribe un monto.');
+    const res = await api('apiSaleRefund', S.token, id, { items: items, amount: amount, reason: f.reason.value, notes: f.notes.value, manual: !!(f.manual && f.manual.checked) });
+    toast(res.message + (res.restocked ? ' ' + res.restocked + ' pieza(s) regresaron al inventario.' : ''));
+    if (S.view === 'sales') viewSales();
+    S.inv = null;
+    setTimeout(() => showSale(id), 0);
+  }, 'Reembolsar', true);
+  const f = $('#rfForm'), ok = $('#modalOk');
+  ok.classList.remove('primary'); ok.classList.add('danger');
+  const total = () => {
+    const all = r.items.every(i => i.left === 0 || st.qty[i.id] === i.left) && r.items.some(i => st.qty[i.id] > 0);
+    return all ? r.amount : Math.round(r.items.reduce((a, i) => a + i.unit_refund * st.qty[i.id], 0) * 100) / 100;
+  };
+  const refresh = () => {
+    if (!st.amountTouched) f.amount.value = total() ? total().toFixed(2) : '';
+    const v = Number((f.amount.value || '0').replace(',', '.')) || 0;
+    ok.textContent = v > 0 ? 'Reembolsar ' + m(Math.min(v, r.amount)) : 'Reembolsar';
+  };
+  document.querySelectorAll('.rf-item').forEach(row => {
+    const it = r.items.find(i => i.id === row.dataset.id);
+    const inp = row.querySelector('.stepper input');
+    const set = v => { st.qty[it.id] = Math.max(0, Math.min(it.left, Math.floor(v) || 0)); if (inp) inp.value = st.qty[it.id]; refresh(); };
+    row.querySelectorAll('[data-d]').forEach(b => b.onclick = () => set(st.qty[it.id] + Number(b.dataset.d)));
+    if (inp) inp.oninput = () => set(Number(inp.value));
+    const rs = row.querySelector('[data-restock]');
+    if (rs) rs.onchange = () => { st.restock[it.id] = rs.checked; };
+    row._set = set;
+  });
+  $('#rfAll').onclick = () => { st.amountTouched = false; document.querySelectorAll('.rf-item').forEach(row => { const it = r.items.find(i => i.id === row.dataset.id); row._set(it.left); }); };
+  f.amount.oninput = () => { st.amountTouched = f.amount.value.trim() !== ''; refresh(); };
+  if ($('#rfManual')) $('#rfManual').onchange = ev => { ok.textContent = ev.target.checked ? 'Registrar reembolso' : 'Reembolsar'; if (!ev.target.checked) refresh(); };
+  refresh();
 }
 
 /* ============================ Prospectos: captura rápida ============================ */
@@ -1845,8 +2029,8 @@ async function viewInventory() {
   if ($('#invLabels')) $('#invLabels').onclick = () => openLabels();
   if ($('#invCfg')) $('#invCfg').onclick = openInvSettings;
   S.onScan = code => { if (S.view === 'inventory' && !$('#modal')) openByCode(code); };
-  try { await loadInventory({ location: S.invFilter.location }); } catch (e) { $('#invBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
-  drawInventory();
+  try { await apiFresh('apiInventory', [{ location: S.invFilter.location || '' }], d => { S.inv = d; if (S.view === 'inventory') drawInventory(); }); }
+  catch (e) { $('#invBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
 }
 
 function drawInventory() {
@@ -2407,9 +2591,11 @@ async function viewSubscribers() {
   setTimeout(() => { if ($('#addSub') && S.subs && S.subs.connected) $('#addSub').textContent = '+ Invitar'; }, 0);
   if ($('#addSub')) $('#addSub').onclick = () => editSubscriber(null);
   try {
-    S.subs = await api('apiSubscribers', S.token);
-    if (S.view === 'subscribers') drawSubscribers();
-    if ($('#addSub') && S.subs.connected) $('#addSub').textContent = '+ Invitar';
+    await apiFresh('apiSubscribers', [], d => {
+      S.subs = d;
+      if (S.view === 'subscribers') drawSubscribers();
+      if ($('#addSub') && S.subs.connected) $('#addSub').textContent = '+ Invitar';
+    });
   } catch (e) { $('#subBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
 }
 
@@ -2580,7 +2766,7 @@ async function viewIntegrations() {
   main.innerHTML = pageHeader('Integraciones', w ? '<button class="btn primary" id="newInt">+ Conectar plataforma</button>' : '') +
     '<div id="intBody"><div class="card empty">Cargando…</div></div>';
   if ($('#newInt')) $('#newInt').onclick = () => editIntegration(null);
-  try { S.int = await api('apiIntegrations', S.token); if (S.view === 'integrations') drawIntegrations(); }
+  try { await apiFresh('apiIntegrations', [], d => { S.int = d; if (S.view === 'integrations') drawIntegrations(); }); }
   catch (e) { $('#intBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
 }
 
