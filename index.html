@@ -625,6 +625,151 @@
     #printArea.small .label .lb-meta b { font-size: 9pt; }
     #printArea.receipt-print .receipt { width: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
+  /* ---------- Finanzas ---------- */
+  .form [hidden], .fin-tools [hidden] { display: none !important; }
+  .form.fin1 { grid-template-columns: 1fr; }
+  .form .two, .form .three { display: grid; gap: 14px 16px; }
+  .form .two { grid-template-columns: 1fr 1fr; }
+  .form .three { grid-template-columns: 1fr 1fr 1fr; }
+  .fin-tabs { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; border-bottom: 1px solid var(--line); margin: -4px 0 18px; }
+  .fin-tabs::-webkit-scrollbar { display: none; }
+  .fin-tab { background: none; border: 0; border-bottom: 2px solid transparent; color: var(--muted); font: 500 14px var(--font); padding: 10px 12px; white-space: nowrap; cursor: pointer; margin-bottom: -1px; }
+  .fin-tab:hover { color: var(--ink); }
+  .fin-tab.on { color: var(--ink); border-bottom-color: var(--brand); }
+  .fin-tab:focus-visible { outline: 2px solid var(--brand); outline-offset: -2px; border-radius: 6px; }
+  .fin-sub { margin-bottom: 14px; }
+  .fin-kpis .kpi .v.m { font-size: clamp(20px, 2.4vw, 30px); white-space: nowrap; }
+  .kpi .v.good { color: var(--brand-text); }
+  .kpi .v.bad { color: var(--danger); }
+  .kpi .v.warn { color: var(--sand); }
+  .good { color: #34C759; }
+  .fin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .fin-grid > .card:first-child:nth-last-child(2) { grid-column: span 1; }
+  @media (min-width: 1100px) { .fin-grid.two-one { grid-template-columns: 2fr 1fr; } }
+  .fin-h { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+  .fin-h h3 { margin: 0; }
+  .fin-total { font: 600 20px var(--display); font-variant-numeric: tabular-nums; }
+  .fin-list { list-style: none; margin: 0 0 12px; padding: 0; }
+  .fin-list li { display: flex; justify-content: space-between; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); align-items: center; }
+  .fin-list li:last-child { border-bottom: 0; }
+  .fin-list b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .fin-list .rp-net { border-top: 1px solid var(--line-strong); font-weight: 600; }
+  .fin-start { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+  .fin-sum { margin: 0 0 10px; font-size: 13px; }
+  .fin-tools { align-items: center; }
+  .fin-tools input[type=month], .fin-tools input[type=date] { max-width: 180px; }
+  .legend { display: flex; gap: 12px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+  .legend .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .sw.s1 { background: var(--brand); } .sw.s2 { background: var(--line-strong); } .sw.s3 { background: var(--sand); border-radius: 50%; }
+  .fin-chart { width: 100%; height: auto; display: block; }
+  .fin-chart .axis { stroke: var(--line-strong); stroke-width: 1; }
+  .fin-chart .b1 { fill: var(--brand); }
+  .fin-chart .b2 { fill: var(--line-strong); }
+  .fin-chart .ln { fill: none; stroke: var(--sand); stroke-width: 2; }
+  .fin-chart .dt { fill: var(--sand); stroke: var(--panel); stroke-width: 2; }
+  .fin-chart .dt.neg { fill: var(--danger); }
+  .fin-chart text { fill: var(--muted); font-size: 11px; font-family: var(--font); }
+  .aging { display: flex; height: 10px; border-radius: 99px; overflow: hidden; background: var(--raised); margin: 6px 0 10px; }
+  .ag0 { background: var(--brand); } .ag1 { background: var(--info); } .ag2 { background: var(--sand); } .ag3 { background: #F59E0B; } .ag4 { background: var(--danger); }
+  .ag-legend { list-style: none; padding: 0; margin: 0 0 12px; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); }
+  .ag-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+  .ag-legend b { color: var(--ink); font-weight: 500; margin-left: 3px; }
+  .catbars { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+  .catbars li { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto; gap: 10px; align-items: center; font-size: 13px; }
+  .cb-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .cb-b { height: 8px; background: var(--raised); border-radius: 99px; overflow: hidden; }
+  .cb-b i { display: block; height: 100%; background: var(--brand); border-radius: 99px; }
+  .catbars b { font-variant-numeric: tabular-nums; }
+  .fin-table td { vertical-align: top; }
+  .nowrap { white-space: nowrap; }
+  .clip { color: var(--muted); vertical-align: -2px; }
+  .clip svg { width: 14px; height: 14px; }
+  .exp-amounts .exp-big { font: 600 22px var(--display); height: 52px; }
+  .exp-total { font: 600 20px var(--display); padding: 9px 0; font-variant-numeric: tabular-nums; }
+  .exp-more summary { cursor: pointer; color: var(--muted); font-size: 13px; padding: 4px 0; }
+  .exp-more[open] summary { margin-bottom: 12px; }
+  .exp-more > div + div { margin-top: 12px; }
+  .exp-file .chips label.btn { cursor: pointer; gap: 6px; }
+  .exp-prev img { max-height: 140px; max-width: 100%; border-radius: var(--radius-sm); margin-top: 8px; border: 1px solid var(--line); }
+  .exp-detail { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; }
+  .exp-att { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+  .exp-att label.btn { cursor: pointer; }
+  .kvs { display: grid; gap: 0; margin: 10px 0; }
+  .kv { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .kv span { color: var(--muted); }
+  .kv b { font-weight: 500; text-align: right; font-variant-numeric: tabular-nums; }
+  .acc-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+  .acc-card { text-align: left; cursor: pointer; color: var(--ink); font: inherit; display: grid; gap: 10px; }
+  .acc-card:hover { border-color: var(--line-strong); }
+  .acc-card:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .acc-top { display: flex; gap: 10px; align-items: center; }
+  .acc-top > span:last-child { display: grid; }
+  .acc-ic { font-size: 20px; width: 36px; height: 36px; display: grid; place-items: center; background: var(--raised); border-radius: 10px; flex: none; }
+  .acc-bal { font: 600 26px var(--display); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .acc-io { display: flex; gap: 12px; }
+  .rp-card { overflow-x: auto; }
+  .rp-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .rp-table th { text-align: left; font-weight: 600; color: var(--muted); font-size: 12px; padding: 8px 10px; border-bottom: 1px solid var(--line-strong); white-space: nowrap; }
+  .rp-table td { padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+  .rp-table td.rp-acc { white-space: normal; padding-left: 22px; }
+  .rp-sec td { font-weight: 600; padding-top: 14px; color: var(--ink); border-bottom-color: var(--line-strong); }
+  .rp-grp td { color: var(--muted); font-size: 12px; padding-top: 10px; }
+  .rp-sub td { color: var(--muted); font-weight: 500; }
+  .rp-tot td { font-weight: 600; background: var(--raised); }
+  .rp-net td { font-weight: 700; font-size: 15px; border-top: 2px solid var(--line-strong); background: var(--brand-soft); }
+  .rp-table tr.click:hover td { background: var(--raised); }
+  .bs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .bs-grid table + table { margin-top: 14px; }
+  .ok-note { background: var(--brand-soft); border-color: var(--brand-line); }
+  .jr-list { display: grid; gap: 10px; }
+  .jr { padding: 12px 14px; }
+  .jr.void { opacity: .5; }
+  .jr.void .jr-d { text-decoration: line-through; }
+  .jr-h { display: flex; justify-content: space-between; gap: 10px; align-items: center; font-size: 13px; }
+  .jr-d { margin: 6px 0 8px; font-size: 14px; }
+  .jr-t { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+  .jr-t { table-layout: fixed; }
+  .jr-t td { padding: 4px 6px; border-top: 1px solid var(--line); overflow-wrap: anywhere; }
+  .jr-t td.code { width: 64px; }
+  .jr-t td.num { width: 110px; }
+  .jr-t td.cr { padding-left: 28px; }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--muted); white-space: nowrap; }
+  .chart-t { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .chart-t td { padding: 7px 8px; border-bottom: 1px solid var(--line); }
+  .chart-t tr.grp.d0 td, .chart-t tr.grp.d1 td { background: var(--raised); }
+  .chart-t tr.off td { opacity: .5; }
+  .pm-head, .pm-line { display: grid; grid-template-columns: minmax(0, 2.2fr) minmax(80px, 1fr) minmax(80px, 1fr) minmax(0, 1.4fr) auto; gap: 8px; align-items: center; }
+  .pm-head { font-size: 12px; color: var(--muted); }
+  #pmLines { display: grid; gap: 8px; }
+  .ob-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(120px, 220px); gap: 12px; align-items: center; padding: 4px 0; }
+  .ob-row .input { text-align: right; }
+  .rec-list li > span:first-child { display: grid; gap: 2px; }
+  #printArea.report-print { font: 11pt/1.4 "Geist", Arial, sans-serif; color: #000; }
+  .report-print .rp-h { margin-bottom: 14px; }
+  .report-print .rp-h b { font-size: 13pt; }
+  .report-print .rp-h span { margin-left: 10px; color: #444; }
+  .report-print h1 { font-size: 15pt; margin: 6px 0 0; }
+  .report-print table { width: 100%; border-collapse: collapse; }
+  .report-print td, .report-print th { padding: 4px 6px; border-bottom: 1px solid #ddd; color: #000 !important; background: none !important; }
+  .report-print .num { text-align: right; }
+  .report-print .rp-net td, .report-print .rp-tot td { font-weight: 700; border-top: 1px solid #000; }
+  .report-print .bs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .report-print .code { color: #555; }
+  @media (max-width: 760px) {
+    .exp-detail { grid-template-columns: 1fr; }
+    .bs-grid { grid-template-columns: 1fr; }
+    .form .three { grid-template-columns: 1fr 1fr; }
+    .pm-head { display: none; }
+    .pm-line { grid-template-columns: 1fr 1fr; }
+    .pm-line select, .pm-line [name=memo] { grid-column: 1 / -1; }
+    .fin-tools input[type=date] { max-width: none; flex: 1; }
+    .acc-cards { grid-template-columns: 1fr; }
+    .fin-grid { grid-template-columns: 1fr; }
+    .jr-t td.code { display: none; }
+    .jr-t td.num { width: 84px; font-size: 12px; }
+    .jr-t td.cr { padding-left: 14px; }
+  }
+  @media (max-width: 520px) { .form .two { grid-template-columns: 1fr; } .form .three { grid-template-columns: 1fr; } }
 </style>
 
 </head>
@@ -727,9 +872,11 @@ function apiT(timeoutMs, fn) {
 
 const SWR = { mem: null, busy: 0, prefetched: false };
 // Lecturas que se pueden guardar. Cualquier otra llamada (guardar, borrar, mover…) borra la memoria.
-const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory', 'apiSubscribers', 'apiIntegrations', 'apiAudit', 'apiUsers']);
+const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory', 'apiSubscribers', 'apiIntegrations', 'apiAudit', 'apiUsers',
+  'apiFinOverview', 'apiFinExpenses', 'apiFinPayables', 'apiFinReceivables', 'apiFinMoney']);
 const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
-  'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing']);
+  'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing', 'apiFinSettings', 'apiFinChart', 'apiFinSuppliers', 'apiFinExpense', 'apiFinRecurring',
+  'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial']);
 
 function swrLoad() {
   if (SWR.mem) return SWR.mem;
@@ -834,6 +981,8 @@ function fmtDate(iso) {
 }
 
 const ICONS = {
+  clip: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5 12.6 20a5 5 0 0 1-7.1-7.1l8.5-8.5a3.3 3.3 0 0 1 4.7 4.7l-8.5 8.5a1.7 1.7 0 0 1-2.4-2.4l7.8-7.8"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg>',
   printer: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="7"/></svg>',
   qrcode: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>',
   personAdd: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7M19 8v6M16 11h6"/></svg>',
@@ -1090,6 +1239,7 @@ function go(view) {
   if (view === 'sales') return viewSales();
   if (view === 'inventory') return viewInventory();
   if (view === 'pos') return viewPos();
+  if (view === 'finance') return viewFinance();
   if (view === 'subscribers') return viewSubscribers();
   if (view === 'integrations') return viewIntegrations();
   if (view === 'audit') return viewAudit();
@@ -3496,6 +3646,888 @@ function printReceipt(rc, fmt, link) {
   setTimeout(() => window.print(), 60);
 }
 
+/* ============================ Finanzas ============================ */
+
+const FIN = { tab: 'resumen', cfg: null, chart: null, rep: 'resultados', acct: 'diario', range: null, expF: { month: '', status: '', q: '' } };
+const FIN_TABS = [['resumen', 'Resumen'], ['gastos', 'Gastos'], ['pagar', 'Por pagar'], ['cobrar', 'Por cobrar'], ['cuentas', 'Cuentas'], ['reportes', 'Reportes'], ['contabilidad', 'Contabilidad']];
+const SRC_LABEL = { venta: 'Venta', cobro: 'Cobro', reembolso: 'Reembolso', devolucion: 'Devolución', inventario: 'Inventario', gasto: 'Gasto', dinero: 'Dinero', caja: 'Caja', manual: 'Manual', apertura: 'Apertura', reversion: 'Reversión' };
+const STATUS_EXP = { pendiente: ['Por pagar', 'pendiente'], parcial: ['Pago parcial', 'parcial'], pagado: ['Pagado', 'pagada'], anulado: ['Anulado', 'cancelada'] };
+
+const fm = v => money(v);
+const finToday = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const monthName = m => { const d = new Date(m + '-15T12:00:00'); return d.toLocaleDateString('es', { month: 'short', year: '2-digit' }).replace('.', ''); };
+const dayFmt = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+const numIn = v => { const n = Number(String(v === undefined || v === null ? '' : v).replace(/[^\d.,-]/g, '').replace(',', '.')); return isFinite(n) ? n : 0; };
+
+async function finLoadBase() {
+  if (FIN.cfg && FIN.chart) return;
+  const [cfg, chart] = await Promise.all([api('apiFinSettings', S.token), api('apiFinChart', S.token)]);
+  FIN.cfg = cfg; FIN.chart = chart;
+}
+function finReload() { FIN.cfg = null; FIN.chart = null; }
+const accName = code => { const a = (FIN.chart || []).find(x => x.code === String(code)); return a ? a.name : code; };
+const moneyAccts = () => (FIN.chart || []).filter(a => a.money_kind && !a.is_group && a.status !== 'inactiva');
+
+/** <select> de cuentas. filter(a) decide cuáles; agrupa por el grupo padre. */
+function accSelect(name, selected, filter, placeholder) {
+  const list = (FIN.chart || []).filter(a => !a.is_group && a.status !== 'inactiva' && filter(a));
+  const groups = {};
+  list.forEach(a => { const g = (FIN.chart.find(x => x.code === a.parent) || {}).name || ''; (groups[g] = groups[g] || []).push(a); });
+  return `<select class="input" name="${name}">${placeholder ? `<option value="">${esc(placeholder)}</option>` : ''}${Object.keys(groups).map(g => `<optgroup label="${esc(g)}">${groups[g].map(a =>
+    `<option value="${a.code}" ${String(selected) === a.code ? 'selected' : ''}>${esc(a.name)}</option>`).join('')}</optgroup>`).join('')}</select>`;
+}
+const isExpenseAcc = a => (FIN.cfg.expense_accounts || []).indexOf(a.code) >= 0;
+
+async function viewFinance() {
+  const main = $('#main');
+  const w = can('finance:write');
+  main.innerHTML = pageHeader('Finanzas', w ? `<button class="btn" id="finMove">Mover dinero</button><button class="btn primary" id="finExp">Registrar gasto</button>` : '') +
+    `<nav class="fin-tabs" role="tablist" aria-label="Secciones de finanzas">${FIN_TABS.map(t => `<button role="tab" class="fin-tab ${FIN.tab === t[0] ? 'on' : ''}" aria-selected="${FIN.tab === t[0]}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</nav>
+    <div id="finBody"><div class="empty">Cargando…</div></div>`;
+  main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { FIN.tab = b.dataset.tab; viewFinance(); });
+  const on = main.querySelector('.fin-tab.on');
+  if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center' });
+  if ($('#finExp')) $('#finExp').onclick = () => openExpense();
+  if ($('#finMove')) $('#finMove').onclick = () => openMoneyMove();
+  try { await finLoadBase(); } catch (e) { $('#finBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  const tab = { resumen: finOverview, gastos: finExpenses, pagar: finPayables, cobrar: finReceivables, cuentas: finAccounts, reportes: finReports, contabilidad: finAccounting }[FIN.tab];
+  try { await tab(); } catch (e) { if (S.view === 'finance') $('#finBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
+}
+const finActive = tab => S.view === 'finance' && FIN.tab === tab && $('#finBody');
+
+/* ---------- Resumen ---------- */
+
+async function finOverview() {
+  await apiFresh('apiFinOverview', [], d => { if (finActive('resumen')) drawFinOverview(d); });
+}
+
+function drawFinOverview(d) {
+  const m = d.month, w = can('finance:write');
+  const pct = v => (v ? (v > 0 ? '' : '') + v.toFixed(1) + ' %' : '—');
+  $('#finBody').innerHTML = `
+    ${!d.has_opening && w ? `<div class="note fin-start"><div><b>Antes de empezar:</b> registra cuánto dinero tenías en cada cuenta, lo que te debían y lo que debías el día que empezaste a usar el sistema. Así los saldos y el balance salen exactos.</div><button class="btn primary sm" id="ovOpen">Registrar saldos iniciales</button></div>` : ''}
+    ${d.pending_sync ? `<div class="note">Poniendo al día la contabilidad con tu historial: faltan ${d.pending_sync} documentos. Se completan solos en unos minutos.</div>` : ''}
+    <div class="grid kpis fin-kpis">
+      <div class="card pad kpi"><div class="l">Ventas del mes</div><div class="v m">${fm(m.sales)}</div><div class="hint">sin impuesto, menos devoluciones</div></div>
+      <div class="card pad kpi"><div class="l">Utilidad bruta</div><div class="v m">${fm(m.gross)}</div><div class="hint">margen ${pct(m.gross_margin)}</div></div>
+      <div class="card pad kpi"><div class="l">Gastos del mes</div><div class="v m">${fm(m.opex + m.financial)}</div><div class="hint">costo de lo vendido aparte: ${fm(m.cost)}</div></div>
+      <div class="card pad kpi"><div class="l">Utilidad neta</div><div class="v m ${m.net < 0 ? 'bad' : 'good'}">${fm(m.net)}</div><div class="hint">margen ${pct(m.net_margin)}</div></div>
+    </div>
+    <div class="fin-grid">
+      <div class="card pad">
+        <div class="fin-h"><h3>Últimos 6 meses</h3><div class="legend"><span><i class="sw s1"></i>Ventas</span><span><i class="sw s2"></i>Costos y gastos</span><span><i class="sw s3"></i>Utilidad neta</span></div></div>
+        ${finChart(d.months)}
+      </div>
+      <div class="card pad">
+        <div class="fin-h"><h3>Dinero disponible</h3><b class="fin-total">${fm(d.money.total)}</b></div>
+        <ul class="fin-list">${d.money.accounts.filter(a => a.balance || !a.system_key || ['cash', 'bank'].indexOf(a.system_key) >= 0).map(a => `<li><span>${esc(a.name)}<span class="muted sm"> · ${esc(a.kind_label)}</span></span><b class="${a.balance < 0 ? 'neg' : ''}">${a.debt ? '−' : ''}${fm(a.balance)}</b></li>`).join('')}</ul>
+        <button class="btn sm" data-go="cuentas">Ver cuentas</button>
+      </div>
+    </div>
+    <div class="fin-grid">
+      <div class="card pad">
+        <div class="fin-h"><h3>Por cobrar</h3><b class="fin-total">${fm(d.receivable.total)}</b></div>
+        ${d.receivable.count ? `<p class="muted sm">${d.receivable.count} venta(s) con saldo pendiente.</p>${agingBar(d.receivable.aging)}` : '<p class="muted">Nadie te debe por ahora.</p>'}
+        <button class="btn sm" data-go="cobrar">Ver por cobrar</button>
+      </div>
+      <div class="card pad">
+        <div class="fin-h"><h3>Por pagar</h3><b class="fin-total">${fm(d.payable.total)}</b></div>
+        ${d.payable.overdue ? `<p class="neg sm"><b>${fm(d.payable.overdue)}</b> vencido.</p>` : ''}
+        ${d.payable.due_soon.length || d.payable.upcoming.length ? `<ul class="fin-list">
+          ${d.payable.due_soon.map(e => `<li><span>${esc(e.supplier || e.description)}<span class="muted sm"> · ${e.days_late > 0 ? 'venció hace ' + e.days_late + ' d' : 'vence ' + dayFmt(e.due_date)}</span></span><b>${fm(e.balance)}</b></li>`).join('')}
+          ${d.payable.upcoming.slice(0, 5).map(r => `<li><span>${esc(r.name)}<span class="muted sm"> · recurrente, ${dayFmt(r.date)}</span></span><b>${fm(r.amount)}</b></li>`).join('')}</ul>` : '<p class="muted">Sin pagos pendientes.</p>'}
+        <button class="btn sm" data-go="pagar">Ver por pagar</button>
+      </div>
+      <div class="card pad">
+        <div class="fin-h"><h3>Gastos del mes por categoría</h3></div>
+        ${d.expenses_by_category.length ? catBars(d.expenses_by_category) : '<p class="muted">Aún no registras gastos este mes.</p>'}
+      </div>
+    </div>`;
+  $('#finBody').querySelectorAll('[data-go]').forEach(b => b.onclick = () => { FIN.tab = b.dataset.go; viewFinance(); });
+  if ($('#ovOpen')) $('#ovOpen').onclick = openOpening;
+}
+
+function finChart(months) {
+  if (!months || !months.length) return '<p class="muted">Sin datos todavía.</p>';
+  const W = 560, H = 200, pad = 26, bw = (W - pad * 2) / months.length;
+  const max = Math.max(1, ...months.map(m => Math.max(m.sales, m.cost + m.opex + m.financial, Math.abs(m.net))));
+  const base = H / 2 + 10;
+  const scale = (H / 2 - 16) / max;
+  const pts = months.map((m, i) => [pad + bw * i + bw / 2, base - m.net * scale]);
+  return `<svg class="fin-chart" viewBox="0 0 ${W} ${H + 16}" role="img" aria-label="Ventas, costos y utilidad de los últimos meses">
+    <line x1="${pad}" x2="${W - pad}" y1="${base}" y2="${base}" class="axis"/>
+    ${months.map((m, i) => {
+      const x = pad + bw * i, cw = Math.min(18, bw / 3.2), spend = m.cost + m.opex + m.financial;
+      return `<g><title>${esc(monthName(m.month))}: ventas ${esc(fm(m.sales))}, costos y gastos ${esc(fm(spend))}, utilidad ${esc(fm(m.net))}</title>
+        <rect class="b1" x="${x + bw / 2 - cw - 2}" y="${base - m.sales * scale}" width="${cw}" height="${Math.max(0, m.sales * scale)}" rx="3"/>
+        <rect class="b2" x="${x + bw / 2 + 2}" y="${base - spend * scale}" width="${cw}" height="${Math.max(0, spend * scale)}" rx="3"/>
+        <text x="${x + bw / 2}" y="${H + 10}" text-anchor="middle">${esc(monthName(m.month))}</text></g>`;
+    }).join('')}
+    <polyline class="ln" points="${pts.map(p => p.join(',')).join(' ')}"/>
+    ${pts.map((p, i) => `<circle class="dt ${months[i].net < 0 ? 'neg' : ''}" cx="${p[0]}" cy="${p[1]}" r="4"/>`).join('')}
+  </svg>`;
+}
+
+function agingBar(a) {
+  const keys = Object.keys(a), tot = keys.reduce((s, k) => s + a[k], 0) || 1;
+  const label = { por_vencer: 'Por vencer', '0-30': '0–30 días', '31-60': '31–60', '61-90': '61–90', '+90': 'Más de 90' };
+  return `<div class="aging" role="img" aria-label="Antigüedad de saldos">${keys.filter(k => a[k] > 0).map((k, i) => `<span class="ag ag${i}" style="flex:${a[k] / tot}" title="${esc(label[k] + ': ' + fm(a[k]))}"></span>`).join('')}</div>
+    <ul class="ag-legend">${keys.map((k, i) => `<li><i class="ag ag${i}"></i>${label[k]} <b>${fm(a[k])}</b></li>`).join('')}</ul>`;
+}
+
+function catBars(list) {
+  const max = Math.max(...list.map(x => x.amount)) || 1;
+  return `<ul class="catbars">${list.slice(0, 8).map(x => `<li><span class="cb-n">${esc(x.name)}</span><span class="cb-b"><i style="width:${Math.max(3, x.amount / max * 100)}%"></i></span><b>${fm(x.amount)}</b></li>`).join('')}</ul>`;
+}
+
+/* ---------- Gastos ---------- */
+
+async function finExpenses() {
+  const f = FIN.expF;
+  if (!f.month && f.month !== 'all') f.month = finToday().slice(0, 7);
+  const draw = d => {
+    if (!finActive('gastos')) return;
+    $('#finBody').innerHTML = `
+      <div class="toolbar fin-tools">
+        <input class="input" type="month" id="exMonth" value="${f.month === 'all' ? '' : esc(f.month)}" aria-label="Mes">
+        <div class="chips" role="group" aria-label="Estado">${[['', 'Todos'], ['por_pagar', 'Por pagar'], ['pagado', 'Pagados'], ['anulado', 'Anulados']].map(o => `<button class="btn sm ${f.status === o[0] ? 'primary' : ''}" data-st="${o[0]}">${o[1]}</button>`).join('')}</div>
+        <input class="input" id="exQ" placeholder="Buscar proveedor, número, concepto…" value="${esc(f.q)}" style="flex:1;min-width:180px">
+        <button class="btn" id="exRec">Recurrentes</button>
+        <button class="btn" id="exSup">Proveedores</button>
+      </div>
+      <div class="fin-sum muted">${d.count} gasto(s) · total <b>${fm(d.total)}</b>${d.owed ? ' · por pagar <b>' + fm(d.owed) + '</b>' : ''}</div>
+      <div class="card tablewrap">${d.rows.length ? `<table class="fin-table"><thead><tr><th>Fecha</th><th>Gasto</th><th class="hide-sm">Categoría</th><th class="hide-sm">Documento</th><th class="num">Total</th><th>Estado</th></tr></thead><tbody>
+        ${d.rows.map(e => `<tr class="click" data-id="${esc(e.id)}" tabindex="0"><td class="nowrap">${dayFmt(e.date)}<div class="muted sm">${esc(e.number)}</div></td>
+          <td><b>${esc(e.supplier || e.description)}</b>${e.attachment_url ? ' <span class="clip" title="Tiene comprobante">' + ICONS.clip + '</span>' : ''}<div class="muted sm">${esc(e.supplier ? e.description : '')}</div></td>
+          <td class="hide-sm">${esc(e.category)}</td><td class="hide-sm">${esc(e.doc_label)}${e.doc_number ? '<div class="muted sm">' + esc(e.doc_number) + '</div>' : ''}</td>
+          <td class="num">${fm(e.amount)}${Number(e.balance) > 0.004 && e.status !== 'anulado' && e.status !== 'pendiente' ? '<div class="muted sm">debe ' + fm(e.balance) + '</div>' : ''}</td>
+          <td><span class="tag ${STATUS_EXP[e.status][1]}">${STATUS_EXP[e.status][0]}</span>${e.overdue ? ' <span class="tag cancelada">Vencido</span>' : ''}</td></tr>`).join('')}
+      </tbody></table>` : `<div class="empty">No hay gastos con este filtro.${can('finance:write') ? '<br><button class="btn primary" id="exNew" style="margin-top:10px">Registrar gasto</button>' : ''}</div>`}</div>`;
+    $('#exMonth').onchange = ev => { f.month = ev.target.value || 'all'; finExpenses(); };
+    $('#finBody').querySelectorAll('[data-st]').forEach(b => b.onclick = () => { f.status = b.dataset.st; finExpenses(); });
+    let t = null;
+    $('#exQ').oninput = ev => { clearTimeout(t); t = setTimeout(() => { f.q = ev.target.value; finExpenses().then(() => { const q = $('#exQ'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } }); }, 350); };
+    $('#exRec').onclick = openRecurringList;
+    $('#exSup').onclick = openSuppliers;
+    if ($('#exNew')) $('#exNew').onclick = () => openExpense();
+    $('#finBody').querySelectorAll('tr[data-id]').forEach(tr => { tr.onclick = () => openExpenseDetail(tr.dataset.id); tr.onkeydown = ev => { if (ev.key === 'Enter') openExpenseDetail(tr.dataset.id); }; });
+  };
+  await apiFresh('apiFinExpenses', [{ month: f.month === 'all' ? '' : f.month, status: f.status, q: f.q }], draw);
+}
+
+/** Formulario de gasto o compra (nuevo o editar). */
+async function openExpense(edit) {
+  try { await finLoadBase(); } catch (e) { toast(e.message, true); return; }
+  let sups = [];
+  try { sups = await api('apiFinSuppliers', S.token, ''); } catch (e) { /* sin lista */ }
+  const cfg = FIN.cfg, e = edit || {};
+  const last = store2.get('nx_fin_payacc', (moneyAccts().find(a => a.system_key === 'bank') || moneyAccts()[0] || {}).code);
+  const docType = e.doc_type || store2.get('nx_fin_doc', 'ccf');
+  const supName = e.supplier || e.supplier_name || '';
+  const rate = cfg.tax_rate || 13;
+  openModal(edit ? 'Editar gasto ' + e.number : 'Registrar gasto o compra', `
+    <form class="form fin1 exp-form" id="exForm" autocomplete="off">
+      <div class="two"><div><label class="f">Fecha</label><input class="input" type="date" name="date" value="${esc(e.date || finToday())}"></div>
+        <div><label class="f">Proveedor</label><input class="input" name="supplier" list="supList" value="${esc(supName)}" placeholder="Nombre (se crea si es nuevo)">
+          <datalist id="supList">${sups.map(s => `<option value="${esc(s.name)}">`).join('')}</datalist></div></div>
+      <div><label class="f">Categoría</label>${accSelect('account', e.account || store2.get('nx_fin_cat', ''), isExpenseAcc, 'Elige una categoría…')}
+        <div class="hint" id="exCatHint"></div></div>
+      <div class="two"><div><label class="f">Documento</label><select class="input" name="doc_type">${Object.keys(cfg.doc_types).map(k => `<option value="${k}" ${docType === k ? 'selected' : ''}>${esc(cfg.doc_types[k])}</option>`).join('')}</select></div>
+        <div><label class="f">Número del documento</label><input class="input" name="doc_number" value="${esc(e.doc_number || '')}" placeholder="Ej. 2026-001234"></div></div>
+      <div class="exp-amounts" id="exAmounts"></div>
+      <div><label class="f">Concepto</label><input class="input" name="description" value="${esc(e.description || '')}" placeholder="Ej. Alquiler de noviembre"></div>
+      <details class="exp-more" ${Number(e.exempt) || Number(e.withholding) ? 'open' : ''}><summary>Más detalles: exento, retención, vencimiento</summary>
+        <div class="two"><div><label class="f">Monto exento</label><input class="input" name="exempt" inputmode="decimal" value="${Number(e.exempt) ? e.exempt : ''}" placeholder="0.00"></div>
+          <div><label class="f">Retención de renta</label><input class="input" name="withholding" inputmode="decimal" value="${Number(e.withholding) ? e.withholding : ''}" placeholder="0.00"><div class="hint">Lo que le retienes al proveedor (ej. 10 % de honorarios).</div></div></div>
+        <div><label class="f">Vence</label><input class="input" type="date" name="due_date" value="${esc(e.due_date || '')}"><div class="hint">Si lo dejas vacío: hoy, o los días de crédito del proveedor.</div></div>
+      </details>
+      ${edit ? '' : `
+      <label class="chk wide"><input type="checkbox" name="paid_now" ${store2.get('nx_fin_paidnow', true) ? 'checked' : ''}> Ya lo pagué</label>
+      <div class="two" id="exPayRow"><div><label class="f">Pagado desde</label>${accSelect('pay_account', last, a => !!a.money_kind)}</div>
+        <div><label class="f">Referencia del pago</label><input class="input" name="pay_ref" placeholder="N.º de transferencia, cheque…"></div></div>
+      <label class="chk wide"><input type="checkbox" name="repeat"> Se repite (alquiler, internet, sueldos…)</label>
+      <div class="two" id="exRepRow" hidden><div><label class="f">Cada cuánto</label><select class="input" name="frequency">${Object.keys(cfg.frequencies).map(k => `<option value="${k}" ${k === 'mensual' ? 'selected' : ''}>${esc(cfg.frequencies[k])}</option>`).join('')}</select></div>
+        <div><label class="f">Al repetirse</label><select class="input" name="auto_pay"><option value="0">Registrarlo por pagar y avisarme</option><option value="1">Registrarlo ya pagado</option></select></div></div>
+      <div class="exp-file"><label class="f">Comprobante (foto o PDF)</label>
+        <div class="chips"><label class="btn"><input type="file" name="photo" accept="image/*" capture="environment" hidden>${ICONS.camera} Tomar foto</label>
+          <label class="btn"><input type="file" name="file" accept="image/*,application/pdf" hidden>Subir archivo</label></div>
+        <div id="exPrev" class="exp-prev"></div></div>`}
+    </form>`, async () => {
+    const f = $('#exForm');
+    const amounts = readAmounts(f);
+    const payload = Object.assign({ id: e.id || undefined, date: f.date.value, account: f.account.value, doc_type: f.doc_type.value, doc_number: f.doc_number.value,
+      description: f.description.value, due_date: f.due_date.value, exempt: numIn(f.exempt.value), withholding: numIn(f.withholding.value) }, amounts);
+    const sup = sups.find(s => s.name.toLowerCase() === f.supplier.value.trim().toLowerCase());
+    if (sup) payload.supplier_id = sup.id; else payload.supplier_name = f.supplier.value.trim();
+    if (!edit && f.paid_now.checked) payload.pay = { account: f.pay_account.value, date: f.date.value, reference: f.pay_ref.value };
+    if (!edit && f.repeat.checked) payload.repeat = { frequency: f.frequency.value, auto_pay: f.auto_pay.value === '1', remind_days: 3 };
+    const r = await api('apiFinSaveExpense', S.token, payload);
+    store2.set('nx_fin_cat', payload.account); store2.set('nx_fin_doc', payload.doc_type);
+    if (!edit) { store2.set('nx_fin_paidnow', f.paid_now.checked); if (f.paid_now.checked) store2.set('nx_fin_payacc', f.pay_account.value); }
+    const file = !edit && (f.photo.files[0] || f.file.files[0]);
+    if (file) {
+      try { await uploadReceipt(r.expense.id, file); } catch (err) { toast('El gasto se guardó, pero el comprobante no se pudo subir: ' + err.message, true); }
+    }
+    toast((edit ? 'Gasto actualizado' : 'Gasto ' + r.expense.number + ' registrado') + (r.recurring ? ' · se repetirá ' + cfg.frequencies[r.recurring.frequency].toLowerCase() : ''));
+    finRefresh();
+  }, edit ? 'Guardar cambios' : 'Registrar', true);
+  const f = $('#exForm');
+  const drawAmounts = () => {
+    const dt = f.doc_type.value, creditable = dt === 'ccf' || dt === 'importacion' || dt === 'factura_us';
+    const box = $('#exAmounts');
+    const prevTotal = box.dataset.total || (e.amount ? r2(Number(e.amount) - Number(e.exempt || 0)) : '');
+    if (creditable) {
+      const sub = box.dataset.sub || (e.subtotal ? e.subtotal : '');
+      box.innerHTML = `<div class="three"><div><label class="f">${dt === 'factura_us' ? 'Monto sin tax' : 'Monto sin IVA'}</label><input class="input" name="subtotal" inputmode="decimal" value="${esc(sub)}" placeholder="0.00"></div>
+        <div><label class="f">${dt === 'factura_us' ? 'Sales tax' : 'IVA (' + rate + ' %)'}</label><input class="input" name="tax" inputmode="decimal" value="${esc(e.tax ? e.tax : '')}" placeholder="0.00"></div>
+        <div><label class="f">Total</label><div class="exp-total" id="exTot">—</div></div></div>
+        <div class="hint">${dt === 'ccf' ? 'El IVA de un crédito fiscal se recupera: va al libro de compras y no cuenta como gasto.' : ''}</div>`;
+      const s = f.subtotal, t = f.tax;
+      let touched = !!e.tax;
+      const calc = () => { if (!touched && dt !== 'factura_us') t.value = s.value ? r2(numIn(s.value) * rate / 100).toFixed(2) : ''; $('#exTot').textContent = fm(numIn(s.value) + numIn(t.value) + numIn(f.exempt.value)); box.dataset.sub = s.value; box.dataset.total = r2(numIn(s.value) + numIn(t.value)); };
+      s.oninput = calc; t.oninput = () => { touched = true; calc(); }; f.exempt.oninput = calc; calc();
+    } else {
+      box.innerHTML = `<div><label class="f">Total pagado</label><input class="input exp-big" name="total" inputmode="decimal" value="${esc(prevTotal)}" placeholder="0.00"><div class="hint">Con este documento el IVA no se recupera: todo cuenta como gasto.</div></div>`;
+      f.total.oninput = () => { box.dataset.total = f.total.value; box.dataset.sub = ''; };
+    }
+  };
+  f.doc_type.onchange = drawAmounts; drawAmounts();
+  const catHint = () => {
+    const a = (FIN.chart || []).find(x => x.code === f.account.value);
+    $('#exCatHint').textContent = a && a.system_key === 'grni' ? 'Para la factura de mercadería que ya registraste como entrada en Inventario.' :
+      a && String(a.code).indexOf('12') === 0 ? 'Activo fijo: no es gasto del mes; se deprecia con el tiempo.' : '';
+  };
+  f.account.onchange = catHint; catHint();
+  const sup = () => { const s = sups.find(x => x.name.toLowerCase() === f.supplier.value.trim().toLowerCase()); if (s && s.default_account && !f.account.value) { f.account.value = s.default_account; catHint(); } };
+  f.supplier.onchange = sup;
+  if (!edit) {
+    const pay = () => { $('#exPayRow').hidden = !f.paid_now.checked; };
+    f.paid_now.onchange = pay; pay();
+    f.repeat.onchange = () => { $('#exRepRow').hidden = !f.repeat.checked; };
+    const prev = ev => { const file = ev.target.files[0]; if (!file) return; (ev.target.name === 'photo' ? f.file : f.photo).value = '';
+      $('#exPrev').innerHTML = file.type.indexOf('image/') === 0 ? `<img alt="Vista previa del comprobante" src="${URL.createObjectURL(file)}">` : `<span class="tag">${esc(file.name)}</span>`; };
+    f.photo.onchange = prev; f.file.onchange = prev;
+  }
+}
+
+function readAmounts(f) {
+  if (f.subtotal) return { subtotal: numIn(f.subtotal.value), tax: numIn(f.tax.value) };
+  return { subtotal: numIn(f.total.value), tax: 0 };
+}
+
+/** Comprime la foto (lado mayor 1600 px) y la sube a Drive. */
+async function uploadReceipt(expenseId, file) {
+  let data, mime = file.type;
+  if (file.type.indexOf('image/') === 0) {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('No se pudo leer la imagen.')); i.src = URL.createObjectURL(file); });
+    const k = Math.min(1, 1600 / Math.max(img.naturalWidth, img.naturalHeight));
+    const cv = document.createElement('canvas'); cv.width = Math.round(img.naturalWidth * k); cv.height = Math.round(img.naturalHeight * k);
+    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    data = cv.toDataURL('image/jpeg', 0.82); mime = 'image/jpeg';
+  } else {
+    if (file.size > 6 * 1024 * 1024) throw new Error('El PDF pesa más de 6 MB.');
+    data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error('No se pudo leer el archivo.')); r.readAsDataURL(file); });
+  }
+  return api('apiFinAttach', S.token, expenseId, { mime: mime, data: data });
+}
+
+async function openExpenseDetail(id) {
+  openModal('Gasto', '<div class="empty">Cargando…</div>', null, null, true);
+  let e;
+  try { e = await api('apiFinExpense', S.token, id); } catch (err) { $('#modal .body').innerHTML = '<p class="err">' + esc(err.message) + '</p>'; return; }
+  const w = can('finance:write');
+  $('#modal h3').textContent = 'Gasto ' + e.number;
+  const row = (l, v) => v ? `<div class="kv"><span>${l}</span><b>${v}</b></div>` : '';
+  $('#modal .body').innerHTML = `
+    <div class="exp-detail">
+      <div>
+        <div class="fin-h"><h3 style="margin:0">${esc(e.supplier || e.description)}</h3><span class="tag ${STATUS_EXP[e.status][1]}">${STATUS_EXP[e.status][0]}</span></div>
+        <div class="kvs">
+          ${row('Fecha', dayFmt(e.date))}${row('Vence', e.due_date && Number(e.balance) > 0.004 ? dayFmt(e.due_date) : '')}
+          ${row('Categoría', esc(e.category))}${row('Concepto', esc(e.description))}
+          ${row('Documento', esc(e.doc_label + (e.doc_number ? ' · ' + e.doc_number : '')))}
+          ${row('Monto', fm(Number(e.subtotal)))}${Number(e.exempt) ? row('Exento', fm(e.exempt)) : ''}${Number(e.tax) ? row('IVA / impuesto', fm(e.tax)) : ''}
+          ${row('Total', fm(e.amount))}${Number(e.withholding) ? row('Retención de renta', '−' + fm(e.withholding)) : ''}
+          ${row('Pagado', fm(e.paid))}${Number(e.balance) > 0.004 ? row('Saldo', '<span class="neg">' + fm(e.balance) + '</span>') : ''}
+        </div>
+        ${e.payments.length ? `<h4>Pagos</h4><ul class="fin-list">${e.payments.map(p => `<li><span>${dayFmt(p.date)} · ${esc(accName(p.from_account))}${p.reference ? ' · ' + esc(p.reference) : ''}<span class="muted sm"> ${esc(p.number)}</span></span>
+          <span><b>${fm(p.amount)}</b>${w ? ` <button class="btn sm" data-voidpay="${esc(p.id)}">Anular</button>` : ''}</span></li>`).join('')}</ul>` : ''}
+        ${e.notes ? `<p class="muted sm">${esc(e.notes)}</p>` : ''}
+      </div>
+      <div class="exp-att">
+        ${e.attachment_url ? `<a class="btn" href="${esc(e.attachment_url)}" target="_blank" rel="noopener">${ICONS.clip} Ver comprobante</a>` : '<p class="muted sm">Sin comprobante.</p>'}
+        ${w && e.status !== 'anulado' ? `<label class="btn"><input type="file" id="attFile" accept="image/*,application/pdf" capture="environment" hidden>${e.attachment_url ? 'Cambiar comprobante' : ICONS.camera + ' Agregar foto o PDF'}</label>` : ''}
+      </div>
+    </div>
+    ${w && e.status !== 'anulado' ? `<div class="chips" style="margin-top:16px">
+      ${Number(e.balance) > 0.004 ? '<button class="btn primary" id="edPay">Registrar pago</button>' : ''}
+      <button class="btn" id="edEdit">Editar</button>
+      ${Number(e.paid) <= 0.004 ? '<button class="btn danger" id="edVoid">Anular</button>' : ''}</div>` : ''}`;
+  if ($('#edPay')) $('#edPay').onclick = () => openPayExpense(e);
+  if ($('#edEdit')) $('#edEdit').onclick = () => openExpense(e);
+  if ($('#edVoid')) $('#edVoid').onclick = async () => {
+    const why = prompt('¿Por qué anulas este gasto?'); if (why === null) return;
+    try { await api('apiFinVoidExpense', S.token, e.id, why); toast('Gasto anulado'); closeModal(true); finRefresh(); } catch (err) { toast(err.message, true); }
+  };
+  document.querySelectorAll('[data-voidpay]').forEach(b => b.onclick = async () => {
+    const why = prompt('¿Por qué anulas este pago? (vuelve a quedar por pagar)'); if (why === null) return;
+    try { await api('apiFinVoidMove', S.token, b.dataset.voidpay, why); toast('Pago anulado'); openExpenseDetail(e.id); finRefresh(); } catch (err) { toast(err.message, true); }
+  });
+  if ($('#attFile')) $('#attFile').onchange = async ev => {
+    const file = ev.target.files[0]; if (!file) return;
+    toast('Subiendo comprobante…');
+    try { await uploadReceipt(e.id, file); toast('Comprobante guardado en tu Google Drive'); openExpenseDetail(e.id); finRefresh(); } catch (err) { toast(err.message, true); }
+  };
+}
+
+function openPayExpense(e) {
+  const last = store2.get('nx_fin_payacc', (moneyAccts().find(a => a.system_key === 'bank') || {}).code);
+  openModal('Pagar ' + e.number, `
+    <p class="muted" style="margin-top:0">${esc(e.supplier || e.description)} · saldo <b>${fm(e.balance)}</b></p>
+    <form class="form fin1" id="payForm">
+      <div class="two"><div><label class="f">Monto</label><input class="input" name="amount" inputmode="decimal" value="${Number(e.balance).toFixed(2)}"></div>
+        <div><label class="f">Fecha</label><input class="input" type="date" name="date" value="${finToday()}"></div></div>
+      <div><label class="f">Pagado desde</label>${accSelect('account', last, a => !!a.money_kind)}</div>
+      <div><label class="f">Referencia</label><input class="input" name="reference" placeholder="N.º de transferencia o cheque"></div>
+    </form>`, async () => {
+    const f = $('#payForm');
+    await api('apiFinPayExpense', S.token, e.id, { amount: numIn(f.amount.value), date: f.date.value, account: f.account.value, reference: f.reference.value });
+    store2.set('nx_fin_payacc', f.account.value);
+    toast('Pago registrado'); finRefresh();
+  }, 'Registrar pago');
+}
+
+function finRefresh() { swrClear(); if (S.view === 'finance') viewFinance(); }
+
+/* ---------- Proveedores ---------- */
+
+async function openSuppliers() {
+  openModal('Proveedores', '<div class="empty">Cargando…</div>', null, null, true);
+  const draw = async () => {
+    let list;
+    try { list = await api('apiFinSuppliers', S.token, ''); } catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+    $('#modal .body').innerHTML = `${can('finance:write') ? '<button class="btn primary" id="supNew" style="margin-bottom:12px">Nuevo proveedor</button>' : ''}
+      ${list.length ? `<div class="tablewrap"><table><thead><tr><th>Proveedor</th><th class="hide-sm">NIT / NRC</th><th class="num">Le debes</th></tr></thead><tbody>
+        ${list.map(s => `<tr class="click" data-id="${esc(s.id)}"><td><b>${esc(s.name)}</b><div class="muted sm">${esc([s.phone, s.email].filter(String).join(' · '))}</div></td>
+          <td class="hide-sm">${esc([s.tax_id, s.nrc].filter(String).join(' / '))}</td><td class="num">${s.owed ? fm(s.owed) : '—'}</td></tr>`).join('')}</tbody></table></div>`
+        : '<div class="empty">Aún no hay proveedores. Se crean solos al registrar un gasto con su nombre.</div>'}`;
+    if ($('#supNew')) $('#supNew').onclick = () => editSupplier({}, draw);
+    document.querySelectorAll('#modal tr[data-id]').forEach(tr => tr.onclick = () => editSupplier(list.find(s => s.id === tr.dataset.id), draw));
+  };
+  draw();
+}
+
+function editSupplier(s, after) {
+  const box = $('#modal .body');
+  box.innerHTML = `<form class="form fin1" id="supForm">
+    <div class="two"><div><label class="f">Nombre</label><input class="input" name="name" value="${esc(s.name || '')}"></div>
+      <div><label class="f">Tipo</label><select class="input" name="kind">${[['contribuyente', 'Contribuyente (empresa)'], ['persona', 'Persona natural'], ['exterior', 'Del exterior']].map(o => `<option value="${o[0]}" ${s.kind === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
+    <div class="three"><div><label class="f">NIT</label><input class="input" name="tax_id" value="${esc(s.tax_id || '')}"></div><div><label class="f">NRC</label><input class="input" name="nrc" value="${esc(s.nrc || '')}"></div>
+      <div><label class="f">Días de crédito</label><input class="input" name="terms_days" inputmode="numeric" value="${esc(s.terms_days || '')}" placeholder="0"></div></div>
+    <div><label class="f">Giro o actividad</label><input class="input" name="giro" value="${esc(s.giro || '')}"></div>
+    <div class="three"><div><label class="f">Contacto</label><input class="input" name="contact" value="${esc(s.contact || '')}"></div><div><label class="f">Teléfono</label><input class="input" name="phone" value="${esc(s.phone || '')}"></div>
+      <div><label class="f">Correo</label><input class="input" name="email" type="email" value="${esc(s.email || '')}"></div></div>
+    <div><label class="f">Categoría usual</label>${accSelect('default_account', s.default_account || '', isExpenseAcc, '—')}<div class="hint">Se pone sola al registrar un gasto de este proveedor.</div></div>
+    <div><label class="f">Dirección</label><input class="input" name="address" value="${esc(s.address || '')}"></div>
+    <div class="chips"><button class="btn primary" type="submit">Guardar</button><button class="btn" type="button" id="supBack">Volver</button></div>
+    <div class="err" id="supErr"></div></form>`;
+  $('#supBack').onclick = after;
+  $('#supForm').onsubmit = async ev => {
+    ev.preventDefault();
+    const f = ev.target;
+    const data = { id: s.id }; ['name', 'kind', 'tax_id', 'nrc', 'terms_days', 'giro', 'contact', 'phone', 'email', 'default_account', 'address'].forEach(k => { data[k] = f[k].value; });
+    try { await api('apiFinSaveSupplier', S.token, data); toast('Proveedor guardado'); after(); } catch (e) { $('#supErr').textContent = e.message; }
+  };
+}
+
+/* ---------- Recurrentes ---------- */
+
+async function openRecurringList() {
+  openModal('Gastos recurrentes', '<div class="empty">Cargando…</div>', null, null, true);
+  let list;
+  try { list = await api('apiFinRecurring', S.token); } catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+  const w = can('finance:write');
+  $('#modal .body').innerHTML = `<p class="muted" style="margin-top:0">Se registran solos el día que toca. Si no se pagan solos, te avisamos por correo unos días antes.</p>
+    ${list.length ? `<ul class="fin-list rec-list">${list.map(r => `<li><span><b>${esc(r.name)}</b><span class="muted sm"> · ${esc(r.frequency_label)} · próximo ${dayFmt(r.next_date)}${r.supplier ? ' · ' + esc(r.supplier) : ''}</span>
+        ${r.status === 'pausado' ? '<span class="tag">Pausado</span>' : r.auto_pay ? '<span class="tag activo">Se paga solo</span>' : ''}</span>
+        <span><b>${fm(r.total)}</b>${w ? ` <button class="btn sm" data-tog="${esc(r.id)}">${r.status === 'pausado' ? 'Reanudar' : 'Pausar'}</button> <button class="btn sm danger" data-del="${esc(r.id)}">Quitar</button>` : ''}</span></li>`).join('')}</ul>`
+      : '<div class="empty">Para crear uno, registra un gasto y marca <b>Se repite</b>.</div>'}`;
+  document.querySelectorAll('[data-tog]').forEach(b => b.onclick = async () => {
+    const r = list.find(x => x.id === b.dataset.tog);
+    try { await api('apiFinSaveRecurring', S.token, Object.assign({}, r, { status: r.status === 'pausado' ? 'activo' : 'pausado' })); openRecurringList(); } catch (e) { toast(e.message, true); }
+  });
+  document.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+    if (!confirm('¿Dejar de repetir este gasto? Los ya registrados se quedan.')) return;
+    try { await api('apiFinDeleteRecurring', S.token, b.dataset.del); openRecurringList(); } catch (e) { toast(e.message, true); }
+  });
+}
+
+/* ---------- Por pagar / por cobrar ---------- */
+
+async function finPayables() {
+  await apiFresh('apiFinPayables', [], d => {
+    if (!finActive('pagar')) return;
+    const w = can('finance:write');
+    $('#finBody').innerHTML = `
+      <div class="grid kpis fin-kpis"><div class="card pad kpi"><div class="l">Total por pagar</div><div class="v m">${fm(d.total)}</div><div class="hint">${d.rows.length} documento(s)</div></div>
+        <div class="card pad kpi"><div class="l">Vencido</div><div class="v m ${d.rows.some(r => r.days_late > 0) ? 'bad' : ''}">${fm(d.rows.filter(r => r.days_late > 0).reduce((s, r) => s + Number(r.balance), 0))}</div></div></div>
+      ${d.rows.length ? `<div class="card pad">${agingBar(d.aging)}</div>` : ''}
+      <div class="card tablewrap" style="margin-top:12px">${d.rows.length ? `<table class="fin-table"><thead><tr><th>Vence</th><th>Proveedor</th><th class="hide-sm">Documento</th><th class="num">Saldo</th><th></th></tr></thead><tbody>
+        ${d.rows.map(e => `<tr><td class="nowrap">${dayFmt(e.due_date)}<div class="sm ${e.days_late > 0 ? 'neg' : 'muted'}">${e.days_late > 0 ? 'hace ' + e.days_late + ' día(s)' : e.days_late === 0 ? 'hoy' : 'en ' + (-e.days_late) + ' día(s)'}</div></td>
+          <td class="click" data-id="${esc(e.id)}"><b>${esc(e.supplier || e.description)}</b><div class="muted sm">${esc(e.number + ' · ' + e.description)}</div></td>
+          <td class="hide-sm">${esc(e.doc_label)}${e.doc_number ? ' · ' + esc(e.doc_number) : ''}</td><td class="num"><b>${fm(e.balance)}</b>${Number(e.paid) > 0 ? '<div class="muted sm">de ' + fm(Number(e.amount) - Number(e.withholding || 0)) + '</div>' : ''}</td>
+          <td class="num">${w ? `<button class="btn sm primary" data-pay="${esc(e.id)}">Pagar</button>` : ''}</td></tr>`).join('')}</tbody></table>` : '<div class="empty">No debes nada. 🎉</div>'}</div>
+      ${d.upcoming.length ? `<div class="card pad" style="margin-top:12px"><div class="fin-h"><h3>Recurrentes en los próximos 45 días</h3><button class="btn sm" id="pRec">Administrar</button></div>
+        <ul class="fin-list">${d.upcoming.map(r => `<li><span>${dayFmt(r.date)} · ${esc(r.name)}${r.auto_pay ? ' <span class="tag activo">se paga solo</span>' : ''}</span><b>${fm(r.amount)}</b></li>`).join('')}</ul></div>` : ''}`;
+    $('#finBody').querySelectorAll('[data-pay]').forEach(b => b.onclick = () => openPayExpense(d.rows.find(r => r.id === b.dataset.pay)));
+    $('#finBody').querySelectorAll('td[data-id]').forEach(td => td.onclick = () => openExpenseDetail(td.dataset.id));
+    if ($('#pRec')) $('#pRec').onclick = openRecurringList;
+  });
+}
+
+async function finReceivables() {
+  await apiFresh('apiFinReceivables', [], d => {
+    if (!finActive('cobrar')) return;
+    const w = can('finance:write');
+    $('#finBody').innerHTML = `
+      <div class="grid kpis fin-kpis"><div class="card pad kpi"><div class="l">Te deben</div><div class="v m">${fm(d.total)}</div><div class="hint">${d.rows.length} venta(s)</div></div>
+        <div class="card pad kpi"><div class="l">Más de 30 días</div><div class="v m ${d.aging['31-60'] + d.aging['61-90'] + d.aging['+90'] > 0 ? 'warn' : ''}">${fm(d.aging['31-60'] + d.aging['61-90'] + d.aging['+90'])}</div></div></div>
+      ${d.rows.length ? `<div class="card pad">${agingBar(d.aging)}</div>` : ''}
+      <div class="card tablewrap" style="margin-top:12px">${d.rows.length ? `<table class="fin-table"><thead><tr><th>Venta</th><th>Cliente</th><th class="num">Saldo</th><th></th></tr></thead><tbody>
+        ${d.rows.map(r => `<tr><td class="nowrap"><b>${esc(r.number)}</b><div class="muted sm">${dayFmt(r.date)} · ${r.days} día(s)</div></td><td>${esc(r.customer_name)}<div class="muted sm">${esc(r.source || '')}</div></td>
+          <td class="num"><b>${fm(r.balance)}</b>${r.paid ? '<div class="muted sm">de ' + fm(r.total) + '</div>' : ''}</td><td class="num">${w ? `<button class="btn sm primary" data-col="${esc(r.id)}">Cobrar</button>` : ''}</td></tr>`).join('')}</tbody></table>`
+        : '<div class="empty">Nadie te debe por ahora.</div>'}</div>`;
+    $('#finBody').querySelectorAll('[data-col]').forEach(b => b.onclick = () => openCollect(d.rows.find(r => r.id === b.dataset.col)));
+  });
+}
+
+function openCollect(r) {
+  const last = store2.get('nx_fin_colacc', (moneyAccts().find(a => a.system_key === 'bank') || {}).code);
+  openModal('Cobrar ' + r.number, `<p class="muted" style="margin-top:0">${esc(r.customer_name)} · saldo <b>${fm(r.balance)}</b></p>
+    <form class="form fin1" id="colForm">
+      <div class="two"><div><label class="f">Monto</label><input class="input" name="amount" inputmode="decimal" value="${Number(r.balance).toFixed(2)}"></div>
+        <div><label class="f">Fecha</label><input class="input" type="date" name="date" value="${finToday()}"></div></div>
+      <div><label class="f">Entró a</label>${accSelect('account', last, a => !!a.money_kind && a.money_kind !== 'tarjeta')}</div>
+      <div><label class="f">Referencia</label><input class="input" name="reference" placeholder="N.º de transferencia, recibo…"></div>
+    </form>`, async () => {
+    const f = $('#colForm');
+    await api('apiFinCollect', S.token, r.id, { amount: numIn(f.amount.value), date: f.date.value, account: f.account.value, reference: f.reference.value });
+    store2.set('nx_fin_colacc', f.account.value);
+    toast('Cobro registrado'); finRefresh();
+  }, 'Registrar cobro');
+}
+
+/* ---------- Cuentas de dinero ---------- */
+
+async function finAccounts() {
+  await apiFresh('apiFinMoney', [], d => {
+    if (!finActive('cuentas')) return;
+    const w = can('finance:write');
+    const icon = { efectivo: '💵', banco: '🏦', pasarela: '💳', tarjeta: '🧾' };
+    $('#finBody').innerHTML = `
+      <div class="fin-h" style="margin-bottom:12px"><div><span class="muted">Disponible en total</span> <b class="fin-total">${fm(d.total)}</b></div>
+        ${w ? '<div class="chips"><button class="btn" id="acNew">Nueva cuenta</button><button class="btn primary" id="acMove">Mover dinero</button></div>' : ''}</div>
+      <div class="acc-cards">${d.accounts.map(a => `<button class="card pad acc-card" data-code="${esc(a.code)}">
+        <div class="acc-top"><span class="acc-ic" aria-hidden="true">${icon[a.kind] || '•'}</span><span><b>${esc(a.name)}</b><span class="muted sm">${esc(a.kind_label)}${a.bank ? ' · ' + esc(a.bank) : ''}${a.number_hint ? ' · …' + esc(a.number_hint) : ''}</span></span></div>
+        <div class="acc-bal ${a.balance < 0 ? 'neg' : ''}">${a.debt ? '<span class="muted sm">Debes </span>' : ''}${fm(a.balance)}</div>
+        <div class="acc-io muted sm"><span>↓ ${fm(a.in_month)}</span><span>↑ ${fm(a.out_month)}</span><span>este mes</span></div></button>`).join('')}</div>`;
+    $('#finBody').querySelectorAll('[data-code]').forEach(b => b.onclick = () => openLedger(b.dataset.code));
+    if ($('#acNew')) $('#acNew').onclick = openNewAccount;
+    if ($('#acMove')) $('#acMove').onclick = () => openMoneyMove();
+  });
+}
+
+function openNewAccount() {
+  openModal('Nueva cuenta de dinero', `<form class="form fin1" id="naForm">
+    <div><label class="f">Tipo</label><select class="input" name="money_kind"><option value="banco">Cuenta de banco</option><option value="efectivo">Caja (efectivo)</option><option value="pasarela">Pasarela o billetera (PayPal, Tigo Money…)</option><option value="tarjeta">Tarjeta de crédito</option></select></div>
+    <div><label class="f">Nombre</label><input class="input" name="name" placeholder="Ej. Banco Agrícola corriente"></div>
+    <div class="two"><div><label class="f">Banco o empresa</label><input class="input" name="bank"></div><div><label class="f">Últimos 4 dígitos</label><input class="input" name="number_hint" maxlength="4" inputmode="numeric"></div></div>
+  </form>`, async () => {
+    const f = $('#naForm');
+    const parent = f.money_kind.value === 'tarjeta' ? '2102' : '1101';
+    await api('apiFinSaveAccount', S.token, { parent: parent, money_kind: f.money_kind.value, name: f.name.value, bank: f.bank.value, number_hint: f.number_hint.value });
+    toast('Cuenta creada'); finReload(); finRefresh();
+  }, 'Crear cuenta');
+}
+
+function openMoneyMove(type) {
+  const t = type || 'transferencia';
+  const types = FIN.cfg ? FIN.cfg.move_types : {};
+  const opts = Object.keys(types).filter(k => k !== 'pago_gasto');
+  openModal('Mover dinero', `<form class="form fin1" id="mvForm">
+    <div><label class="f">¿Qué pasó?</label><select class="input" name="type">${opts.map(k => `<option value="${k}" ${k === t ? 'selected' : ''}>${esc(types[k])}</option>`).join('')}</select></div>
+    <div class="two"><div id="mvFrom"><label class="f">Sale de</label>${accSelect('from_account', '', a => !!a.money_kind)}</div>
+      <div id="mvTo"><label class="f">Entra a</label>${accSelect('to_account', '', a => !!a.money_kind)}</div></div>
+    <div class="two"><div><label class="f">Monto</label><input class="input" name="amount" inputmode="decimal" placeholder="0.00"></div>
+      <div><label class="f">Fecha</label><input class="input" type="date" name="date" value="${finToday()}"></div></div>
+    <div id="mvFee"><label class="f">Comisión cobrada</label><input class="input" name="fee" inputmode="decimal" placeholder="0.00"><div class="hint">Lo que te cobró el banco o la pasarela por el movimiento.</div></div>
+    <div id="mvCounter"><label class="f">Categoría</label>${accSelect('counter_account', '', a => a.type === 'ingreso' || a.type === 'gasto' || a.type === 'pasivo' && !a.money_kind, 'La de siempre')}</div>
+    <div class="two"><div><label class="f">Quién</label><input class="input" name="party_name" placeholder="Socio, banco…"></div><div><label class="f">Referencia</label><input class="input" name="reference"></div></div>
+    <div><label class="f">Nota</label><input class="input" name="notes"></div>
+  </form>`, async () => {
+    const f = $('#mvForm');
+    const data = { type: f.type.value, amount: numIn(f.amount.value), fee: numIn(f.fee.value), date: f.date.value, party_name: f.party_name.value, reference: f.reference.value, notes: f.notes.value };
+    if (!$('#mvFrom').hidden) data.from_account = f.from_account.value;
+    if (!$('#mvTo').hidden) data.to_account = f.to_account.value;
+    if (!$('#mvCounter').hidden && f.counter_account.value) data.counter_account = f.counter_account.value;
+    await api('apiFinSaveMove', S.token, data);
+    toast('Movimiento registrado'); finRefresh();
+  }, 'Registrar');
+  const f = $('#mvForm');
+  const sync = () => {
+    const ty = f.type.value, incoming = ['aporte', 'prestamo', 'otro_ingreso'].indexOf(ty) >= 0;
+    $('#mvFrom').hidden = incoming; $('#mvTo').hidden = !incoming && ty !== 'transferencia';
+    $('#mvFee').hidden = incoming; $('#mvCounter').hidden = ty !== 'otro_ingreso' && ty !== 'otro_egreso';
+  };
+  f.type.onchange = sync; sync();
+}
+
+async function openLedger(code, from, to) {
+  openModal(accName(code), '<div class="empty">Cargando…</div>', null, null, true);
+  const r = finRange();
+  from = from || r.from; to = to || r.to;
+  let d;
+  try { d = await api('apiFinLedger', S.token, code, from, to); } catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+  $('#modal .body').innerHTML = `${rangePicker('lg', from, to)}
+    <div class="fin-sum muted">Saldo al ${dayFmt(from)}: <b>${fm(d.opening)}</b> · entradas ${fm(d.debit)} · salidas ${fm(d.credit)} · saldo al ${dayFmt(to)}: <b>${fm(d.closing)}</b></div>
+    <div class="tablewrap">${d.rows.length ? `<table class="fin-table"><thead><tr><th>Fecha</th><th>Concepto</th><th class="num">Debe</th><th class="num">Haber</th><th class="num">Saldo</th></tr></thead><tbody>
+      ${d.rows.map(x => `<tr><td class="nowrap">${dayFmt(x.date)}<div class="muted sm">${esc(x.number)}</div></td><td>${esc(x.description)}${x.party ? '<div class="muted sm">' + esc(x.party) + '</div>' : ''}</td>
+        <td class="num">${x.debit ? fm(x.debit) : ''}</td><td class="num">${x.credit ? fm(x.credit) : ''}</td><td class="num"><b>${fm(x.balance)}</b></td></tr>`).join('')}</tbody></table>` : '<div class="empty">Sin movimientos en estas fechas.</div>'}</div>
+    <div class="chips" style="margin-top:12px"><button class="btn" id="lgCsv">Descargar (Excel/CSV)</button></div>`;
+  bindRange('lg', (a, b) => openLedger(code, a, b));
+  $('#lgCsv').onclick = () => downloadCsv('Mayor ' + d.code + ' ' + d.name + ' ' + from + ' a ' + to, ['Fecha', 'Partida', 'Concepto', 'Tercero', 'Debe', 'Haber', 'Saldo'],
+    d.rows.map(x => [x.date, x.number, x.description, x.party, x.debit, x.credit, x.balance]));
+}
+
+/* ---------- Fechas de los reportes ---------- */
+
+function finRange() {
+  if (FIN.range) return FIN.range;
+  const t = finToday();
+  return (FIN.range = { from: t.slice(0, 8) + '01', to: t });
+}
+function rangePresets() {
+  const t = finToday(), y = Number(t.slice(0, 4)), m = Number(t.slice(5, 7));
+  const pad = n => String(n).padStart(2, '0');
+  const lastDay = (yy, mm) => new Date(yy, mm, 0).getDate();
+  const pm = m === 1 ? [y - 1, 12] : [y, m - 1];
+  const fy = (FIN.cfg && FIN.cfg.fiscal_start) || '01';
+  const fyStart = (Number(fy) <= m ? y : y - 1) + '-' + fy + '-01';
+  const ago = new Date(y, m - 12, 1);
+  return [['Este mes', t.slice(0, 8) + '01', t], ['Mes anterior', pm[0] + '-' + pad(pm[1]) + '-01', pm[0] + '-' + pad(pm[1]) + '-' + lastDay(pm[0], pm[1])],
+    ['Este año', fyStart, t], ['Últimos 12 meses', ago.getFullYear() + '-' + pad(ago.getMonth() + 1) + '-01', t]];
+}
+function rangePicker(id, from, to, single) {
+  if (single) return `<div class="toolbar fin-tools"><label class="muted sm" for="${id}At">Al</label><input class="input" type="date" id="${id}At" value="${esc(to)}" style="max-width:180px"></div>`;
+  return `<div class="toolbar fin-tools"><div class="chips">${rangePresets().map(p => `<button class="btn sm ${p[1] === from && p[2] === to ? 'primary' : ''}" data-rg="${p[1]}|${p[2]}">${p[0]}</button>`).join('')}</div>
+    <input class="input" type="date" id="${id}From" value="${esc(from)}" aria-label="Desde" style="max-width:170px"><span class="muted">a</span><input class="input" type="date" id="${id}To" value="${esc(to)}" aria-label="Hasta" style="max-width:170px"></div>`;
+}
+function bindRange(id, fn, single) {
+  if (single) { $('#' + id + 'At').onchange = ev => fn(ev.target.value); return; }
+  document.querySelectorAll('[data-rg]').forEach(b => b.onclick = () => { const [a, c] = b.dataset.rg.split('|'); FIN.range = { from: a, to: c }; fn(a, c); });
+  const ch = () => { const a = $('#' + id + 'From').value, c = $('#' + id + 'To').value; if (a && c && a <= c) { FIN.range = { from: a, to: c }; fn(a, c); } };
+  $('#' + id + 'From').onchange = ch; $('#' + id + 'To').onchange = ch;
+}
+
+function downloadCsv(name, head, rows) {
+  const cell = v => { const s = v === null || v === undefined ? '' : typeof v === 'number' ? String(v).replace('.', ',') : String(v); return /[";\n,]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const csv = '﻿' + [head].concat(rows).map(r => r.map(cell).join(';')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = name.replace(/[\\/:*?"<>|]/g, '-') + '.csv';
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+function printReport(title, html) {
+  let area = $('#printArea');
+  if (!area) { area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+  area.className = 'report-print';
+  const biz = S.boot.tenant.legal_name || S.boot.tenant.name;
+  area.innerHTML = `<div class="rp"><div class="rp-h"><b>${esc(biz)}</b>${S.boot.tenant.tax_id ? '<span>NIT ' + esc(S.boot.tenant.tax_id) + '</span>' : ''}<h1>${esc(title)}</h1></div>${html}</div>`;
+  let ps = $('#printPage');
+  if (!ps) { ps = document.createElement('style'); ps.id = 'printPage'; document.head.appendChild(ps); }
+  ps.textContent = '@page { size: letter; margin: 14mm; }';
+  document.body.classList.add('printing');
+  const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  setTimeout(() => window.print(), 60);
+}
+
+/* ---------- Reportes ---------- */
+
+async function finReports() {
+  const tabs = [['resultados', 'Estado de resultados'], ['balance', 'Balance general'], ['flujo', 'Flujo de efectivo']];
+  $('#finBody').innerHTML = `<div class="chips fin-sub" role="tablist">${tabs.map(t => `<button class="btn sm ${FIN.rep === t[0] ? 'primary' : ''}" data-rep="${t[0]}">${t[1]}</button>`).join('')}</div><div id="repBody"><div class="empty">Cargando…</div></div>`;
+  $('#finBody').querySelectorAll('[data-rep]').forEach(b => b.onclick = () => { FIN.rep = b.dataset.rep; finReports(); });
+  const r = finRange();
+  if (FIN.rep === 'resultados') return repIncome(r.from, r.to);
+  if (FIN.rep === 'balance') return repBalance(r.to);
+  return repCashFlow(r.from, r.to);
+}
+
+async function repIncome(from, to) {
+  const byMonth = !!FIN.byMonth;
+  const d = await api('apiFinIncome', S.token, from, to, byMonth);
+  if (!finActive('reportes')) return;
+  const T = d.totals;
+  const sec = (title, rows, total, sign) => rows.length ? `<tr class="rp-sec"><td colspan="${byMonth ? d.months.length + 2 : 2}">${title}</td></tr>
+    ${rows.map(r => `<tr class="click" data-code="${esc(r.code)}"><td class="rp-acc">${esc(r.name)}</td>${byMonth ? d.months.map(m => `<td class="num">${fmZ(r.months[m.month] * sign)}</td>`).join('') : ''}<td class="num">${fmZ(r.total * sign)}</td></tr>`).join('')}
+    ${total ? `<tr class="rp-sub"><td>Total ${title.toLowerCase()}</td>${byMonth ? d.months.map(m => `<td class="num">${fmZ(total[1](m))}</td>`).join('') : ''}<td class="num">${fmZ(total[0])}</td></tr>` : ''}` : '';
+  const line = (label, key, cls) => `<tr class="${cls || 'rp-tot'}"><td>${label}</td>${byMonth ? d.months.map(m => `<td class="num ${m[key] < 0 ? 'neg' : ''}">${fmZ(m[key])}</td>`).join('') : ''}<td class="num ${T[key] < 0 ? 'neg' : ''}">${fmZ(T[key])}</td></tr>`;
+  const isOther = r => r.code.indexOf('42') === 0, isFin = r => r.code.indexOf('62') === 0 || r.code.indexOf('63') === 0;
+  const rows = d.rows;
+  const table = `<table class="rp-table"><thead><tr><th></th>${byMonth ? d.months.map(m => `<th class="num">${esc(monthName(m.month))}</th>`).join('') : ''}<th class="num">${byMonth ? 'Total' : esc(dayFmt(from) + ' – ' + dayFmt(to))}</th></tr></thead><tbody>
+    ${sec('Ingresos', rows.filter(r => r.type === 'ingreso' && !isOther(r)), [T.sales, m => m.sales], 1)}
+    ${sec('Costo de ventas', rows.filter(r => r.type === 'costo'), [T.cost, m => m.cost], 1)}
+    ${line('Utilidad bruta', 'gross')}
+    ${sec('Gastos de operación', rows.filter(r => r.type === 'gasto' && !isFin(r)), [T.opex, m => m.opex], 1)}
+    ${line('Utilidad de operación', 'operating')}
+    ${sec('Otros ingresos', rows.filter(r => r.type === 'ingreso' && isOther(r)), null, 1)}
+    ${sec('Gastos financieros e impuestos', rows.filter(r => r.type === 'gasto' && isFin(r)), null, 1)}
+    ${line('Utilidad neta', 'net', 'rp-net')}
+  </tbody></table>`;
+  $('#repBody').innerHTML = `${rangePicker('is', from, to)}
+    <div class="chips" style="margin:-4px 0 10px"><label class="chk"><input type="checkbox" id="isMonth" ${byMonth ? 'checked' : ''}> Ver por mes</label></div>
+    <div class="grid kpis fin-kpis"><div class="card pad kpi"><div class="l">Ventas</div><div class="v m">${fm(T.sales)}</div></div>
+      <div class="card pad kpi"><div class="l">Utilidad bruta</div><div class="v m">${fm(T.gross)}</div><div class="hint">margen ${T.gross_margin.toFixed(1)} %</div></div>
+      <div class="card pad kpi"><div class="l">Gastos</div><div class="v m">${fm(T.opex + T.financial)}</div></div>
+      <div class="card pad kpi"><div class="l">Utilidad neta</div><div class="v m ${T.net < 0 ? 'bad' : 'good'}">${fm(T.net)}</div><div class="hint">margen ${T.net_margin.toFixed(1)} %</div></div></div>
+    <div class="card tablewrap rp-card">${rows.length ? table : '<div class="empty">Sin movimientos en estas fechas.</div>'}</div>
+    <div class="chips" style="margin-top:12px"><button class="btn" id="isPrint">Imprimir o PDF</button><button class="btn" id="isCsv">Descargar (Excel/CSV)</button></div>`;
+  bindRange('is', (a, b) => repIncome(a, b));
+  $('#isMonth').onchange = ev => { FIN.byMonth = ev.target.checked; repIncome(from, to); };
+  $('#repBody').querySelectorAll('tr[data-code]').forEach(tr => tr.onclick = () => openLedger(tr.dataset.code, from, to));
+  $('#isPrint').onclick = () => printReport('Estado de resultados del ' + dayFmt(from) + ' al ' + dayFmt(to), table);
+  $('#isCsv').onclick = () => downloadCsv('Estado de resultados ' + from + ' a ' + to, ['Cuenta', 'Nombre', 'Tipo'].concat(byMonth ? d.months.map(m => m.month) : []).concat(['Total']),
+    rows.map(r => [r.code, r.name, r.type].concat(byMonth ? d.months.map(m => r.months[m.month] || 0) : []).concat([r.total]))
+      .concat([['', 'Utilidad bruta', ''].concat(byMonth ? d.months.map(m => m.gross) : []).concat([T.gross]), ['', 'Utilidad neta', ''].concat(byMonth ? d.months.map(m => m.net) : []).concat([T.net])]));
+}
+const fmZ = v => (!v ? '—' : fm(v));
+
+async function repBalance(at) {
+  const d = await api('apiFinBalance', S.token, at);
+  if (!finActive('reportes')) return;
+  const group = rows => {
+    const g = {}; rows.forEach(r => { (g[r.group_name || ''] = g[r.group_name || ''] || []).push(r); });
+    return Object.keys(g).map(k => `${k ? `<tr class="rp-grp"><td colspan="2">${esc(k)}</td></tr>` : ''}${g[k].map(r => `<tr ${r.code ? `class="click" data-code="${esc(r.code)}"` : ''}><td class="rp-acc">${esc(r.name)}</td><td class="num ${r.balance < 0 ? 'neg' : ''}">${fm(r.balance)}</td></tr>`).join('')}`).join('');
+  };
+  const col = (title, rows, total) => `<table class="rp-table"><thead><tr><th>${title}</th><th></th></tr></thead><tbody>${group(rows)}<tr class="rp-tot"><td>Total ${title.toLowerCase()}</td><td class="num">${fm(total)}</td></tr></tbody></table>`;
+  const html = `<div class="bs-grid"><div>${col('Activo', d.assets, d.total_assets)}</div><div>${col('Pasivo', d.liabilities, d.total_liabilities)}${col('Patrimonio', d.equity, d.total_equity)}
+    <table class="rp-table"><tbody><tr class="rp-net"><td>Pasivo + patrimonio</td><td class="num">${fm(d.total_liabilities + d.total_equity)}</td></tr></tbody></table></div></div>`;
+  $('#repBody').innerHTML = `${rangePicker('bs', '', at, true)}
+    ${d.balanced ? '<div class="note ok-note">El balance cuadra: activo = pasivo + patrimonio.</div>' : `<div class="note">Hay una diferencia de ${fm(d.difference)}. Revisa los saldos iniciales en Contabilidad.</div>`}
+    <div class="card pad rp-card">${html}</div>
+    <div class="chips" style="margin-top:12px"><button class="btn" id="bsPrint">Imprimir o PDF</button><button class="btn" id="bsCsv">Descargar (Excel/CSV)</button></div>`;
+  bindRange('bs', a => { FIN.range = { from: finRange().from, to: a }; repBalance(a); }, true);
+  $('#repBody').querySelectorAll('tr[data-code]').forEach(tr => tr.onclick = () => openLedger(tr.dataset.code, d.fiscal_start, at));
+  $('#bsPrint').onclick = () => printReport('Balance general al ' + dayFmt(at), html);
+  $('#bsCsv').onclick = () => downloadCsv('Balance general ' + at, ['Sección', 'Cuenta', 'Nombre', 'Saldo'],
+    [].concat(d.assets.map(r => ['Activo', r.code, r.name, r.balance]), d.liabilities.map(r => ['Pasivo', r.code, r.name, r.balance]), d.equity.map(r => ['Patrimonio', r.code, r.name, r.balance])));
+}
+
+async function repCashFlow(from, to) {
+  const d = await api('apiFinCashFlow', S.token, from, to);
+  if (!finActive('reportes')) return;
+  const html = `<table class="rp-table"><tbody>
+    <tr class="rp-tot"><td>Dinero al inicio</td><td class="num">${fm(d.opening)}</td><td></td></tr>
+    <tr class="rp-sec"><td>Movimientos</td><td class="num">Entró</td><td class="num">Salió</td></tr>
+    ${d.categories.map(c => `<tr><td class="rp-acc">${esc(c.name)}</td><td class="num">${c.in ? fm(c.in) : '—'}</td><td class="num">${c.out ? fm(c.out) : '—'}</td></tr>`).join('')}
+    <tr class="rp-sub"><td>Totales</td><td class="num">${fm(d.inflows)}</td><td class="num">${fm(d.outflows)}</td></tr>
+    <tr class="rp-net"><td>Dinero al final</td><td class="num">${fm(d.closing)}</td><td></td></tr></tbody></table>`;
+  $('#repBody').innerHTML = `${rangePicker('cf', from, to)}
+    <div class="grid kpis fin-kpis"><div class="card pad kpi"><div class="l">Entró</div><div class="v m good">${fm(d.inflows)}</div></div><div class="card pad kpi"><div class="l">Salió</div><div class="v m">${fm(d.outflows)}</div></div>
+      <div class="card pad kpi"><div class="l">Neto</div><div class="v m ${d.inflows - d.outflows < 0 ? 'bad' : 'good'}">${fm(d.inflows - d.outflows)}</div></div><div class="card pad kpi"><div class="l">Dinero hoy</div><div class="v m">${fm(d.closing)}</div></div></div>
+    <div class="fin-grid"><div class="card pad rp-card">${html}</div>
+      <div class="card pad"><h3>Próximos 30 días</h3><ul class="fin-list">
+        <li><span>Dinero al ${dayFmt(d.to)}</span><b>${fm(d.closing)}</b></li><li><span>+ Por cobrar</span><b>${fm(d.projection.receivable)}</b></li>
+        <li><span>− Por pagar que vence</span><b>${fm(d.projection.payable_30)}</b></li><li><span>− Gastos recurrentes</span><b>${fm(d.projection.recurring_30)}</b></li>
+        <li class="rp-net"><span>Quedaría</span><b class="${d.projection.expected < 0 ? 'neg' : ''}">${fm(d.projection.expected)}</b></li></ul>
+        ${d.months.length > 1 ? `<h3 style="margin-top:16px">Por mes</h3><ul class="fin-list">${d.months.map(m => `<li><span>${esc(monthName(m.month))}</span><span class="sm"><span class="good">+${fm(m.in)}</span> · −${fm(m.out)} · <b class="${m.net < 0 ? 'neg' : ''}">${fm(m.net)}</b></span></li>`).join('')}</ul>` : ''}</div></div>
+    <div class="chips" style="margin-top:12px"><button class="btn" id="cfPrint">Imprimir o PDF</button></div>`;
+  bindRange('cf', (a, b) => repCashFlow(a, b));
+  $('#cfPrint').onclick = () => printReport('Flujo de efectivo del ' + dayFmt(from) + ' al ' + dayFmt(to), html);
+}
+
+/* ---------- Contabilidad ---------- */
+
+async function finAccounting() {
+  const tabs = [['diario', 'Libro diario'], ['mayor', 'Libro mayor'], ['balanza', 'Balanza'], ['catalogo', 'Catálogo'], ['partida', 'Partida manual'], ['inicial', 'Saldos iniciales'], ['cierre', 'Cierre'], ['ajustes', 'Ajustes']]
+    .filter(t => can('finance:write') || ['diario', 'mayor', 'balanza', 'catalogo'].indexOf(t[0]) >= 0);
+  $('#finBody').innerHTML = `<div class="chips fin-sub" role="tablist">${tabs.map(t => `<button class="btn sm ${FIN.acct === t[0] ? 'primary' : ''}" data-ac="${t[0]}">${t[1]}</button>`).join('')}</div><div id="acBody"><div class="empty">Cargando…</div></div>`;
+  $('#finBody').querySelectorAll('[data-ac]').forEach(b => b.onclick = () => { FIN.acct = b.dataset.ac; finAccounting(); });
+  const r = finRange();
+  const fn = { diario: () => acJournal(r.from, r.to), mayor: () => acLedgerPick(), balanza: () => acTrial(r.from, r.to), catalogo: acChart, partida: () => acManual(), inicial: openOpeningInline, cierre: acClose, ajustes: acSettings }[FIN.acct];
+  await fn();
+}
+
+async function acJournal(from, to, q, src) {
+  const d = await api('apiFinJournal', S.token, { from: from, to: to, q: q || '', source_type: src || '', limit: 400 });
+  if (!finActive('contabilidad')) return;
+  $('#acBody').innerHTML = `${rangePicker('jr', from, to)}
+    <div class="toolbar fin-tools"><input class="input" id="jrQ" placeholder="Buscar partida o concepto…" value="${esc(q || '')}" style="flex:1"><select class="input" id="jrSrc" style="max-width:200px"><option value="">Todos los orígenes</option>${Object.keys(SRC_LABEL).map(k => `<option value="${k}" ${src === k ? 'selected' : ''}>${SRC_LABEL[k]}</option>`).join('')}</select></div>
+    <div class="fin-sum muted">${d.count} partida(s)${d.count > d.entries.length ? ' · se muestran las últimas ' + d.entries.length : ''}</div>
+    <div class="jr-list">${d.entries.map(j => `<div class="card jr ${j.status === 'anulado' ? 'void' : ''}"><div class="jr-h"><span><b>${esc(j.number)}</b> · ${dayFmt(j.date)} · <span class="tag">${esc(SRC_LABEL[j.source_type] || j.source_type)}</span></span>
+        ${can('finance:write') && (j.source_type === 'manual' || j.source_type === 'apertura') && j.status !== 'anulado' ? `<button class="btn sm danger" data-void="${esc(j.id)}">Anular</button>` : ''}</div>
+      <div class="jr-d">${esc(j.description)}${j.notes ? '<div class="muted sm">' + esc(j.notes) + '</div>' : ''}</div>
+      <table class="jr-t"><tbody>${j.lines.map(l => `<tr><td class="code">${esc(l.account)}</td><td class="${l.credit ? 'cr' : ''}">${esc(l.name)}${l.memo ? '<span class="muted sm"> · ' + esc(l.memo) + '</span>' : ''}</td><td class="num">${l.debit ? fm(l.debit) : ''}</td><td class="num">${l.credit ? fm(l.credit) : ''}</td></tr>`).join('')}</tbody></table></div>`).join('') || '<div class="card empty">Sin partidas en estas fechas.</div>'}</div>
+    <div class="chips" style="margin-top:12px"><button class="btn" id="jrCsv">Descargar (Excel/CSV)</button></div>`;
+  bindRange('jr', (a, b) => acJournal(a, b, q, src));
+  let t = null;
+  $('#jrQ').oninput = ev => { clearTimeout(t); t = setTimeout(() => acJournal(from, to, ev.target.value, src), 400); };
+  $('#jrSrc').onchange = ev => acJournal(from, to, q, ev.target.value);
+  $('#acBody').querySelectorAll('[data-void]').forEach(b => b.onclick = async () => {
+    const why = prompt('¿Por qué anulas esta partida?'); if (why === null) return;
+    try { await api('apiFinVoidEntry', S.token, b.dataset.void, why); toast('Partida anulada'); acJournal(from, to, q, src); } catch (e) { toast(e.message, true); }
+  });
+  $('#jrCsv').onclick = () => downloadCsv('Libro diario ' + from + ' a ' + to, ['Partida', 'Fecha', 'Concepto', 'Cuenta', 'Nombre', 'Debe', 'Haber', 'Detalle'],
+    [].concat(...d.entries.filter(j => j.status !== 'anulado').map(j => j.lines.map(l => [j.number, j.date, j.description, l.account, l.name, l.debit, l.credit, l.memo]))));
+}
+
+function acLedgerPick() {
+  const r = finRange();
+  $('#acBody').innerHTML = `<div class="form fin1" style="max-width:520px"><div><label class="f">Cuenta</label>${accSelect('lgAcc', '', () => true, 'Elige una cuenta…').replace('name="lgAcc"', 'name="lgAcc" id="lgAcc"')}</div></div>`;
+  $('#lgAcc').onchange = ev => { if (ev.target.value) openLedger(ev.target.value, r.from, r.to); };
+}
+
+async function acTrial(from, to) {
+  const d = await api('apiFinTrial', S.token, from, to);
+  if (!finActive('contabilidad')) return;
+  const html = `<table class="rp-table"><thead><tr><th>Cuenta</th><th class="num">Saldo inicial</th><th class="num">Debe</th><th class="num">Haber</th><th class="num">Saldo deudor</th><th class="num">Saldo acreedor</th></tr></thead><tbody>
+    ${d.rows.map(r => `<tr class="click" data-code="${esc(r.code)}"><td><span class="code">${esc(r.code)}</span> ${esc(r.name)}</td><td class="num">${fmZ(r.opening)}</td><td class="num">${fmZ(r.debit)}</td><td class="num">${fmZ(r.credit)}</td><td class="num">${fmZ(r.closing_debit)}</td><td class="num">${fmZ(r.closing_credit)}</td></tr>`).join('')}
+    <tr class="rp-net"><td>Totales</td><td></td><td class="num">${fm(d.debit)}</td><td class="num">${fm(d.credit)}</td><td class="num">${fm(d.closing_debit)}</td><td class="num">${fm(d.closing_credit)}</td></tr></tbody></table>`;
+  $('#acBody').innerHTML = `${rangePicker('tb', from, to)}${d.balanced ? '<div class="note ok-note">La balanza cuadra.</div>' : '<div class="note">La balanza no cuadra: avísanos.</div>'}
+    <div class="card tablewrap rp-card">${html}</div>
+    <div class="chips" style="margin-top:12px"><button class="btn" id="tbPrint">Imprimir o PDF</button><button class="btn" id="tbCsv">Descargar (Excel/CSV)</button></div>`;
+  bindRange('tb', (a, b) => acTrial(a, b));
+  $('#acBody').querySelectorAll('tr[data-code]').forEach(tr => tr.onclick = () => openLedger(tr.dataset.code, from, to));
+  $('#tbPrint').onclick = () => printReport('Balanza de comprobación del ' + dayFmt(from) + ' al ' + dayFmt(to), html);
+  $('#tbCsv').onclick = () => downloadCsv('Balanza ' + from + ' a ' + to, ['Cuenta', 'Nombre', 'Saldo inicial', 'Debe', 'Haber', 'Saldo deudor', 'Saldo acreedor'], d.rows.map(r => [r.code, r.name, r.opening, r.debit, r.credit, r.closing_debit, r.closing_credit]));
+}
+
+async function acChart() {
+  FIN.chart = await api('apiFinChart', S.token);
+  if (!finActive('contabilidad')) return;
+  const w = can('finance:write');
+  const depth = c => (c.length <= 1 ? 0 : c.length <= 2 ? 1 : c.length <= 4 ? 2 : 3);
+  $('#acBody').innerHTML = `<p class="muted">Catálogo basado en NIIF para PYMES (El Salvador). Puedes agregar subcuentas en cualquier grupo y cambiar nombres. Las cuentas que usa el sistema no se pueden desactivar.</p>
+    <div class="card tablewrap"><table class="chart-t"><tbody>${FIN.chart.map(a => `<tr class="${a.is_group ? 'grp d' + depth(a.code) : ''} ${a.status === 'inactiva' ? 'off' : ''}">
+      <td class="code">${esc(a.code)}</td><td style="padding-left:${depth(a.code) * 14 + 8}px">${a.is_group ? '<b>' + esc(a.name) + '</b>' : esc(a.name)}${a.system_key ? ' <span class="tag" title="La usa el sistema">sistema</span>' : ''}${a.money_kind ? ' <span class="tag activo">dinero</span>' : ''}${a.status === 'inactiva' ? ' <span class="tag">inactiva</span>' : ''}</td>
+      <td class="num">${w ? (a.is_group ? `<button class="btn sm" data-add="${esc(a.code)}">+ Subcuenta</button>` : `<button class="btn sm" data-edit="${esc(a.code)}">Editar</button>`) : ''}</td></tr>`).join('')}</tbody></table></div>`;
+  $('#acBody').querySelectorAll('[data-add]').forEach(b => b.onclick = () => {
+    const parent = FIN.chart.find(a => a.code === b.dataset.add);
+    openModal('Nueva cuenta en ' + parent.name, `<form class="form fin1" id="chForm"><div><label class="f">Nombre</label><input class="input" name="name"></div></form>`, async () => {
+      const r = await api('apiFinSaveAccount', S.token, { parent: parent.code, name: $('#chForm').name.value });
+      toast('Cuenta ' + r.code + ' creada'); finReload(); await finLoadBase(); acChart();
+    }, 'Crear');
+  });
+  $('#acBody').querySelectorAll('[data-edit]').forEach(b => b.onclick = () => {
+    const a = FIN.chart.find(x => x.code === b.dataset.edit);
+    openModal('Cuenta ' + a.code, `<form class="form fin1" id="chForm"><div><label class="f">Nombre</label><input class="input" name="name" value="${esc(a.name)}"></div>
+      ${a.money_kind ? `<div class="two"><div><label class="f">Banco o empresa</label><input class="input" name="bank" value="${esc(a.bank)}"></div><div><label class="f">Últimos 4 dígitos</label><input class="input" name="number_hint" value="${esc(a.number_hint)}" maxlength="4"></div></div>` : ''}
+      ${a.system_key ? '' : `<label class="chk"><input type="checkbox" name="inactive" ${a.status === 'inactiva' ? 'checked' : ''}> Desactivar (ya no aparece en las listas)</label>`}</form>`, async () => {
+      const f = $('#chForm');
+      await api('apiFinSaveAccount', S.token, { code: a.code, name: f.name.value, bank: f.bank ? f.bank.value : '', number_hint: f.number_hint ? f.number_hint.value : '', status: f.inactive && f.inactive.checked ? 'inactiva' : 'activa' });
+      toast('Cuenta guardada'); finReload(); await finLoadBase(); acChart();
+    }, 'Guardar');
+  });
+}
+
+function acManual() {
+  const line = () => `<div class="pm-line">${accSelect('acc', '', () => true, 'Cuenta…')}<input class="input" name="debit" inputmode="decimal" placeholder="Debe"><input class="input" name="credit" inputmode="decimal" placeholder="Haber"><input class="input" name="memo" placeholder="Detalle"><button type="button" class="btn sm" data-rm aria-label="Quitar línea">✕</button></div>`;
+  $('#acBody').innerHTML = `<p class="muted">Para ajustes de tu contador: depreciaciones, provisiones, reclasificaciones. Lo del día a día (ventas, gastos, pagos) ya se registra solo.</p>
+    <form class="form fin1 card pad" id="pmForm" style="max-width:860px">
+      <div class="two"><div><label class="f">Fecha</label><input class="input" type="date" name="date" value="${finToday()}"></div><div><label class="f">Concepto</label><input class="input" name="description" placeholder="Ej. Depreciación de noviembre"></div></div>
+      <div class="pm-head"><span>Cuenta</span><span>Debe</span><span>Haber</span><span>Detalle</span><span></span></div>
+      <div id="pmLines">${line()}${line()}</div>
+      <div class="chips"><button type="button" class="btn sm" id="pmAdd">+ Línea</button><span class="muted sm" id="pmSum"></span></div>
+      <div class="chips"><button class="btn primary" type="submit">Registrar partida</button></div><div class="err" id="pmErr"></div></form>`;
+  const sum = () => {
+    let dd = 0, cc = 0;
+    document.querySelectorAll('.pm-line').forEach(l => { dd += numIn(l.querySelector('[name=debit]').value); cc += numIn(l.querySelector('[name=credit]').value); });
+    $('#pmSum').innerHTML = `Debe <b>${fm(dd)}</b> · Haber <b>${fm(cc)}</b> · ${Math.abs(dd - cc) < 0.005 && dd > 0 ? '<span class="good">cuadra</span>' : '<span class="neg">diferencia ' + fm(dd - cc) + '</span>'}`;
+  };
+  const bind = () => { document.querySelectorAll('.pm-line input').forEach(i => i.oninput = sum); document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { if (document.querySelectorAll('.pm-line').length > 2) { b.parentElement.remove(); sum(); } }); };
+  $('#pmAdd').onclick = () => { $('#pmLines').insertAdjacentHTML('beforeend', line()); bind(); };
+  bind(); sum();
+  $('#pmForm').onsubmit = async ev => {
+    ev.preventDefault();
+    const f = ev.target;
+    const lines = [...document.querySelectorAll('.pm-line')].map(l => ({ account: l.querySelector('[name=acc]').value, debit: numIn(l.querySelector('[name=debit]').value), credit: numIn(l.querySelector('[name=credit]').value), memo: l.querySelector('[name=memo]').value }));
+    try { const r = await api('apiFinManualEntry', S.token, { date: f.date.value, description: f.description.value, lines: lines }); toast('Partida ' + r.number + ' registrada'); FIN.acct = 'diario'; finAccounting(); }
+    catch (e) { $('#pmErr').textContent = e.message; }
+  };
+}
+
+function openOpening() { FIN.tab = 'contabilidad'; FIN.acct = 'inicial'; viewFinance(); }
+
+async function openOpeningInline() {
+  const cfg = FIN.cfg;
+  let tb = null;
+  try { tb = await api('apiFinTrial', S.token, '2000-01-01', finToday()); } catch (e) { /* sin saldos */ }
+  const grni = tb ? (tb.rows.find(r => r.code === '210102') || {}) : {};
+  const grniBal = grni.closing ? -grni.closing : 0;
+  const money = moneyAccts();
+  $('#acBody').innerHTML = `${cfg.has_opening ? '<div class="note">Ya registraste saldos iniciales. Si te faltó algo, puedes registrar otros (se suman) o anular la partida en el Libro diario.</div>' : ''}
+    <p class="muted">Escribe lo que tenías el día que empezaste a usar el sistema. Monto positivo = lo normal (dinero que tienes, deuda que debes).</p>
+    <form class="form fin1 card pad" id="obForm" style="max-width:720px">
+      <div><label class="f">Fecha de inicio</label><input class="input" type="date" name="date" value="${finToday().slice(0, 8)}01" style="max-width:200px"></div>
+      <h4>Dinero</h4>${money.map(a => `<div class="ob-row"><span>${esc(a.name)}${a.money_kind === 'tarjeta' ? ' <span class="muted sm">(lo que debías)</span>' : ''}</span><input class="input" inputmode="decimal" data-acc="${a.code}" placeholder="0.00"></div>`).join('')}
+      <h4>Lo que te debían y lo que debías</h4>
+      <div class="ob-row"><span>Clientes que te debían</span><input class="input" inputmode="decimal" data-acc="110201" placeholder="0.00"></div>
+      <div class="ob-row"><span>Proveedores a los que debías</span><input class="input" inputmode="decimal" data-acc="210101" placeholder="0.00"></div>
+      <div class="ob-row"><span>Préstamos bancarios</span><input class="input" inputmode="decimal" data-acc="220101" placeholder="0.00"></div>
+      <div class="ob-row"><span>Mobiliario y equipo</span><input class="input" inputmode="decimal" data-acc="120101" placeholder="0.00"></div>
+      <div class="ob-row"><span>Equipo de cómputo</span><input class="input" inputmode="decimal" data-acc="120102" placeholder="0.00"></div>
+      ${grniBal > 0.004 ? `<h4>Inventario</h4><label class="chk wide"><input type="checkbox" id="obInv" checked> El inventario que ya cargaste en Inventario (<b>${fm(grniBal)}</b> al costo) era mío desde antes: tomarlo como saldo inicial y no como compra por facturar.</label>` : '<p class="muted sm">El inventario inicial se toma de lo que registres en Inventario con su costo.</p>'}
+      <div class="chips"><button class="btn primary" type="submit">Registrar saldos iniciales</button></div><div class="err" id="obErr"></div></form>`;
+  $('#obForm').onsubmit = async ev => {
+    ev.preventDefault();
+    const items = [...document.querySelectorAll('[data-acc]')].map(i => ({ account: i.dataset.acc, amount: numIn(i.value) })).filter(x => x.amount);
+    if ($('#obInv') && $('#obInv').checked) items.push({ account: '210102', amount: -grniBal });
+    try { await api('apiFinOpening', S.token, { date: ev.target.date.value, items: items }); toast('Saldos iniciales registrados'); finReload(); FIN.tab = 'resumen'; FIN.acct = 'diario'; viewFinance(); }
+    catch (e) { $('#obErr').textContent = e.message; }
+  };
+}
+
+function acClose() {
+  const c = FIN.cfg.closed_until;
+  const prev = rangePresets()[1][2];
+  $('#acBody').innerHTML = `<div class="card pad" style="max-width:640px">
+    <p>${c ? `Los libros están <b>cerrados hasta el ${dayFmt(c)}</b>. Nada con fecha anterior se puede crear ni cambiar; si un documento viejo cambia, el ajuste entra con fecha de hoy.` : 'No hay periodos cerrados.'}</p>
+    <p class="muted">Cierra el mes cuando ya lo revisaste con tu contador y declaraste. Así nadie mueve números de un mes ya presentado.</p>
+    <form class="form fin1" id="clForm2"><div class="two"><div><label class="f">Cerrar hasta</label><input class="input" type="date" name="until" value="${esc(c && c > prev ? c : prev)}"></div></div>
+      <div class="chips"><button class="btn primary" type="submit">Cerrar periodo</button>${c ? '<button class="btn" type="button" id="clOpen">Reabrir todo</button>' : ''}</div><div class="err" id="clErr"></div></form></div>`;
+  $('#clForm2').onsubmit = async ev => {
+    ev.preventDefault();
+    if (!confirm('¿Cerrar los libros hasta el ' + dayFmt(ev.target.until.value) + '?')) return;
+    try { await api('apiFinClosePeriod', S.token, ev.target.until.value); toast('Periodo cerrado'); finReload(); await finLoadBase(); acClose(); } catch (e) { $('#clErr').textContent = e.message; }
+  };
+  if ($('#clOpen')) $('#clOpen').onclick = async () => {
+    if (!confirm('¿Reabrir todos los periodos? Queda registrado en Auditoría.')) return;
+    try { await api('apiFinClosePeriod', S.token, ''); toast('Periodos reabiertos'); finReload(); await finLoadBase(); acClose(); } catch (e) { toast(e.message, true); }
+  };
+}
+
+function acSettings() {
+  const cfg = FIN.cfg;
+  const labels = { efectivo: 'Efectivo', tarjeta: 'Tarjeta (terminal)', transferencia: 'Transferencia', wompi: 'Wompi', n1co: 'N1co', stripe: 'Stripe', stripe_qr: 'QR de Stripe', otro: 'Otro', shopify: 'Shopify', woocommerce: 'WooCommerce', online: 'Otras tiendas en línea' };
+  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  $('#acBody').innerHTML = `<form class="form fin1 card pad" id="fsForm" style="max-width:720px">
+    <h4 style="margin-top:0">¿A qué cuenta entra cada forma de cobro?</h4>
+    ${Object.keys(labels).map(k => `<div class="ob-row"><span>${labels[k]}</span>${accSelect('m_' + k, cfg.method_accounts[k], a => !!a.money_kind && a.money_kind !== 'tarjeta')}</div>`).join('')}
+    <h4>Datos fiscales</h4>
+    <div class="two"><div><label class="f">NRC</label><input class="input" name="nrc" value="${esc(cfg.nrc)}"></div><div><label class="f">Inicio del año fiscal</label><select class="input" name="fiscal_start">${months.map((m, i) => `<option value="${String(i + 1).padStart(2, '0')}" ${cfg.fiscal_start === String(i + 1).padStart(2, '0') ? 'selected' : ''}>${m}</option>`).join('')}</select></div></div>
+    <div><label class="f">Giro o actividad económica</label><input class="input" name="giro" value="${esc(cfg.giro)}"></div>
+    <div class="chips"><button class="btn primary" type="submit">Guardar</button></div><div class="err" id="fsErr"></div></form>`;
+  $('#fsForm').onsubmit = async ev => {
+    ev.preventDefault();
+    const f = ev.target, map = {};
+    Object.keys(labels).forEach(k => { map[k] = f['m_' + k].value; });
+    try { FIN.cfg = Object.assign(FIN.cfg, await api('apiFinSaveSettings', S.token, { method_accounts: map, nrc: f.nrc.value, giro: f.giro.value, fiscal_start: f.fiscal_start.value })); toast('Ajustes guardados'); swrClear(); }
+    catch (e) { $('#fsErr').textContent = e.message; }
+  };
+}
+
 /* ---------- Ventas sin conexión: se guardan en el dispositivo y se envían solas ---------- */
 
 const OFF = {
@@ -3991,13 +5023,19 @@ function openCashMove() {
     <form class="form" id="cmForm">
       <div><label class="f">Monto</label><input class="input pos-money" name="amount" inputmode="decimal" placeholder="0.00"></div>
       <div><label class="f">Motivo</label><input class="input" name="reason" list="cmReasons" placeholder="Ej. pago a proveedor"><datalist id="cmReasons"><option value="Pago a proveedor"><option value="Más cambio"><option value="Retiro a caja fuerte"><option value="Gastos del evento"></datalist></div>
+      ${(POS.cat.cash_accounts || []).length ? `<div><label class="f" id="cmToL">¿A dónde va?</label><select class="input" name="account"><option value="">No sé / lo clasifica el contador</option>
+        ${[['dinero', 'Depósito o traspaso a'], ['gasto', 'Pago de un gasto'], ['socios', 'Socios']].map(g => `<optgroup label="${g[1]}">${POS.cat.cash_accounts.filter(a => a.kind === g[0]).map(a => `<option value="${esc(a.code)}">${esc(a.name)}</option>`).join('')}</optgroup>`).join('')}</select>
+        <div class="hint">Así Finanzas sabe si fue un depósito al banco, un gasto o un retiro.</div></div>` : ''}
     </form>`, async () => {
     const f = $('#cmForm');
     const type = document.querySelector('[data-t].primary').dataset.t;
-    POS.cat.session = await api('apiPosCashMove', S.token, s.id, { type: type, amount: Number(f.amount.value.replace(',', '.')), reason: f.reason.value });
+    POS.cat.session = await api('apiPosCashMove', S.token, s.id, { type: type, amount: Number(f.amount.value.replace(',', '.')), reason: f.reason.value, account: f.account ? f.account.value : '' });
     toast(type === 'salida' ? 'Salida registrada' : 'Entrada registrada');
   }, 'Registrar');
-  document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => document.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('primary', x === b)));
+  document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => {
+    document.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('primary', x === b));
+    if ($('#cmToL')) $('#cmToL').textContent = b.dataset.t === 'salida' ? '¿A dónde va?' : '¿De dónde viene?';
+  });
 }
 
 async function openPosClose() {
