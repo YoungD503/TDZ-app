@@ -705,6 +705,71 @@
   .exp-file .chips label.btn { cursor: pointer; gap: 6px; }
   .exp-prev img { max-height: 140px; max-width: 100%; border-radius: var(--radius-sm); margin-top: 8px; border: 1px solid var(--line); }
   .exp-detail { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 20px; }
+  .ship-chips { flex-wrap: wrap; }
+  .ship-cod { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .ship-steps { display: flex; gap: 4px; margin: 0 0 12px; overflow-x: auto; scrollbar-width: none; }
+  .ship-steps span { flex: 1; min-width: 74px; font-size: 11px; color: var(--muted); border-top: 3px solid var(--line); padding-top: 6px; }
+  .ship-steps span.on { color: var(--ink); border-top-color: var(--brand); font-weight: 600; }
+  .ship-events { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 10px; border-left: 2px solid var(--line); }
+  .ship-events li { padding-left: 12px; position: relative; font-size: 13px; }
+  .ship-events li::before { content: ""; position: absolute; left: -6px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: var(--line); }
+  .ship-events li:first-child::before { background: var(--brand); }
+  .ship-qr { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .ship-qr svg { border-radius: 8px; }
+  .ship-next .btn { min-height: 48px; flex: 1; }
+  .ship-rates { display: grid; gap: 8px; }
+  .ship-rate { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius-sm); cursor: pointer; }
+  .ship-rate:has(input:checked) { border-color: var(--brand); }
+  .ship-dims-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+  .ship-provs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin: 14px 0; }
+  .ship-prov { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px; display: grid; gap: 6px; align-content: start; }
+  .ship-prov-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .ship-use { margin-top: 6px; }
+  .ship-carriers { display: grid; gap: 8px; }
+  .ship-carrier { display: grid; grid-template-columns: 180px minmax(0, 1fr) auto auto; gap: 8px; align-items: center; }
+  #printArea.ship-print .ship-label { width: 4in; height: 6in; box-sizing: border-box; padding: .2in; color: #000; font: 11pt/1.3 Arial, sans-serif; display: flex; flex-direction: column; gap: .12in; }
+  .ship-label .sl-from { font-size: 9pt; border-bottom: 1px solid #000; padding-bottom: .08in; }
+  .ship-label .sl-to { font-size: 14pt; display: flex; flex-direction: column; } .ship-label .sl-to span { font-size: 8pt; letter-spacing: .1em; } .ship-label .sl-to b { font-size: 17pt; }
+  .ship-label .sl-notes { border: 1px dashed #000; padding: .06in; font-size: 10pt; }
+  .ship-label .sl-foot { margin-top: auto; display: flex; gap: .15in; align-items: flex-end; border-top: 2px solid #000; padding-top: .1in; }
+  .ship-label .sl-num { font-size: 16pt; } .ship-label .sl-cod { margin-top: 6px; border: 2px solid #000; padding: 4px 6px; font-weight: 700; font-size: 13pt; }
+  @media (max-width: 640px) { .ship-carrier { grid-template-columns: 1fr; } .ship-dims-row { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .dte-mode { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+  .dte-mode p { margin: 0; flex: 1; min-width: 220px; color: var(--muted); }
+  .dte-detail { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20px; align-items: start; }
+  .dte-detail .code, .dte-cfg .code { word-break: break-all; }
+  .dte-qr { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .dte-qr svg { border-radius: 8px; }
+  .dte-json { margin-top: 12px; }
+  .dte-json pre { max-height: 320px; overflow: auto; }
+  .dte-cfg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; align-items: start; }
+  .dte-cfg > .card { margin: 0; }
+  .dte-cfg > .dte-data { grid-column: 1 / -1; }
+  .dte-cfg h3 { margin: 0 0 10px; }
+  .dte-cfg h4 { margin: 8px 0 0; }
+  .dte-cred form { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+  .dte-help ol { padding-left: 18px; margin: 0 0 8px; display: grid; gap: 6px; }
+  .dte-sale { display: flex; flex-wrap: wrap; gap: 6px; margin: -4px 0 12px; }
+  .nc-items { display: grid; gap: 8px; }
+  .nc-item { display: grid; grid-template-columns: minmax(0, 1fr) 96px; gap: 10px; align-items: center; }
+  .r-dte { border-top: 1px dashed #000; margin-top: 8px; padding-top: 6px; }
+  .r-code { font: .9em ui-monospace, Menlo, monospace; word-break: break-all; margin-bottom: 3px; }
+  #printArea.dte-print .dte-paper { color: #000; font: 10pt/1.35 "Geist", Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .dte-paper .dte-top { display: grid; grid-template-columns: 1.2fr 1.3fr auto; gap: 14px; align-items: start; }
+  .dte-paper h1 { font-size: 15pt; margin: 0 0 4px; }
+  .dte-paper p { margin: 2px 0; }
+  .dte-paper .dte-box { border: 1.5px solid #000; border-radius: 6px; padding: 8px 10px; font-size: 8.5pt; word-break: break-all; }
+  .dte-paper .dte-box h2 { font-size: 9pt; margin: 0; } .dte-paper .dte-box h3 { font-size: 11pt; margin: 2px 0 6px; }
+  .dte-paper .dte-warn { font-weight: 700; border: 1px dashed #000; text-align: center; padding: 2px; }
+  .dte-paper .dte-rec { border: 1px solid #000; border-radius: 6px; padding: 6px 10px; margin-top: 10px; }
+  .dte-paper .dte-items { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .dte-paper .dte-items th, .dte-paper .dte-items td { border-bottom: 1px solid #999; padding: 4px 6px; text-align: left; }
+  .dte-paper .dte-items .num { text-align: right; }
+  .dte-paper .dte-items th { background: none !important; color: #000 !important; font-weight: 700; border-bottom: 1.5px solid #000; text-transform: none; letter-spacing: 0; }
+  .dte-paper .dte-sum { margin: 10px 0 0 auto; max-width: 300px; }
+  .dte-paper .dte-sum > div { display: flex; justify-content: space-between; padding: 2px 0; }
+  .dte-paper .dte-total { border-top: 1.5px solid #000; font-weight: 700; font-size: 12pt; margin-top: 4px; padding-top: 4px !important; }
+  @media (max-width: 860px) { .dte-cfg { grid-template-columns: 1fr; } .dte-detail { grid-template-columns: 1fr; } }
   .exp-att { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
   .exp-att label.btn { cursor: pointer; }
   .kvs { display: grid; gap: 0; margin: 10px 0; }
@@ -889,7 +954,8 @@ const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory'
   'apiFinOverview', 'apiFinExpenses', 'apiFinPayables', 'apiFinReceivables', 'apiFinMoney']);
 const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
   'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing', 'apiFinSettings', 'apiFinChart', 'apiFinSuppliers', 'apiFinExpense', 'apiFinRecurring',
-  'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial', 'apiTaxReport', 'apiTaxAnexo']);
+  'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial', 'apiTaxReport', 'apiTaxAnexo',
+  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet']);
 
 function swrLoad() {
   if (SWR.mem) return SWR.mem;
@@ -1187,7 +1253,7 @@ function renderShell() {
   $('#themeLink').onclick = () => { setTheme(currentTheme() === 'dark' ? 'light' : 'dark'); paintThemeLink(); };
   $('#pwdLink').onclick = () => renderPasswordChange(false);
   $('#outLink').onclick = logout;
-  go(b.menu.some(m => m.id === S.view) ? S.view : 'inicio');
+  go(b.menu.some(m => m.id === S.view) ? S.view : b.menu.some(m => m.id === 'inicio') ? 'inicio' : (b.menu[0] || {}).id || 'inicio');
 }
 
 function setDrawer(open) {
@@ -1267,6 +1333,8 @@ function go(view) {
   if (view === 'integrations') return viewIntegrations();
   if (view === 'audit') return viewAudit();
   if (view === 'settings') return viewSettings();
+  if (view === 'dte') return viewDte();
+  if (view === 'shipping') return viewShipping();
   if (S.boot.entities[view]) return viewEntity(view);
   viewHome();
 }
@@ -1585,6 +1653,11 @@ function viewSettings() {
         <div class="err" id="tErr" style="margin:0"></div><button class="btn primary" id="tSave">Guardar</button>
       </div>
     </div>
+    ${S.boot.tenant.currency === 'USD' ? `<div class="card pad" style="max-width:720px">
+      <h3>Facturación electrónica (El Salvador)</h3>
+      <p class="muted">Emite facturas, créditos fiscales, notas de crédito y facturas de sujeto excluido con el sistema de Hacienda. Sin credenciales funciona en práctica.</p>
+      <button class="btn" id="dteOpen">Configurar facturación electrónica</button>
+    </div>` : ''}
     ${S.boot.user.role === 'admin' ? `<div class="card pad danger-zone" style="max-width:720px">
       <h3>Empezar de cero</h3>
       <p class="muted">Borra las ventas, la caja, el inventario y las finanzas para volver a probar desde cero. Antes de borrar se guarda una copia completa en tu Google Drive.
@@ -1592,6 +1665,7 @@ function viewSettings() {
       <button class="btn danger" id="resetOpen">Empezar de cero…</button>
     </div>` : ''}`;
   if ($('#resetOpen')) $('#resetOpen').onclick = openReset;
+  if ($('#dteOpen')) $('#dteOpen').onclick = () => { DTE.tab = 'ajustes'; go('dte'); };
   $('#tSave').onclick = async () => {
     const form = $('#tenantForm');
     if (!form.reportValidity()) return;
@@ -1678,10 +1752,12 @@ const SOURCE_NAMES = { pos: 'Punto de venta', shopify: 'Shopify', woocommerce: '
 
 async function viewSales() {
   const main = $('#main');
-  main.innerHTML = pageHeader('Ventas', can('sales:delete') ? '<button class="btn danger" id="purgeTests" style="display:none"></button>' : '') +
+  main.innerHTML = pageHeader('Ventas', (can('sales:delete') ? '<button class="btn danger" id="purgeTests" style="display:none"></button>' : '') +
+    (S.boot.tenant.currency === 'USD' ? '<button class="btn" id="goDte">Facturación electrónica</button>' : '')) +
     `<div class="toolbar"><input class="input" id="q" placeholder="Buscar por folio, pedido, cliente…"></div>
      <div class="card tablewrap" id="list"><div class="empty">Cargando…</div></div>`;
   $('#q').addEventListener('input', drawSales);
+  if ($('#goDte')) $('#goDte').onclick = () => go('dte');
   try {
     await apiFresh('apiSales', [''], data => { if (S.view !== 'sales') return; S.sales = data; drawSales(); salesPurgeButton(); });
   }
@@ -1732,6 +1808,8 @@ async function showSale(id) {
       <p><b>Cliente:</b> ${esc(s.customer_name || '—')} ${s.payment_method ? '· <b>Pago:</b> ' + esc(s.payment_method) : ''}</p>
       <p class="sale-fiscal"><b>${esc(DOC_NAMES[s.doc_type || '01'])}</b>${s.customer_nrc ? ' · NRC ' + esc(s.customer_nrc) : ''} · ${s.doc_number ? '<span class="code">' + esc(s.doc_number) + '</span>' : '<span class="muted">sin datos de DTE</span>'}
         ${can('sales:write') && s.is_test !== true ? ' <button class="btn sm" id="saleFiscal">Datos fiscales</button>' : ''}</p>
+      ${s.currency === 'USD' ? '<div id="saleDte"></div>' : ''}
+      ${can('shipping:read') ? '<div id="saleShip"></div>' : ''}
       <div class="card tablewrap"><table><thead><tr><th>Artículo</th><th>SKU</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num">Total</th></tr></thead>
         <tbody>${d.items.map(i => `<tr><td>${esc(i.description)}${i.product_id ? '' : ' <span class="tag">fuera de catálogo</span>'}</td><td>${esc(i.sku || '')}</td>
           <td class="num">${esc(i.qty)}${Number(i.refunded_qty) ? '<br><span class="muted sm">' + esc(i.refunded_qty) + ' reembolsada(s)</span>' : ''}</td><td class="num">${m(i.unit_price)}</td><td class="num">${m(i.total)}</td></tr>`).join('')}</tbody></table></div>
@@ -1748,6 +1826,8 @@ async function showSale(id) {
         ? '<div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn danger" id="refundBtn">Reembolsar</button></div>' : ''}`, null, null, true);
     if ($('#refundBtn')) $('#refundBtn').onclick = () => openRefund(id);
     if ($('#saleFiscal')) $('#saleFiscal').onclick = () => openSaleFiscal(s, () => showSale(id));
+    if ($('#saleDte')) saleDteBlock(s, () => showSale(id));
+    if ($('#saleShip')) saleShipBlock(s);
   } catch (e) { toast(e.message, true); }
 }
 
@@ -3142,9 +3222,17 @@ function posTotals() {
     if (st.prices_include_tax) { l.tax = r2(net - net / (1 + l.rate)); l.total = net; }
     else { l.tax = r2(net * l.rate); l.total = r2(net + l.tax); }
   });
-  const total = r2(lines.reduce((a, l) => a + l.total, 0)), tax = r2(lines.reduce((a, l) => a + l.tax, 0));
+  // Envío a domicilio: una línea de servicio con el IVA general (igual que el servidor).
+  let ship = null;
+  const fee = c.ship ? r2(c.ship.fee || 0) : 0;
+  if (fee > 0) {
+    const rate = st.tax_rate / 100;
+    const tx = st.prices_include_tax ? r2(fee - fee / (1 + rate)) : r2(fee * rate);
+    ship = { fee: fee, tax: tx, total: st.prices_include_tax ? fee : r2(fee + tx) };
+  }
+  const total = r2(lines.reduce((a, l) => a + l.total, 0) + (ship ? ship.total : 0)), tax = r2(lines.reduce((a, l) => a + l.tax, 0) + (ship ? ship.tax : 0));
   return { lines: lines, total: total, tax: tax, subtotal: r2(total - tax), discount: r2(lines.reduce((a, l) => a + l.disc, 0)),
-           units: lines.reduce((a, l) => a + l.qty, 0) };
+           units: lines.reduce((a, l) => a + l.qty, 0), ship: ship };
 }
 
 const pm = v => moneyIn(v, POS.cat ? POS.cat.settings.currency : undefined);
@@ -3339,6 +3427,7 @@ function drawPosCart(flashId) {
       </div>`).join('') : '<div class="empty pc-empty">Toca un producto o escanea su código.</div>'}</div>
     <div class="pc-sum">
       ${t.discount ? `<div><span>Descuento</span><span>−${esc(pm(t.discount))}</span></div>` : ''}
+      ${c.ship ? `<div><span>Envío${c.cod ? ' · contra entrega' : ''}</span><span>${esc(pm(t.ship ? t.ship.total : 0))}</span></div>` : ''}
       <div><span>${st.prices_include_tax ? 'IVA incluido' : 'Subtotal'}</span><span>${esc(pm(st.prices_include_tax ? t.tax : t.subtotal))}</span></div>
       ${st.prices_include_tax ? '' : `<div><span>Impuesto</span><span>${esc(pm(t.tax))}</span></div>`}
       <div class="pc-grand"><span>Total</span><span>${esc(pm(t.total))}</span></div>
@@ -3346,6 +3435,7 @@ function drawPosCart(flashId) {
     <div class="pc-acts">
       ${POS.cat.can_discount ? '<button class="btn" id="pcDisc">Descuento</button>' : ''}
       <button class="btn" id="pcNote">${c.notes ? 'Nota ✓' : 'Nota'}</button>
+      ${can('shipping:write') ? `<button class="btn ${c.ship ? 'primary' : ''}" id="pcShip">${c.ship ? 'Envío ✓' : 'Envío'}</button>` : ''}
       ${st.prices_include_tax ? `<button class="btn ${c.doc_type && c.doc_type !== '01' ? 'primary' : ''}" id="pcDoc">${esc(DOC_NAMES[c.doc_type || '01'])}</button>` : ''}
       <button class="btn" id="pcClear" ${c.items.length ? '' : 'disabled'}>Vaciar</button>
     </div>
@@ -3367,6 +3457,7 @@ function drawPosCart(flashId) {
   box.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editPosLine(t.lines[Number(b.dataset.edit)]));
   $('#pcCust').onclick = pickCustomer;
   if ($('#pcDoc')) $('#pcDoc').onclick = openPosDoc;
+  if ($('#pcShip')) $('#pcShip').onclick = openPosShip;
   $('#pcHide').onclick = () => document.body.classList.remove('cart-open');
   if ($('#pcDisc')) $('#pcDisc').onclick = () => {
     openModal('Descuento general', `<form class="form" id="dForm"><div class="wide"><label class="f">Monto a descontar del total</label>
@@ -3461,6 +3552,7 @@ function cartPayload() {
     customer_id: c.customer && c.customer.id ? c.customer.id : undefined,
     customer: c.customer && !c.customer.id ? c.customer : undefined,
     doc_type: c.doc_type || '01', customer_nrc: c.doc_type === '03' ? c.customer_nrc : undefined,
+    ship: c.ship || undefined, cod: c.ship && c.cod ? true : undefined,
   };
 }
 
@@ -3482,11 +3574,12 @@ function openPayment() {
   openModal('Cobrar', `
     ${offline ? '<div class="note off-note">Sin conexión: la venta se guarda en este dispositivo y se envía sola cuando vuelva la señal.</div>' : ''}
     <div class="pay-total"><span class="muted">Total</span><b>${esc(pm(t.total))}</b><span class="muted" id="payLeft"></span></div>
+    ${POS.cart.cod ? '<div class="note">Contra entrega: puedes finalizar sin cobrar; lo que falte lo cobra quien entrega y lo registras en Envíos.</div>' : ''}
     <div class="pay-methods" role="tablist">${methods.map(m => `<button type="button" class="btn ${m === 'efectivo' ? 'primary' : ''}" data-m="${m}">${esc(M[m])}</button>`).join('')}
-      ${POS.cat.stripe_qr && !offline ? `<button type="button" class="btn" data-m="stripe_qr">QR Stripe${POS.cat.stripe_qr.mode === 'test' ? ' (prueba)' : ''}</button>` : ''}</div>
+      ${POS.cat.stripe_qr && !offline && !POS.cart.cod ? `<button type="button" class="btn" data-m="stripe_qr">QR Stripe${POS.cat.stripe_qr.mode === 'test' ? ' (prueba)' : ''}</button>` : ''}</div>
     <div id="payPanel"></div>
     <div id="payList"></div>`, async () => {
-    if (remaining() > 0.009) throw new Error('Falta cobrar ' + pm(remaining()) + '.');
+    if (remaining() > 0.009 && !POS.cart.cod) throw new Error('Falta cobrar ' + pm(remaining()) + '.');
     const payload = Object.assign(cartPayload(), { payments: pays.map(p => ({ method: p.method, amount: p.amount, tendered: p.tendered, reference: p.reference })) });
     let r;
     if (POS.offline || !navigator.onLine) r = posQueueSale(payload, t, pays);
@@ -3508,8 +3601,9 @@ function openPayment() {
     $('#payList').innerHTML = pays.length ? `<ul class="list pay-list">${pays.map((p, i) => `<li><span>${esc(M[p.method])}${p.reference ? ' <span class="muted sm">' + esc(p.reference) + '</span>' : ''}${p.method === 'efectivo' && p.tendered > p.amount ? '<br><span class="muted sm">Recibido ' + esc(pm(p.tendered)) + ' · cambio ' + esc(pm(p.tendered - p.amount)) + '</span>' : ''}</span>
       <span><b>${esc(pm(p.amount))}</b> <button type="button" class="ml-x" data-x="${i}" aria-label="Quitar pago">✕</button></span></li>`).join('')}</ul>` : '';
     $('#payList').querySelectorAll('[data-x]').forEach(b => b.onclick = () => { pays.splice(Number(b.dataset.x), 1); drawList(); drawPanel(); });
-    ok.disabled = left > 0.009;
-    ok.textContent = left > 0.009 ? 'Falta ' + pm(left) : 'Finalizar venta';
+    const cod = POS.cart.cod === true;
+    ok.disabled = left > 0.009 && !cod;
+    ok.textContent = left > 0.009 ? (cod ? 'Finalizar · cobrar ' + pm(left) + ' al entregar' : 'Falta ' + pm(left)) : 'Finalizar venta';
   };
   const add = p => { pays.push(p); drawList(); drawPanel(); };
   const drawPanel = () => {
@@ -3626,6 +3720,7 @@ function showPosDone(r, fresh) {
       ${r.change > 0 ? `<div class="change-big"><span class="muted">Cambio</span><b>${esc(pm(r.change))}</b></div>` : `<div class="change-big ok"><span class="muted">Pagado</span><b>${esc(pm(rc.total))}</b></div>`}
       ${rc.is_test ? '<span class="tag prueba">PRUEBA</span>' : ''}
     </div>
+    ${r.dte ? '<div class="hint" id="rcDte" aria-live="polite"></div>' : ''}
     ${r.offline ? '<div class="note off-note">Venta guardada en este dispositivo. Se envía sola al sistema cuando vuelva la señal; ahí recibe su número definitivo y el enlace del recibo.</div>' : ''}
     <div class="done-grid">
       <div class="rc-preview" aria-label="Vista previa del recibo">${receiptHtml(rc, '80', link)}</div>
@@ -3647,6 +3742,8 @@ function showPosDone(r, fresh) {
     </div>`, async () => {}, 'Nueva venta', true);
   const cancel = document.querySelector('#modal footer .btn:not(#modalOk)');
   if (cancel) cancel.style.display = 'none'; // la venta ya está hecha: solo "Nueva venta"
+  if (r.dte && fresh) posSendDte(r);
+  else if (r.dte && $('#rcDte')) $('#rcDte').textContent = 'DTE: ' + (r.dte.status_label || r.dte.status);
   const cash = (rc.payments || []).some(p => /efectivo/i.test(p.method));
   const state = (txt, bad) => { const el = $('#rcPrnState'); if (el) { el.textContent = txt; el.classList.toggle('neg', !!bad); } };
   const printDirect = async gesture => {
@@ -3706,6 +3803,7 @@ function receiptHtml(rc, fmt, link) {
     <div class="r-row r-total"><span>TOTAL</span><span>${m(rc.total)}</span></div>
     ${rc.payments.map(p => `<div class="r-row"><span>${esc(p.method)}${p.reference ? ' ' + esc(p.reference) : ''}</span><span>${m(p.amount)}</span></div>${p.tendered && p.change ? `<div class="r-row r-sub"><span>Recibido ${m(p.tendered)}</span><span>Cambio ${m(p.change)}</span></div>` : ''}`).join('')}
     ${rc.refunded ? `<div class="r-row"><span>Reembolsado</span><span>−${m(rc.refunded)}</span></div>` : ''}
+    ${receiptDteHtml(rc, fmt)}
     ${link ? `<div class="r-qr">${qrSvg(link, fmt === '58' ? 92 : 112)}<span>Tu recibo en línea</span></div>` : ''}
     ${rc.footer ? `<div class="r-foot">${esc(rc.footer)}</div>` : ''}
   </div>`;
@@ -4058,7 +4156,9 @@ async function openExpenseDetail(id) {
     ${w && e.status !== 'anulado' ? `<div class="chips" style="margin-top:16px">
       ${Number(e.balance) > 0.004 ? '<button class="btn primary" id="edPay">Registrar pago</button>' : ''}
       <button class="btn" id="edEdit">Editar</button>
-      ${Number(e.paid) <= 0.004 ? '<button class="btn danger" id="edVoid">Anular</button>' : ''}</div>` : ''}`;
+      ${Number(e.paid) <= 0.004 ? '<button class="btn danger" id="edVoid">Anular</button>' : ''}
+      ${e.doc_type === 'fse' ? '<button class="btn" id="edFse">Factura de sujeto excluido electrónica</button>' : ''}</div>` : ''}`;
+  if ($('#edFse')) $('#edFse').onclick = () => openFseDte(e);
   if ($('#edPay')) $('#edPay').onclick = () => openPayExpense(e);
   if ($('#edEdit')) $('#edEdit').onclick = () => openExpense(e);
   if ($('#edVoid')) $('#edVoid').onclick = async () => {
@@ -4778,7 +4878,7 @@ function openSaleFiscal(s, after) {
     <div><label class="f">Código de generación</label><input class="input code" name="doc_number" value="${esc(s.doc_number || '')}" placeholder="1A2B3C4D-1234-1234-1234-1234567890AB"></div>
     <div class="two"><div><label class="f">Número de control</label><input class="input" name="doc_control" value="${esc(s.doc_control || '')}" placeholder="DTE-01-…"></div>
       <div><label class="f">Sello de recepción</label><input class="input" name="doc_seal" value="${esc(s.doc_seal || '')}"></div></div>
-    <p class="muted sm">Son los datos del DTE que emitió tu sistema de facturación electrónica. Cuando conectemos la facturación electrónica se llenarán solos.</p></form>`, async () => {
+    <p class="muted sm">Úsalo si emitiste el DTE en otro sistema (por ejemplo, el facturador gratuito de Hacienda). Con la facturación electrónica de Nexo activada, estos datos se llenan solos.</p></form>`, async () => {
     const f = $('#sfForm');
     await api('apiSaleFiscal', S.token, s.id, { doc_type: f.doc_type.value, customer_nrc: f.customer_nrc.value, doc_number: f.doc_number.value, doc_control: f.doc_control.value, doc_seal: f.doc_seal.value });
     toast('Datos fiscales guardados'); swrClear(); if (after) after();
@@ -4808,6 +4908,882 @@ function openPosDoc() {
   const sync = () => { $('#pdNrc').hidden = f.dataset.doc !== '03'; document.querySelectorAll('[data-doc]').forEach(b => b.classList.toggle('primary', b.dataset.doc === f.dataset.doc)); };
   document.querySelectorAll('[data-doc]').forEach(b => b.onclick = () => { f.dataset.doc = b.dataset.doc; sync(); });
   sync();
+}
+
+
+/* ============================ Facturación electrónica (DTE El Salvador) ============================ */
+
+const DTE = { tab: 'docs', cfg: null, f: { status: '', tipo: '', q: '' }, rows: null };
+const DTE_TABS = [['docs', 'Documentos'], ['ajustes', 'Configuración'], ['pruebas', 'Pruebas de Hacienda']];
+const DTE_TAG = { practica: 'pendiente', pendiente: 'pendiente', enviando: 'pendiente', procesado: 'pagada', rechazado: 'cancelada', contingencia: 'parcial', invalidado: 'cancelada', error: 'cancelada' };
+
+async function dteLoad(force) {
+  if (DTE.cfg && !force) return DTE.cfg;
+  DTE.cfg = await api('apiDteSettings', S.token);
+  return DTE.cfg;
+}
+
+function dteMode(c) {
+  const s = c.settings;
+  if (!s.enabled) return { label: 'Apagada', cls: 'cancelada', text: 'La facturación electrónica está apagada: las ventas no generan DTE.' };
+  if (c.missing.length) return { label: 'Faltan datos', cls: 'cancelada', text: 'Completa los datos de tu empresa en Configuración para poder emitir.' };
+  if (!c.can_send) return { label: 'Práctica', cls: 'pendiente', text: 'Sin credenciales de ' + (s.ambiente === '01' ? 'producción' : 'pruebas') + ': cada venta arma su DTE completo para que lo revises, pero no se envía a Hacienda.' };
+  if (s.ambiente === '00') return { label: 'Pruebas de Hacienda', cls: 'parcial', text: 'Conectado al ambiente de pruebas: Hacienda recibe y sella los documentos, pero no tienen validez fiscal.' };
+  return { label: 'Producción', cls: 'pagada', text: 'Conectado a producción: los documentos aceptados son tus facturas legales.' };
+}
+
+async function viewDte() {
+  const main = $('#main');
+  main.innerHTML = pageHeader('Facturación electrónica', '<button class="btn" id="dteSales">Ventas</button>') +
+    `<nav class="fin-tabs" role="tablist" aria-label="Secciones de facturación electrónica">${DTE_TABS.filter(t => t[0] === 'docs' || can('settings:write'))
+      .map(t => `<button role="tab" class="fin-tab ${DTE.tab === t[0] ? 'on' : ''}" aria-selected="${DTE.tab === t[0]}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</nav>
+    <div id="dteBody"><div class="empty">Cargando…</div></div>`;
+  $('#dteSales').onclick = () => go('sales');
+  main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { DTE.tab = b.dataset.tab; viewDte(); });
+  try { await dteLoad(true); } catch (e) { $('#dteBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'dte') return;
+  const fn = { docs: dteDocs, ajustes: dteSettingsTab, pruebas: dteTests }[can('settings:write') ? DTE.tab : 'docs'];
+  try { await fn(); } catch (e) { if (S.view === 'dte') $('#dteBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
+}
+
+/* ---------- Documentos ---------- */
+
+async function dteDocs() {
+  const c = DTE.cfg, mode = dteMode(c);
+  $('#dteBody').innerHTML = `
+    <div class="card pad dte-mode"><span class="tag ${mode.cls}">${esc(mode.label)}</span><p>${esc(mode.text)}</p>
+      ${c.missing.length && c.admin ? '<button class="btn sm" id="dteGoCfg">Completar datos</button>' : ''}</div>
+    <div class="toolbar">
+      <select class="input" id="dteSt"><option value="">Todos los estados</option>${Object.keys(c.status).map(k => `<option value="${k}" ${DTE.f.status === k ? 'selected' : ''}>${esc(c.status[k])}</option>`).join('')}</select>
+      <select class="input" id="dteTp"><option value="">Todos los tipos</option>${c.type_order.map(k => `<option value="${k}" ${DTE.f.tipo === k ? 'selected' : ''}>${esc(c.types[k].name)}</option>`).join('')}
+        <option value="anulacion" ${DTE.f.tipo === 'anulacion' ? 'selected' : ''}>Invalidaciones</option><option value="contingencia" ${DTE.f.tipo === 'contingencia' ? 'selected' : ''}>Eventos de contingencia</option></select>
+      <input class="input" id="dteQ" placeholder="Buscar por número, código o cliente" value="${esc(DTE.f.q)}">
+      <span id="dteRetryWrap"></span>
+    </div>
+    <div class="card tablewrap" id="dteList"><div class="empty">Cargando…</div></div>`;
+  if ($('#dteGoCfg')) $('#dteGoCfg').onclick = () => { DTE.tab = 'ajustes'; viewDte(); };
+  let tm = null;
+  const reload = () => { DTE.f = { status: $('#dteSt').value, tipo: $('#dteTp').value, q: $('#dteQ').value }; dteDrawList(); };
+  $('#dteSt').onchange = reload; $('#dteTp').onchange = reload;
+  $('#dteQ').oninput = () => { clearTimeout(tm); tm = setTimeout(reload, 300); };
+  await dteDrawList();
+}
+
+async function dteDrawList() {
+  let d;
+  try { d = await api('apiDteList', S.token, DTE.f); } catch (e) { $('#dteList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'dte') return;
+  const waiting = (d.summary.pendiente || 0) + (d.summary.contingencia || 0) + (d.summary.enviando || 0);
+  $('#dteRetryWrap').innerHTML = waiting && can('sales:write') ? `<button class="btn primary" id="dteRetry">Enviar pendientes (${waiting})</button>` : '';
+  if ($('#dteRetry')) $('#dteRetry').onclick = async ev => {
+    ev.target.disabled = true; ev.target.textContent = 'Enviando…';
+    try { const r = await api('apiDteRetryAll', S.token); toast(r.sent ? r.sent + ' documento(s) aceptados por Hacienda' : (r.contingency && r.contingency.error) || 'Hacienda todavía no responde; se reintenta solo cada 15 minutos.', !r.sent); }
+    catch (e) { toast(e.message, true); }
+    dteDrawList();
+  };
+  if (!d.rows.length) {
+    $('#dteList').innerHTML = `<div class="empty">${DTE.f.status || DTE.f.tipo || DTE.f.q ? 'Sin resultados.' : DTE.cfg.settings.enabled ? 'Aún no hay documentos. Cada venta del punto de venta genera el suyo; también puedes emitirlo desde el detalle de una venta.' : 'Activa la facturación electrónica en Configuración.'}</div>`;
+    return;
+  }
+  $('#dteList').innerHTML = `<table class="wrap"><thead><tr><th>Fecha</th><th>Documento</th><th>Número de control</th><th>Receptor</th><th class="num">Total</th><th>Estado</th><th></th></tr></thead>
+    <tbody>${d.rows.map(r => `<tr><td class="muted" style="white-space:nowrap">${esc(dayFmt(r.fec_emi))} ${esc(String(r.hor_emi || '').slice(0, 5))}</td>
+      <td>${esc(r.type_label)}${r.ambiente === '00' ? ' <span class="tag prueba">PRUEBAS</span>' : ''}<br><span class="muted sm">${esc(r.ref_number || '')}</span></td>
+      <td><span class="code sm">${esc(r.numero_control || '—')}</span></td><td>${esc(r.receptor_name || '')}${r.receptor_doc ? '<br><span class="muted sm">' + esc(r.receptor_doc) + '</span>' : ''}</td>
+      <td class="num">${r.total ? esc(moneyIn(r.total, 'USD')) : ''}</td><td><span class="tag ${DTE_TAG[r.status] || ''}">${esc(r.status_label)}</span></td>
+      <td class="actions"><button class="btn sm" data-dte="${esc(r.id)}">Ver</button></td></tr>`).join('')}</tbody></table>
+    ${d.total > d.rows.length ? '<p class="muted sm pad">Se muestran los ' + d.rows.length + ' más recientes de ' + d.total + '. Usa la búsqueda para encontrar otros.</p>' : ''}`;
+  $('#dteList').querySelectorAll('[data-dte]').forEach(b => b.onclick = () => openDte(b.dataset.dte, () => { if (S.view === 'dte') dteDrawList(); }));
+}
+
+/** Detalle de un DTE con sus acciones. after() refresca la pantalla de origen. */
+async function openDte(id, after) {
+  openModal('Documento electrónico', '<div class="empty">Cargando…</div>', null, null, true);
+  let d;
+  try { d = await api('apiDteGet', S.token, id); } catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+  const kv = (l, v, cls) => v ? `<div class="kv"><span>${l}</span><b class="${cls || ''}">${v}</b></div>` : '';
+  const isDoc = ['01', '03', '05', '14'].indexOf(d.tipo) >= 0;
+  const w = can('sales:write'), rf = can('sales:refund');
+  $('#modal h3').textContent = d.type_label + (d.numero_control ? ' · ' + d.numero_control.slice(-6) : '');
+  $('#modal .body').innerHTML = `
+    <div class="dte-detail">
+      <div>
+        <p><span class="tag ${DTE_TAG[d.status] || ''}">${esc(d.status_label)}</span> <span class="muted">${esc(d.ambiente_label)}${d.ref_number ? ' · ' + esc(d.ref_number) : ''}</span></p>
+        ${d.status === 'practica' ? '<div class="note">Documento de práctica: está completo y validado, pero no se envió a Hacienda. Sube tus credenciales para emitir de verdad.</div>' : ''}
+        ${d.status === 'error' || d.status === 'rechazado' ? `<div class="note bad-note"><b>${d.status === 'error' ? 'Faltan datos' : 'Hacienda lo rechazó'}${d.mh_code ? ' (' + esc(d.mh_code) + ')' : ''}:</b> ${esc(d.mh_message || '')}${d.observaciones ? '<br>' + esc(d.observaciones) : ''}</div>` : ''}
+        ${d.status === 'contingencia' ? `<div class="note">Hacienda no respondió (${esc(d.mh_message || '')}). Se reporta como contingencia y se envía solo cuando vuelva; tienes hasta 72 horas.</div>` : ''}
+        <div class="kvs">
+          ${kv('Receptor', esc(d.receptor_name) + (d.receptor_doc ? ' · ' + esc(d.receptor_doc) : ''))}
+          ${kv('Fecha y hora', esc(dayFmt(d.fec_emi) + ' ' + d.hor_emi))}
+          ${kv('Número de control', '<span class="code">' + esc(d.numero_control || '—') + '</span>')}
+          ${kv('Código de generación', '<span class="code">' + esc(d.codigo) + '</span>')}
+          ${kv('Sello de recepción', d.sello ? '<span class="code">' + esc(d.sello) + '</span>' : '')}
+          ${d.total ? kv('Total', esc(moneyIn(d.total, 'USD'))) : ''}${d.iva ? kv('IVA', esc(moneyIn(d.iva, 'USD'))) : ''}
+          ${kv('Notas', esc(d.notes || ''))}
+        </div>
+        ${(d.credit_notes || []).length ? `<h4>Notas de crédito</h4><ul class="fin-list">${d.credit_notes.map(n => `<li><span>${esc(n.numero_control)} · ${esc(n.status_label)}</span><b>${esc(moneyIn(n.total, 'USD'))}</b></li>`).join('')}</ul>` : ''}
+        ${d.document ? `<details class="dte-json"><summary>Ver el JSON del documento</summary>${codeBlock(JSON.stringify(d.document, null, 2))}</details>` : ''}
+      </div>
+      <div class="dte-qr">${d.qr ? qrSvg(d.qr, 150) + `<a href="${esc(d.qr)}" target="_blank" rel="noopener" class="hint">Consultar en Hacienda</a>` : ''}</div>
+    </div>
+    <div class="chips" style="margin-top:16px">
+      ${w && d.status === 'pendiente' ? '<button class="btn primary" id="dSend">Enviar a Hacienda</button>' : ''}
+      ${w && ['rechazado', 'error'].indexOf(d.status) >= 0 && isDoc ? '<button class="btn primary" id="dFix">Corregir y volver a generar</button>' : ''}
+      ${isDoc && d.document ? '<button class="btn" id="dPrint">Imprimir</button><button class="btn" id="dJson">Descargar JSON</button>' : ''}
+      ${rf && d.tipo === '03' && d.status === 'procesado' ? '<button class="btn" id="dNc">Nota de crédito</button>' : ''}
+      ${rf && isDoc && d.status === 'procesado' ? '<button class="btn danger" id="dVoid">Invalidar</button>' : ''}
+    </div>`;
+  bindCopy($('#modal'));
+  const refresh = () => { if (after) after(); openDte(id, after); };
+  const busy = async (btn, label, fn) => {
+    btn.disabled = true; const t = btn.textContent; btn.textContent = label;
+    try { await fn(); } catch (e) { toast(e.message, true); btn.disabled = false; btn.textContent = t; }
+  };
+  if ($('#dSend')) $('#dSend').onclick = ev => busy(ev.target, 'Enviando…', async () => {
+    const r = await api('apiDteSend', S.token, id);
+    toast(r.status === 'procesado' ? 'Aceptado por Hacienda' : r.status_label + (r.mh_message ? ': ' + r.mh_message : ''), r.status !== 'procesado'); refresh();
+  });
+  if ($('#dFix')) $('#dFix').onclick = ev => busy(ev.target, 'Generando…', async () => {
+    const r = await api('apiDteRebuild', S.token, id);
+    if (r.status === 'pendiente') { const s = await api('apiDteSend', S.token, id); toast(s.status === 'procesado' ? 'Corregido y aceptado por Hacienda' : s.status_label, s.status !== 'procesado'); }
+    else toast(r.status === 'error' ? r.mh_message : 'Documento generado de nuevo', r.status === 'error');
+    refresh();
+  });
+  if ($('#dPrint')) $('#dPrint').onclick = () => printDte(d);
+  if ($('#dJson')) $('#dJson').onclick = ev => busy(ev.target, 'Preparando…', async () => {
+    const f = await api('apiDteDownload', S.token, id);
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([f.content], { type: 'application/json' })); a.download = f.filename;
+    document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    ev.target.disabled = false; ev.target.textContent = 'Descargar JSON';
+  });
+  if ($('#dNc')) $('#dNc').onclick = () => openCreditNote(d, after);
+  if ($('#dVoid')) $('#dVoid').onclick = () => openInvalidate(d, after);
+}
+
+function openCreditNote(d, after) {
+  const items = (d.document && d.document.cuerpoDocumento) || [];
+  openModal('Nota de crédito sobre ' + d.numero_control.slice(-6), `<form class="form fin1" id="ncForm">
+    <p class="muted sm" style="margin:0">Para devoluciones o descuentos después de emitir el crédito fiscal. Elige cuántas unidades de cada artículo se acreditan.</p>
+    <div class="nc-items">${items.map(x => `<div class="nc-item"><span>${esc(x.descripcion)}<br><span class="muted sm">${esc(qtyFmt(x.cantidad))} × ${esc(moneyIn(x.precioUni, 'USD'))} sin IVA</span></span>
+      <input class="input" type="number" min="0" max="${esc(x.cantidad)}" step="any" inputmode="decimal" data-n="${esc(x.numItem)}" value="0" aria-label="Cantidad a acreditar de ${esc(x.descripcion)}"></div>`).join('')}</div>
+    <div><label class="f">Motivo</label><input class="input" name="reason" maxlength="300" placeholder="Devolución de mercadería"></div></form>`, async () => {
+    const f = $('#ncForm');
+    const picks = Array.from(f.querySelectorAll('[data-n]')).map(i => ({ n: Number(i.dataset.n), qty: numIn(i.value) })).filter(p => p.qty > 0);
+    const nc = await api('apiDteCreditNote', S.token, d.id, { items: picks, reason: f.reason.value });
+    let msg = 'Nota de crédito generada';
+    if (nc.status === 'pendiente') { const s = await api('apiDteSend', S.token, nc.id); msg = s.status === 'procesado' ? 'Nota de crédito aceptada por Hacienda' : 'Nota de crédito: ' + s.status_label; }
+    toast(msg); if (after) after();
+    setTimeout(() => openDte(nc.id, after), 0);
+  }, 'Emitir nota de crédito');
+}
+
+function openInvalidate(d, after) {
+  const types = DTE.cfg ? DTE.cfg.void_types : { 1: 'Error en la información', 2: 'Rescindir la operación', 3: 'Otro' };
+  openModal('Invalidar ' + d.numero_control.slice(-6), `<form class="form fin1" id="ivForm">
+    <div class="note">Invalidar le avisa a Hacienda que este documento ya no vale. No se puede deshacer.</div>
+    <div><label class="f">Motivo</label><select class="input" name="tipo">${Object.keys(types).map(k => `<option value="${k}" ${k === '2' ? 'selected' : ''}>${esc(types[k])}</option>`).join('')}</select></div>
+    <div id="ivRepl"><label class="f">Documento que lo reemplaza</label><select class="input" name="replacement_id"><option value="">Elige…</option>${(d.replacements || []).map(r => `<option value="${esc(r.id)}">${esc(r.label)}</option>`).join('')}</select>
+      <div class="hint">Primero emite el documento correcto; después invalidas este y lo eliges aquí.</div></div>
+    <div><label class="f">Explicación</label><input class="input" name="reason" maxlength="200" placeholder="El cliente canceló la compra"></div></form>`, async () => {
+    const f = $('#ivForm');
+    await api('apiDteInvalidate', S.token, d.id, { tipo: Number(f.tipo.value), replacement_id: f.replacement_id.value, reason: f.reason.value });
+    toast('Documento invalidado'); if (after) after();
+  }, 'Invalidar');
+  $('#modalOk').classList.add('danger');
+  const f = $('#ivForm');
+  const sync = () => { $('#ivRepl').hidden = f.tipo.value === '2'; };
+  f.tipo.onchange = sync; sync();
+}
+
+/** Representación gráfica (hoja carta) con QR de consulta. */
+function printDte(d) {
+  const j = d.document || {}, e = j.emisor || {}, r = j.receptor || {}, R = j.resumen || {}, id = j.identificacion || {};
+  const m = v => esc(moneyIn(v || 0, 'USD'));
+  const dir = x => x && x.direccion ? esc(x.direccion.complemento || '') : '';
+  const p4 = v => '$' + Number(v || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+  const body = (j.cuerpoDocumento || []).map(x => `<tr><td>${esc(qtyFmt(x.cantidad))}</td><td>${esc(x.descripcion)}</td><td class="num">${esc(p4(x.precioUni))}</td>
+    <td class="num">${x.montoDescu ? m(x.montoDescu) : ''}</td><td class="num">${x.ventaExenta ? m(x.ventaExenta) : ''}</td><td class="num">${m(x.ventaGravada !== undefined ? x.ventaGravada : x.compra)}</td></tr>`).join('');
+  const iva = R.totalIva !== undefined ? R.totalIva : (R.tributos || []).reduce((a, t) => a + (t.codigo === '20' ? t.valor : 0), 0);
+  const html = `<div class="dte-paper">
+    <div class="dte-top"><div><h1>${esc(e.nombre || '')}</h1><p>${esc(e.nombreComercial || '')}</p><p>NIT ${esc(e.nit || '')} · NRC ${esc(e.nrc || '')}</p><p>${esc(e.descActividad || '')}</p><p>${dir(e)}</p><p>${esc([e.telefono, e.correo].filter(Boolean).join(' · '))}</p></div>
+      <div class="dte-box"><h2>DOCUMENTO TRIBUTARIO ELECTRÓNICO</h2><h3>${esc(d.type_label.toUpperCase())}</h3>
+        ${d.ambiente === '00' ? '<p class="dte-warn">AMBIENTE DE PRUEBAS — SIN VALIDEZ FISCAL</p>' : ''}
+        <p><b>Código de generación</b><br>${esc(d.codigo)}</p><p><b>Número de control</b><br>${esc(d.numero_control)}</p>
+        <p><b>Sello de recepción</b><br>${esc(d.sello || 'Pendiente')}</p><p><b>Modelo</b> ${id.tipoModelo === 2 ? 'Diferido' : 'Previo'} · <b>Transmisión</b> ${id.tipoOperacion === 2 ? 'Contingencia' : 'Normal'}</p>
+        <p><b>Fecha y hora</b> ${esc(d.fec_emi)} ${esc(d.hor_emi)}</p></div>
+      <div class="dte-qrbox">${d.qr ? qrSvg(d.qr, 120) : ''}</div></div>
+    <div class="dte-rec"><b>${d.tipo === '14' ? 'Sujeto excluido' : 'Receptor'}:</b> ${esc(r.nombre || 'Consumidor final')}
+      ${r.nit || r.numDocumento ? ' · Documento ' + esc(r.nit || r.numDocumento) : ''}${r.nrc ? ' · NRC ' + esc(r.nrc) : ''}${r.descActividad ? ' · ' + esc(r.descActividad) : ''}${dir(r) ? '<br>' + dir(r) : ''}</div>
+    ${(j.documentoRelacionado || []).length ? '<div class="dte-rec"><b>Documento relacionado:</b> ' + j.documentoRelacionado.map(x => esc(x.numeroDocumento) + ' (' + esc(x.fechaEmision) + ')').join(', ') + '</div>' : ''}
+    <table class="dte-items"><thead><tr><th>Cant.</th><th>Descripción</th><th class="num">Precio</th><th class="num">Descuento</th><th class="num">Exentas</th><th class="num">${d.tipo === '14' ? 'Compra' : 'Gravadas'}</th></tr></thead><tbody>${body}</tbody></table>
+    <div class="dte-sum">
+      ${d.tipo === '14' ? `<div><span>Subtotal</span><b>${m(R.subTotal)}</b></div><div><span>Retención de renta</span><b>${m(R.reteRenta)}</b></div>`
+        : `<div><span>Total gravado</span><b>${m(R.totalGravada)}</b></div><div><span>Total exento</span><b>${m(R.totalExenta)}</b></div>
+           <div><span>${d.tipo === '01' ? 'IVA incluido' : 'IVA 13 %'}</span><b>${m(iva)}</b></div>`}
+      <div class="dte-total"><span>Total a pagar</span><b>${m(R.totalPagar)}</b></div><p>${esc(R.totalLetras || '')}</p></div>
+  </div>`;
+  let area = $('#printArea');
+  if (!area) { area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+  area.className = 'dte-print';
+  area.innerHTML = html;
+  let ps = $('#printPage');
+  if (!ps) { ps = document.createElement('style'); ps.id = 'printPage'; document.head.appendChild(ps); }
+  ps.textContent = '@page { size: letter; margin: 12mm; }';
+  document.body.classList.add('printing');
+  const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  setTimeout(() => window.print(), 60);
+}
+
+/* ---------- Configuración ---------- */
+
+function dteSettingsTab() {
+  const c = DTE.cfg, s = c.settings;
+  const sec = c.secrets;
+  const inp = (name, label, val, attrs, hint) => `<div><label class="f" for="ds_${name}">${label}</label><input class="input" id="ds_${name}" name="${name}" value="${esc(val || '')}" ${attrs || ''}>${hint ? '<div class="hint">' + hint + '</div>' : ''}</div>`;
+  const credCard = amb => {
+    const st = sec[amb], name = amb === '01' ? 'producción' : 'pruebas';
+    return `<div class="card pad dte-cred" data-amb="${amb}">
+      <h3>Credenciales de ${name}</h3>
+      <ul class="fin-list">
+        <li><span>Certificado de firma</span><b class="${st.cert ? '' : 'muted'}">${st.cert ? 'Cargado' + (st.cert_at ? ' · ' + esc(dayFmt(st.cert_at.slice(0, 10))) : '') : 'Falta'}</b></li>
+        <li><span>Contraseña de la API</span><b class="${st.api ? '' : 'muted'}">${st.api ? 'Guardada' : 'Falta'}</b></li>
+      </ul>
+      <form class="form fin1 dte-cert" autocomplete="off">
+        <div><label class="f">Archivo del certificado (.crt)</label><input class="input" type="file" name="file" accept=".crt,.xml,.cer"></div>
+        <div><label class="f">Contraseña de la llave privada</label><input class="input" type="password" name="pass" autocomplete="new-password"></div>
+        <button type="submit" class="btn">${st.cert ? 'Reemplazar certificado' : 'Subir certificado'}</button>
+      </form>
+      <form class="form fin1 dte-api" autocomplete="off">
+        <div><label class="f">Contraseña de la API de Hacienda</label><input class="input" type="password" name="pwd" autocomplete="new-password"></div>
+        <button type="submit" class="btn">${st.api ? 'Cambiar contraseña' : 'Guardar contraseña'}</button>
+      </form>
+      <div class="chips"><button type="button" class="btn" data-test="${amb}" ${st.api ? '' : 'disabled'}>Probar conexión</button>
+        ${st.cert || st.api ? `<button type="button" class="btn danger" data-rm="${amb}">Quitar credenciales</button>` : ''}</div>
+    </div>`;
+  };
+  $('#dteBody').innerHTML = `
+    <div class="dte-cfg">
+    <div class="card pad">
+      <h3>Activación</h3>
+      <form class="form fin1" id="dteOn">
+        <label class="chk wide"><input type="checkbox" name="enabled" ${s.enabled ? 'checked' : ''}> Activar la facturación electrónica</label>
+        <label class="chk wide"><input type="checkbox" name="auto_pos" ${s.auto_pos !== false ? 'checked' : ''}> Generar el DTE en cada venta del punto de venta</label>
+        <label class="chk wide"><input type="checkbox" name="transmit" ${s.transmit !== false ? 'checked' : ''}> Enviar a Hacienda cuando haya credenciales (si lo apagas, todo queda en práctica)</label>
+        <div><label class="f">Ambiente</label><select class="input" name="ambiente"><option value="00" ${s.ambiente !== '01' ? 'selected' : ''}>Pruebas</option><option value="01" ${s.ambiente === '01' ? 'selected' : ''}>Producción</option></select>
+          <div class="hint">Empieza en pruebas. Hacienda te autoriza producción cuando apruebas sus pruebas.</div></div>
+      </form>
+    </div>
+    <div class="card pad dte-help"><h3>Qué necesitas de Hacienda</h3>
+      <ol><li>Tu NIT y NRC activos, y acceso a <b>factura.gob.sv</b> con tu clave de servicios en línea.</li>
+        <li>En el portal: registra tu establecimiento y punto de venta, y genera el <b>certificado</b> (archivo .crt) con la contraseña de su llave privada.</li>
+        <li>Crea la <b>contraseña de la API</b> del sistema de transmisión (una para pruebas y otra para producción).</li>
+        <li>Súbelos aquí, prueba la conexión y haz las pruebas que pide Hacienda en la pestaña <b>Pruebas de Hacienda</b>.</li>
+        <li>Cuando Hacienda te autorice, sube las credenciales de producción y cambia el ambiente.</li></ol>
+      <p class="muted sm">El certificado y las contraseñas se guardan cifrados en tu servidor de Google y nunca se muestran ni se mandan al navegador. No los compartas por chat ni correo.</p></div>
+    <div class="card pad dte-data">
+      <h3>Datos del emisor</h3>
+      ${c.missing.length ? '<div class="note">Falta: ' + esc(c.missing.join(', ')) + '.</div>' : ''}
+      <form class="form" id="dteData">
+        <div class="two">${inp('nit', 'NIT', s.nit, 'inputmode="numeric"', '14 dígitos (o tu DUI de 9 si eres persona natural).')}${inp('nrc', 'NRC', s.nrc, 'inputmode="numeric"')}</div>
+        ${inp('nombre', 'Nombre o razón social', s.nombre, 'maxlength="250"')}
+        ${inp('nombre_comercial', 'Nombre comercial', s.nombre_comercial, 'maxlength="150"')}
+        <div class="two">${inp('cod_actividad', 'Código de actividad económica', s.cod_actividad, 'inputmode="numeric" maxlength="6"', 'El que aparece en tu tarjeta de NRC o en tu registro de Hacienda.')}
+          ${inp('desc_actividad', 'Actividad económica', s.desc_actividad, 'maxlength="150"')}</div>
+        <div class="three"><div><label class="f" for="ds_dep">Departamento</label><select class="input" id="ds_dep" name="dep"><option value="">Elige…</option>${c.deptos.map(x => `<option value="${x[0]}" ${s.dep === x[0] ? 'selected' : ''}>${esc(x[1])}</option>`).join('')}</select></div>
+          ${inp('mun', 'Municipio (código)', s.mun, 'inputmode="numeric" maxlength="2"', 'Catálogo de Hacienda.')}
+          ${inp('dist', 'Distrito (código)', s.dist, 'inputmode="numeric" maxlength="4"')}</div>
+        ${inp('complemento', 'Dirección', s.complemento, 'maxlength="200"')}
+        <div class="two">${inp('telefono', 'Teléfono', s.telefono, 'inputmode="tel"')}${inp('correo', 'Correo para facturación', s.correo, 'type="email"')}</div>
+        <div class="three"><div><label class="f" for="ds_tipo_establecimiento">Tipo de establecimiento</label><select class="input" id="ds_tipo_establecimiento" name="tipo_establecimiento">
+            ${[['02', 'Casa matriz'], ['01', 'Sucursal'], ['04', 'Bodega'], ['07', 'Predio o patio'], ['20', 'Otro']].map(x => `<option value="${x[0]}" ${s.tipo_establecimiento === x[0] ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></div>
+          ${inp('cod_estable', 'Código de establecimiento', s.cod_estable, 'maxlength="4" autocapitalize="characters"', 'Como M001 (el que registraste en Hacienda).')}
+          ${inp('cod_pv', 'Código de punto de venta', s.cod_pv, 'maxlength="4" autocapitalize="characters"', 'Como P001.')}</div>
+        <h4>Responsable de invalidaciones y contingencias</h4>
+        <div class="three">${inp('resp_nombre', 'Nombre', s.resp_nombre, 'maxlength="100"')}
+          <div><label class="f" for="ds_resp_tipo">Documento</label><select class="input" id="ds_resp_tipo" name="resp_tipo">${[['13', 'DUI'], ['36', 'NIT'], ['03', 'Pasaporte'], ['02', 'Carné de residente']].map(x => `<option value="${x[0]}" ${s.resp_tipo === x[0] ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></div>
+          ${inp('resp_doc', 'Número', s.resp_doc, 'maxlength="25"')}</div>
+        <div style="display:flex;justify-content:flex-end"><button class="btn primary" type="submit">Guardar datos</button></div>
+      </form>
+    </div>
+    ${credCard('00')}${credCard('01')}
+    </div>`;
+  const save = async (data, msg) => { DTE.cfg = await api('apiDteSaveSettings', S.token, data); toast(msg || 'Guardado'); dteSettingsTab(); };
+  const on = $('#dteOn');
+  on.querySelectorAll('input,select').forEach(el => el.onchange = async () => {
+    const data = { enabled: on.enabled.checked, auto_pos: on.auto_pos.checked, transmit: on.transmit.checked, ambiente: on.ambiente.value };
+    try { await save(data, data.ambiente === '01' && s.ambiente !== '01' ? 'Ahora emites en producción' : 'Guardado'); }
+    catch (e) { toast(e.message, true); dteSettingsTab(); }
+  });
+  $('#dteData').onsubmit = async ev => {
+    ev.preventDefault();
+    const f = ev.target, data = {};
+    Array.from(f.elements).forEach(el => { if (el.name) data[el.name] = el.value; });
+    try { await save(data, 'Datos guardados'); } catch (e) { toast(e.message, true); }
+  };
+  document.querySelectorAll('.dte-cred').forEach(card => {
+    const amb = card.dataset.amb;
+    card.querySelector('.dte-cert').onsubmit = async ev => {
+      ev.preventDefault();
+      const f = ev.target, file = f.file.files[0];
+      if (!file) { toast('Elige el archivo .crt del certificado.', true); return; }
+      if (file.size > 300000) { toast('Ese archivo es demasiado grande para ser un certificado de Hacienda.', true); return; }
+      const btn = f.querySelector('button'); btn.disabled = true;
+      try {
+        const xml = await file.text();
+        DTE.cfg = await api('apiDteUploadCert', S.token, amb, xml, f.pass.value);
+        f.reset(); toast('Certificado cargado'); dteSettingsTab();
+      } catch (e) { toast(e.message, true); btn.disabled = false; }
+    };
+    card.querySelector('.dte-api').onsubmit = async ev => {
+      ev.preventDefault();
+      const f = ev.target, btn = f.querySelector('button'); btn.disabled = true;
+      try { DTE.cfg = await api('apiDteSaveApiPassword', S.token, amb, f.pwd.value); f.reset(); toast('Contraseña guardada'); dteSettingsTab(); }
+      catch (e) { toast(e.message, true); btn.disabled = false; }
+    };
+  });
+  document.querySelectorAll('[data-test]').forEach(b => b.onclick = async () => {
+    b.disabled = true; const t = b.textContent; b.textContent = 'Conectando…';
+    try { const r = await api('apiDteTest', S.token, b.dataset.test); toast(r.message); } catch (e) { toast(e.message, true); }
+    b.disabled = false; b.textContent = t;
+  });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => openModal('Quitar credenciales', `<p>Se borran el certificado y la contraseña de la API de <b>${b.dataset.rm === '01' ? 'producción' : 'pruebas'}</b> de este sistema.</p>
+    <p class="muted">Los documentos ya emitidos no cambian. Si quitas las de producción, el sistema vuelve al ambiente de pruebas.</p>`, async () => {
+    DTE.cfg = await api('apiDteRemoveSecrets', S.token, b.dataset.rm); toast('Credenciales quitadas'); dteSettingsTab();
+  }, 'Quitar'));
+}
+
+/* ---------- Pruebas de Hacienda ---------- */
+
+async function dteTests() {
+  const c = DTE.cfg, s = c.settings;
+  const cnt = c.test_counts || {};
+  let customers = [];
+  try { customers = (await api('apiList', S.token, 'customers', '')).filter(x => x.nrc && x.cod_actividad && x.dep_code); } catch (e) { customers = []; }
+  if (S.view !== 'dte') return;
+  const ready = s.enabled && s.ambiente === '00' && c.can_send && !c.missing.length;
+  $('#dteBody').innerHTML = `
+    <div class="card pad" style="max-width:760px">
+      <h3>Pruebas para que Hacienda te autorice</h3>
+      <p class="muted">Antes de darte acceso a producción, Hacienda pide que emitas en su ambiente de pruebas cierta cantidad de documentos de cada tipo (te dice cuántos en el portal). Aquí los generas con tus productos, sin tocar tus ventas ni tu inventario.</p>
+      ${ready ? '' : `<div class="note">${s.ambiente === '01' ? 'Ya estás en producción: las pruebas se hacen en el ambiente de pruebas.' : 'Para hacer pruebas: activa la facturación, completa tus datos y sube las credenciales de pruebas en Configuración.'}</div>`}
+      <ul class="fin-list">${c.type_order.map(k => `<li><span>${esc(c.types[k].name)}</span><b>${cnt[k] || 0} aceptados</b></li>`).join('')}</ul>
+      <p class="muted sm">Las notas de crédito se hacen desde un crédito fiscal aceptado, y las de sujeto excluido desde un gasto con ese documento; también cuentan aquí.</p>
+      <form class="form fin1" id="dtForm">
+        <div class="two"><div><label class="f">Tipo</label><select class="input" name="tipo"><option value="01">Factura</option><option value="03">Crédito fiscal</option></select></div>
+          <div><label class="f">Cuántos</label><input class="input" type="number" name="n" min="1" max="100" value="10" inputmode="numeric"></div></div>
+        <div id="dtCust"><label class="f">Cliente para los créditos fiscales</label><select class="input" name="customer_id">${customers.length ? customers.map(x => `<option value="${esc(x.id)}">${esc(x.name)} · NRC ${esc(x.nrc)}</option>`).join('') : '<option value="">Ningún cliente tiene NIT, NRC, actividad y dirección completos</option>'}</select></div>
+        <button class="btn primary" type="submit" ${ready ? '' : 'disabled'}>Generar y enviar</button>
+        <div class="hint" id="dtProg" aria-live="polite"></div>
+      </form>
+    </div>`;
+  const f = $('#dtForm');
+  const sync = () => { $('#dtCust').hidden = f.tipo.value !== '03'; };
+  f.tipo.onchange = sync; sync();
+  f.onsubmit = async ev => {
+    ev.preventDefault();
+    const total = Math.max(1, Math.min(100, Math.round(numIn(f.n.value))));
+    const btn = f.querySelector('button'); btn.disabled = true;
+    let done = 0, okN = 0, last = '';
+    try {
+      while (done < total && S.view === 'dte') {
+        const r = await api('apiDteTestBatch', S.token, f.tipo.value, Math.min(10, total - done), { customer_id: f.customer_id.value });
+        done += r.done.length; okN += r.done.filter(x => x.status === 'procesado').length;
+        const bad = r.done.find(x => x.status !== 'procesado');
+        if (bad) last = bad.message || bad.status;
+        $('#dtProg').textContent = done + ' de ' + total + ' enviados · ' + okN + ' aceptados' + (last ? ' · último aviso: ' + last : '');
+        if (!r.done.length || r.done.some(x => x.status === 'contingencia')) break;
+      }
+      toast(okN + ' documento(s) de prueba aceptados por Hacienda', okN < done);
+      DTE.cfg = await api('apiDteSettings', S.token);
+    } catch (e) { toast(e.message, true); }
+    if (S.view === 'dte' && DTE.tab === 'pruebas') dteTests();
+  };
+}
+
+/* ---------- DTE dentro de una venta y en el POS ---------- */
+
+async function saleDteBlock(s, reopen) {
+  const box = $('#saleDte');
+  if (!box) return;
+  let d;
+  try { d = await api('apiDteList', S.token, { ref_id: s.id }); } catch (e) { box.innerHTML = ''; return; }
+  if (!$('#saleDte')) return;
+  const rows = d.rows.filter(r => ['01', '03', '05'].indexOf(r.tipo) >= 0);
+  const live = rows.find(r => ['invalidado'].indexOf(r.status) < 0 && r.tipo !== '05');
+  box.innerHTML = `<div class="dte-sale">${rows.map(r => `<button class="btn sm" data-dte="${esc(r.id)}"><span class="tag ${DTE_TAG[r.status] || ''}">${esc(r.status_label)}</span> ${esc(r.type_label)}${r.ambiente === '00' ? ' · pruebas' : ''}</button>`).join('')}
+    ${!live && can('sales:write') && s.is_test !== true && ['pendiente', 'cancelada'].indexOf(s.status) < 0 && s.doc_type !== '11' ? '<button class="btn sm primary" id="saleDteNew">Emitir DTE</button>' : ''}</div>`;
+  box.querySelectorAll('[data-dte]').forEach(b => b.onclick = () => openDte(b.dataset.dte, null));
+  if ($('#saleDteNew')) $('#saleDteNew').onclick = async ev => {
+    ev.target.disabled = true; ev.target.textContent = 'Generando…';
+    try {
+      let r = await api('apiDteForSale', S.token, s.id);
+      if (r.status === 'pendiente') r = await api('apiDteSend', S.token, r.id);
+      toast(r.status === 'procesado' ? 'Aceptado por Hacienda' : r.status_label + (r.mh_message ? ': ' + r.mh_message : ''), ['procesado', 'practica'].indexOf(r.status) < 0);
+      openDte(r.id, reopen);
+    } catch (e) { toast(e.message, true); ev.target.disabled = false; ev.target.textContent = 'Emitir DTE'; }
+  };
+}
+
+/** Después de cobrar: envía el DTE sin hacer esperar a la caja y actualiza el recibo. */
+async function posSendDte(r) {
+  const line = $('#rcDte');
+  const set = (txt, bad) => { const el = $('#rcDte'); if (el) { el.textContent = txt; el.classList.toggle('neg', !!bad); } };
+  if (!r.dte) return;
+  if (r.dte.status === 'error') { set('DTE: ' + r.dte.message, true); return; }
+  if (r.dte.status === 'practica') { set('DTE de práctica generado (sin credenciales, no se envía).'); return; }
+  if (r.dte.status !== 'pendiente' || !r.dte.id) { if (line) set('DTE: ' + (r.dte.status_label || r.dte.status)); return; }
+  set('Enviando el DTE a Hacienda…');
+  try {
+    const d = await api('apiDteSend', S.token, r.dte.id);
+    r.dte = { id: d.id, status: d.status, status_label: d.status_label, message: d.mh_message, control: d.numero_control };
+    set(d.status === 'procesado' ? 'DTE aceptado por Hacienda ✓' : d.status === 'contingencia' ? 'Hacienda no respondió: el DTE se envía solo cuando vuelva.' : 'DTE ' + d.status_label + (d.mh_message ? ': ' + d.mh_message : ''), d.status === 'rechazado');
+    const fresh = await api('apiPosReceipt', S.token, r.id);
+    r.receipt = fresh.receipt;
+    if (POS.last && POS.last.id === r.id) POS.last = r;
+    const pv = document.querySelector('#modal .rc-preview');
+    if (pv) pv.innerHTML = receiptHtml(r.receipt, '80', r.token ? receiptUrl(r.token) : '');
+  } catch (e) { set('DTE: ' + e.message + ' (se reintenta solo)', true); }
+}
+
+/** Bloque fiscal del recibo impreso. */
+function receiptDteHtml(rc, fmt) {
+  const d = rc.dte;
+  if (!d) return '';
+  return `<div class="r-dte"><div class="r-doc">${esc(d.name)} electrónica</div>
+    ${d.test ? '<div class="r-test">Ambiente de pruebas — sin validez fiscal</div>' : ''}
+    <div class="r-sub">Código de generación</div><div class="r-code">${esc(d.codigo)}</div>
+    <div class="r-sub">Número de control</div><div class="r-code">${esc(d.control)}</div>
+    ${d.sello ? `<div class="r-sub">Sello de recepción</div><div class="r-code">${esc(d.sello)}</div>` : '<div class="r-sub">Pendiente del sello de Hacienda</div>'}
+    ${d.qr ? `<div class="r-qr">${qrSvg(d.qr, fmt === '58' ? 92 : 112)}<span>Consulta en Hacienda</span></div>` : ''}</div>`;
+}
+
+/** Factura de sujeto excluido electrónica para un gasto: pide lo que le falte al proveedor. */
+async function openFseDte(e) {
+  let cfg;
+  try { cfg = await dteLoad(true); } catch (err) { toast(err.message, true); return; }
+  if (!cfg.settings.enabled) { toast('Activa la facturación electrónica en Ventas → Facturación electrónica.', true); return; }
+  const list = await api('apiDteList', S.token, { ref_id: e.id }).catch(() => ({ rows: [] }));
+  const cur = list.rows.find(r => r.tipo === '14' && ['invalidado', 'error'].indexOf(r.status) < 0);
+  if (cur) { openDte(cur.id, null); return; }
+  openModal('Factura de sujeto excluido', `<form class="form fin1" id="fseForm">
+    <p class="muted sm" style="margin:0">La emites tú cuando le compras a una persona que no es contribuyente de IVA. Completa los datos de <b>${esc(e.supplier || 'el proveedor')}</b> (se guardan en su ficha).</p>
+    <div><label class="f">DUI o NIT</label><input class="input" name="tax_id" placeholder="01234567-8"></div>
+    <div><label class="f">Dirección</label><input class="input" name="address" maxlength="200"></div>
+    <div class="three"><div><label class="f">Departamento</label><select class="input" name="dep_code"><option value="">Elige…</option>${cfg.deptos.map(x => `<option value="${x[0]}">${esc(x[1])}</option>`).join('')}</select></div>
+      <div><label class="f">Municipio (código)</label><input class="input" name="mun_code" inputmode="numeric" maxlength="2"></div>
+      <div><label class="f">Distrito (código)</label><input class="input" name="dist_code" inputmode="numeric" maxlength="4"></div></div>
+    <p class="muted sm" style="margin:0">Deja en blanco lo que ya tenga registrado.</p></form>`, async () => {
+    const f = $('#fseForm'), patch = {};
+    ['tax_id', 'address', 'dep_code', 'mun_code', 'dist_code'].forEach(k => { if (f[k].value) patch[k] = f[k].value; });
+    let r = await api('apiDteForExpense', S.token, e.id, patch);
+    if (r.status === 'pendiente') r = await api('apiDteSend', S.token, r.id);
+    toast(r.status === 'procesado' ? 'Aceptada por Hacienda' : r.status_label, ['procesado', 'practica'].indexOf(r.status) < 0);
+    setTimeout(() => openDte(r.id, null), 0);
+  }, 'Emitir');
+}
+
+
+/* ============================ Envíos ============================ */
+
+const SHIP = { tab: 'lista', cfg: null, f: { status: 'activos', q: '' } };
+const SHIP_TAG = { preparar: 'pendiente', empacado: 'pendiente', guia: 'parcial', enviado: 'parcial', en_camino: 'parcial', en_reparto: 'parcial', entregado: 'pagada',
+  fallido: 'cancelada', devuelto: 'cancelada', cancelado: 'cancelada' };
+const SHIP_NEXT = { preparar: ['empacado', 'enviado'], empacado: ['enviado'], guia: ['enviado'], enviado: ['en_camino', 'en_reparto', 'entregado'], en_camino: ['en_reparto', 'entregado'],
+  en_reparto: ['entregado', 'fallido'], fallido: ['en_reparto', 'devuelto'], entregado: [], devuelto: [], cancelado: ['preparar'] };
+const COUNTRIES = [['SV', 'El Salvador'], ['US', 'Estados Unidos'], ['GT', 'Guatemala'], ['HN', 'Honduras'], ['NI', 'Nicaragua'], ['CR', 'Costa Rica'], ['PA', 'Panamá'], ['MX', 'México'], ['CA', 'Canadá'], ['ES', 'España']];
+
+function trackBase() {
+  if (ON_GOOGLE) return '';
+  return new URL('rastreo.html', location.href).href.split('?')[0] + '?t=';
+}
+
+async function shipLoad(force) {
+  if (SHIP.cfg && !force) return SHIP.cfg;
+  SHIP.cfg = await api('apiShipSettings', S.token, trackBase());
+  return SHIP.cfg;
+}
+
+function shipCarrierOptions(sel, region) {
+  const list = (SHIP.cfg ? SHIP.cfg.carriers : []).filter(c => !region || c.region === 'all' || c.region === region || c.code === sel);
+  return list.map(c => `<option value="${esc(c.code)}" ${c.code === sel ? 'selected' : ''}>${esc(c.name)}</option>`).join('');
+}
+
+async function viewShipping() {
+  const main = $('#main');
+  const w = can('shipping:write');
+  main.innerHTML = pageHeader(w ? 'Envíos' : 'Mis entregas', w ? '<button class="btn" id="shSync">Actualizar rastreo</button><button class="btn primary" id="shNew">Nuevo envío</button>' : '') +
+    (w && can('settings:write') ? `<nav class="fin-tabs" role="tablist" aria-label="Secciones de envíos">${[['lista', 'Envíos'], ['ajustes', 'Ajustes y conexiones']]
+      .map(t => `<button role="tab" class="fin-tab ${SHIP.tab === t[0] ? 'on' : ''}" aria-selected="${SHIP.tab === t[0]}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</nav>` : '') +
+    '<div id="shBody"><div class="empty">Cargando…</div></div>';
+  main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { SHIP.tab = b.dataset.tab; viewShipping(); });
+  if ($('#shNew')) $('#shNew').onclick = () => openShipForm({});
+  if ($('#shSync')) $('#shSync').onclick = async ev => {
+    ev.target.disabled = true; ev.target.textContent = 'Actualizando…';
+    try { const r = await api('apiShipSyncAll', S.token); toast(r.checked ? r.checked + ' envío(s) revisados · ' + r.changed + ' cambiaron de estado' : 'No hay envíos con rastreo automático en camino.'); }
+    catch (e) { toast(e.message, true); }
+    ev.target.disabled = false; ev.target.textContent = 'Actualizar rastreo'; shipDrawList();
+  };
+  try { await shipLoad(true); } catch (e) { $('#shBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'shipping') return;
+  if (SHIP.tab === 'ajustes' && can('settings:write')) return shipSettings();
+  $('#shBody').innerHTML = `
+    <div id="shCod"></div>
+    <div class="toolbar">
+      <div class="chips ship-chips" id="shChips"></div>
+      <input class="input" id="shQ" placeholder="Buscar por envío, pedido, cliente o guía" value="${esc(SHIP.f.q)}">
+    </div>
+    <div class="card tablewrap" id="shList"><div class="empty">Cargando…</div></div>`;
+  let tm = null;
+  $('#shQ').oninput = () => { clearTimeout(tm); tm = setTimeout(() => { SHIP.f.q = $('#shQ').value; shipDrawList(); }, 300); };
+  shipDrawList();
+}
+
+async function shipDrawList() {
+  let d;
+  try { d = await api('apiShipList', S.token, SHIP.f); } catch (e) { if ($('#shList')) $('#shList').innerHTML = '<div class="empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'shipping' || !$('#shList')) return;
+  const c = SHIP.cfg, sum = d.summary;
+  const active = Object.keys(sum).filter(k => ['entregado', 'devuelto', 'cancelado'].indexOf(k) < 0).reduce((a, k) => a + sum[k], 0);
+  const chips = [['activos', 'En curso', active]].concat(c.order.concat(['fallido', 'devuelto', 'cancelado']).filter(k => sum[k]).map(k => [k, c.status[k], sum[k]]))
+    .concat(d.deliverer ? [] : [['', 'Todos', null]]);
+  $('#shChips').innerHTML = chips.map(x => `<button type="button" class="btn sm ${SHIP.f.status === x[0] ? 'primary' : ''}" data-st="${x[0]}">${esc(x[1])}${x[2] !== null ? ' · ' + x[2] : ''}</button>`).join('');
+  $('#shChips').querySelectorAll('[data-st]').forEach(b => b.onclick = () => { SHIP.f.status = b.dataset.st; SHIP.f.cod = false; shipDrawList(); });
+  $('#shCod').innerHTML = d.cod_count && can('finance:write') ? `<div class="card pad ship-cod"><div><b>${esc(moneyIn(d.cod_pending))}</b> por cobrar contra entrega en ${d.cod_count} envío(s).</div>
+    <button class="btn sm" id="shCodBtn">${SHIP.f.cod ? 'Ver todos' : 'Ver cuáles'}</button></div>` : '';
+  if ($('#shCodBtn')) $('#shCodBtn').onclick = () => { SHIP.f.cod = !SHIP.f.cod; SHIP.f.status = SHIP.f.cod ? '' : 'activos'; shipDrawList(); };
+  if (!d.rows.length) {
+    $('#shList').innerHTML = `<div class="empty">${d.deliverer ? 'No tienes entregas pendientes.' : SHIP.f.q || SHIP.f.status !== 'activos' ? 'Sin resultados.'
+      : 'No hay envíos en curso. Se crean al cobrar en el punto de venta con "Envío", desde el detalle de una venta, o solos cuando llega un pedido en línea con dirección.'}</div>`;
+    return;
+  }
+  $('#shList').innerHTML = `<table class="wrap"><thead><tr><th>Envío</th><th>Para</th><th>Transportista</th><th>Estado</th><th class="num">Cobrar</th><th></th></tr></thead>
+    <tbody>${d.rows.map(r => `<tr><td style="white-space:nowrap"><b>${esc(r.number)}</b>${r.sale_number ? '<br><span class="muted sm">' + esc(r.sale_number) + '</span>' : ''}<br><span class="muted sm">${fmtDate(r.created_at)}</span></td>
+      <td>${esc(r.recipient_name)}<br><span class="muted sm">${esc([r.city, r.country].filter(Boolean).join(', '))}</span></td>
+      <td>${esc(r.carrier_name || '—')}${r.tracking_number ? '<br><span class="code sm">' + esc(r.tracking_number) + '</span>' : ''}${r.auto ? ' <span class="tag" title="Se actualiza solo">auto</span>' : ''}</td>
+      <td><span class="tag ${SHIP_TAG[r.status] || ''}">${esc(r.status_label)}</span><br><span class="muted sm">${esc(String(r.last_event || '').slice(0, 70))}</span></td>
+      <td class="num">${Number(r.cod_amount) > 0 && r.cod_status !== 'cobrado' ? esc(moneyIn(r.cod_amount)) : ''}</td>
+      <td class="actions"><button class="btn sm" data-sh="${esc(r.id)}">Ver</button></td></tr>`).join('')}</tbody></table>`;
+  $('#shList').querySelectorAll('[data-sh]').forEach(b => b.onclick = () => openShipment(b.dataset.sh, shipDrawList));
+}
+
+/** Detalle de un envío. after() refresca la lista de origen. */
+async function openShipment(id, after) {
+  openModal('Envío', '<div class="empty">Cargando…</div>', null, null, true);
+  let sh;
+  try { await shipLoad(); sh = await api('apiShipGet', S.token, id); } catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+  const c = SHIP.cfg, w = can('shipping:write'), deliverer = !w;
+  const idx = c.order.indexOf(sh.status);
+  const kv = (l, v) => v ? `<div class="kv"><span>${l}</span><b>${v}</b></div>` : '';
+  const next = deliverer ? ['en_reparto', 'entregado', 'fallido'].filter(x => x !== sh.status && ['entregado', 'devuelto', 'cancelado'].indexOf(sh.status) < 0) : (SHIP_NEXT[sh.status] || []);
+  const addr = [sh.address1, sh.address2, [sh.city, sh.state, sh.zip].filter(Boolean).join(' '), (COUNTRIES.find(x => x[0] === sh.country) || [0, sh.country])[1]].filter(Boolean);
+  $('#modal h3').textContent = 'Envío ' + sh.number + (sh.sale_number ? ' · ' + sh.sale_number : '');
+  $('#modal .body').innerHTML = `
+    <div class="ship-steps" aria-label="Avance del envío">${c.order.filter(x => x !== 'guia' || sh.status === 'guia').map(x => `<span class="${c.order.indexOf(x) <= idx ? 'on' : ''}">${esc(c.status[x])}</span>`).join('')}</div>
+    <p><span class="tag ${SHIP_TAG[sh.status] || ''}">${esc(sh.status_label)}</span> ${sh.auto ? '<span class="muted sm">Se actualiza solo con ' + esc(sh.auto_provider) + '</span>' : ''}</p>
+    <div class="exp-detail">
+      <div>
+        <div class="kvs">
+          ${kv('Para', esc(sh.recipient_name) + (sh.phone ? ' · <a href="tel:' + esc(sh.phone.replace(/[^\d+]/g, '')) + '">' + esc(sh.phone) + '</a>' : ''))}
+          ${kv('Dirección', addr.map(esc).join('<br>'))}
+          ${kv('Indicaciones', esc(sh.notes))}
+          ${kv('Transportista', esc(sh.carrier_name || '—') + (sh.service ? ' · ' + esc(sh.service) : ''))}
+          ${kv('Guía', sh.tracking_number ? '<span class="code">' + esc(sh.tracking_number) + '</span>' + (sh.track_url ? ' · <a href="' + esc(sh.track_url) + '" target="_blank" rel="noopener">rastrear</a>' : '') : '')}
+          ${kv('Entrega estimada', sh.eta ? esc(dayFmt(String(sh.eta).slice(0, 10))) : '')}
+          ${Number(sh.shipping_cost) ? kv('Cobrado por envío', esc(moneyIn(sh.shipping_cost))) : ''}${Number(sh.label_cost) ? kv('Costo de la guía', esc(moneyIn(sh.label_cost))) : ''}
+          ${Number(sh.cod_amount) > 0 ? kv('Contra entrega', esc(moneyIn(sh.cod_amount)) + ' · ' + (sh.cod_status === 'cobrado' ? 'cobrado' : '<span class="neg">por cobrar</span>')) : ''}
+          ${sh.proof_url ? kv('Prueba de entrega', '<a href="' + esc(sh.proof_url) + '" target="_blank" rel="noopener">Ver foto</a>') : ''}
+        </div>
+        <h4>Movimientos</h4>
+        <ul class="ship-events">${sh.events.map(e => `<li><b>${esc(e.text)}</b>${e.where ? ' · ' + esc(e.where) : ''}<br><span class="muted sm">${e.at ? fmtDate(e.at) : ''}${e.src ? ' · ' + esc(c.providers[e.src] || e.src) : ''}</span></li>`).join('')}</ul>
+      </div>
+      <div class="exp-att">
+        ${w ? `<div class="ship-qr">${qrSvg(sh.public_url, 132)}<span class="muted sm">Seguimiento del cliente</span></div>` : ''}
+        ${w ? '<button class="btn" id="shCopy">Copiar enlace de seguimiento</button>' : ''}
+        ${sh.phone ? '<button class="btn" id="shWa">Enviar por WhatsApp</button>' : ''}
+        ${sh.label_url ? `<a class="btn" href="${esc(sh.label_url)}" target="_blank" rel="noopener">Imprimir guía (${esc(c.providers[sh.provider] || 'PDF')})</a>` : w ? '<button class="btn" id="shLabel">Imprimir etiqueta</button>' : ''}
+      </div>
+    </div>
+    ${next.length ? `<div class="chips ship-next">${next.map(x => `<button class="btn ${x === 'entregado' ? 'primary' : x === 'fallido' ? 'danger' : ''}" data-next="${x}">${esc(c.status[x])}</button>`).join('')}</div>` : ''}
+    <div class="chips" style="margin-top:10px">
+      ${w && !sh.label_url && c.settings.label_provider && ['preparar', 'empacado'].indexOf(sh.status) >= 0 ? `<button class="btn primary" id="shRates">Comprar guía con ${esc(c.providers[c.settings.label_provider])}</button>` : ''}
+      ${sh.auto ? '<button class="btn" id="shRefresh">Actualizar rastreo</button>' : ''}
+      ${['entregado', 'devuelto', 'cancelado'].indexOf(sh.status) < 0 ? '<label class="btn"><input type="file" id="shProof" accept="image/png,image/jpeg,image/webp" capture="environment" hidden>Foto de entrega</label>' : ''}
+      ${Number(sh.cod_amount) > 0 && sh.cod_status !== 'cobrado' && can('finance:write') ? '<button class="btn" id="shCollect">Registrar cobro contra entrega</button>' : ''}
+      ${w ? '<button class="btn" id="shEdit">Editar</button>' : ''}
+      ${w && ['entregado', 'devuelto', 'cancelado'].indexOf(sh.status) < 0 ? '<button class="btn danger" id="shCancel">Cancelar envío</button>' : ''}
+    </div>`;
+  const reopen = () => { if (after) after(); openShipment(id, after); };
+  const busy = async (btn, label, fn) => { btn.disabled = true; const t = btn.textContent; btn.textContent = label; try { await fn(); } catch (e) { toast(e.message, true); btn.disabled = false; btn.textContent = t; } };
+  document.querySelectorAll('[data-next]').forEach(b => b.onclick = () => {
+    const st = b.dataset.next;
+    if (st === 'fallido' || st === 'entregado') {
+      const note = prompt(st === 'fallido' ? '¿Qué pasó? (lo verá el cliente)' : 'Nota de entrega (opcional): quién recibió, etc.', '');
+      if (note === null) return;
+      busy(b, 'Guardando…', async () => { await api('apiShipStatus', S.token, id, st, note); toast(c.status[st]); reopen(); });
+    } else busy(b, 'Guardando…', async () => { await api('apiShipStatus', S.token, id, st, ''); toast(c.status[st]); reopen(); });
+  });
+  if ($('#shCopy')) $('#shCopy').onclick = () => (navigator.clipboard ? navigator.clipboard.writeText(sh.public_url) : Promise.reject()).then(() => toast('Enlace copiado'), () => prompt('Copia el enlace:', sh.public_url));
+  if ($('#shWa')) $('#shWa').onclick = () => {
+    let d = sh.phone.replace(/\D/g, '');
+    if (d.length === 8) d = '503' + d; else if (d.length === 10) d = '1' + d;
+    const text = 'Hola ' + sh.recipient_name.split(' ')[0] + ', tu pedido de ' + (sh.business || '') + ' está: ' + sh.status_label + '.' + (sh.tracking_number ? ' Guía ' + sh.carrier_name + ' ' + sh.tracking_number + '.' : '') + '\nSíguelo aquí: ' + sh.public_url;
+    window.open('https:\/\/wa.me/' + d + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  };
+  if ($('#shLabel')) $('#shLabel').onclick = () => printShipLabel(sh);
+  if ($('#shRates')) $('#shRates').onclick = ev => busy(ev.target, 'Cotizando…', async () => { const r = await api('apiShipRates', S.token, id); openShipRates(sh, r, after); });
+  if ($('#shRefresh')) $('#shRefresh').onclick = ev => busy(ev.target, 'Consultando…', async () => { const r = await api('apiShipRefresh', S.token, id); toast(r.status_label); reopen(); });
+  if ($('#shProof')) $('#shProof').onchange = async ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    try { const data = await shrinkImage(f, 1600); await api('apiShipProof', S.token, id, { mime: 'image/jpeg', data: data }); toast('Foto guardada'); reopen(); }
+    catch (e) { toast(e.message, true); }
+  };
+  if ($('#shCollect')) $('#shCollect').onclick = () => openShipCollect(sh, reopen);
+  if ($('#shEdit')) $('#shEdit').onclick = () => openShipForm(sh, after);
+  if ($('#shCancel')) $('#shCancel').onclick = () => openModal('Cancelar envío', `<p>El envío <b>${esc(sh.number)}</b> queda cancelado.${sh.label_url ? ' La guía comprada se pide de vuelta a ' + esc(c.providers[sh.provider]) + ' para recuperar su costo.' : ''}</p>
+    <p class="muted">La venta no cambia: si devuelves el dinero, hazlo desde la venta.</p>`, async () => { await api('apiShipStatus', S.token, id, 'cancelado', ''); toast('Envío cancelado'); if (after) after(); }, 'Cancelar envío');
+}
+
+/** Reduce la foto antes de subirla (más rápido con mala señal). Devuelve base64 JPEG. */
+function shrinkImage(file, max) {
+  return new Promise((ok, bad) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height));
+      const cv = document.createElement('canvas'); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+      cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+      URL.revokeObjectURL(img.src);
+      ok(cv.toDataURL('image/jpeg', 0.82).split(',')[1]);
+    };
+    img.onerror = () => bad(new Error('No pude leer esa foto.'));
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function openShipRates(sh, r, after) {
+  openModal('Elige la tarifa · ' + r.provider_label, `<div class="ship-rates">${r.rates.map((x, i) => `<label class="ship-rate"><input type="radio" name="rate" value="${esc(x.id)}" ${i === 0 ? 'checked' : ''}>
+      <span><b>${esc(x.carrier)}</b> ${esc(x.service)}<br><span class="muted sm">${x.days ? x.days + ' día(s)' : esc(x.terms || '')}</span></span><b>${esc(moneyIn(x.amount, x.currency))}</b></label>`).join('')}</div>
+    <p class="muted sm">El costo se cobra en tu cuenta de ${esc(r.provider_label)}. La etiqueta sale lista para imprimir (4×6).</p>`, async () => {
+    const rate = document.querySelector('[name=rate]:checked');
+    if (!rate) throw new Error('Elige una tarifa.');
+    const d = await api('apiShipBuy', S.token, sh.id, rate.value);
+    toast('Guía lista: ' + d.tracking_number);
+    if (after) after();
+    setTimeout(() => openShipment(sh.id, after), 0);
+  }, 'Comprar guía');
+}
+
+async function openShipCollect(sh, after) {
+  let accts = [];
+  try { accts = (await api('apiFinMoney', S.token)).accounts || []; } catch (e) { accts = []; }
+  openModal('Cobro contra entrega · ' + sh.number, `<form class="form fin1" id="ccForm">
+    <p style="margin:0">Registra el dinero cuando te lo entregue el repartidor o te lo deposite la empresa de envíos.</p>
+    <div class="two"><div><label class="f">Monto</label><input class="input" name="amount" inputmode="decimal" value="${esc(Number(sh.cod_amount).toFixed(2))}"></div>
+      <div><label class="f">Fecha</label><input class="input" type="date" name="date" value="${finToday()}"></div></div>
+    <div><label class="f">Entró a</label><select class="input" name="account">${accts.map(a => `<option value="${esc(a.code)}">${esc(a.name)}</option>`).join('')}</select></div>
+    <div><label class="f">Referencia (opcional)</label><input class="input" name="reference" maxlength="80" placeholder="Depósito de Cargo Expreso"></div></form>`, async () => {
+    const f = $('#ccForm');
+    await api('apiShipCollect', S.token, sh.id, { amount: numIn(f.amount.value), date: f.date.value, account: f.account.value, reference: f.reference.value });
+    toast('Cobro registrado'); swrClear(); if (after) after();
+  }, 'Registrar cobro');
+}
+
+/** Crear o editar un envío. sh vacío = nuevo; sh.sale_id = desde una venta. */
+async function openShipForm(sh, after) {
+  try { await shipLoad(); } catch (e) { toast(e.message, true); return; }
+  const c = SHIP.cfg, isNew = !sh.id, locked = !!(sh.label_url && sh.provider);
+  let customers = [];
+  if (isNew && !sh.sale_id) { try { customers = await api('apiList', S.token, 'customers', ''); } catch (e) { customers = []; } }
+  const v = k => esc(sh[k] === undefined || sh[k] === null ? '' : sh[k]);
+  const country = sh.country || c.settings.origin.country || 'US';
+  openModal(isNew ? (sh.sale_number ? 'Envío de ' + sh.sale_number : 'Nuevo envío') : 'Editar ' + sh.number, `<form class="form" id="sfm" autocomplete="off">
+    ${isNew && !sh.sale_id ? `<div class="wide"><label class="f">Cliente (opcional)</label><select class="input" name="customer_id"><option value="">— Escribe los datos abajo —</option>${customers.slice(0, 500).map(x => `<option value="${esc(x.id)}">${esc(x.name)}${x.city ? ' · ' + esc(x.city) : ''}</option>`).join('')}</select>
+      <div class="hint">Si eliges un cliente y dejas campos en blanco, se usan los de su ficha.</div></div>` : ''}
+    ${locked ? '<div class="note wide">La guía ya se compró: la dirección no se puede cambiar.</div>' : ''}
+    <div><label class="f">Quién recibe</label><input class="input" name="recipient_name" value="${v('recipient_name')}" ${locked ? 'disabled' : ''}></div>
+    <div><label class="f">Teléfono</label><input class="input" name="phone" inputmode="tel" value="${v('phone')}" ${locked ? 'disabled' : ''}></div>
+    <div class="wide"><label class="f">Dirección</label><input class="input" name="address1" value="${v('address1')}" placeholder="Calle, número, colonia" ${locked ? 'disabled' : ''}></div>
+    <div class="wide"><label class="f">Referencia o apartamento</label><input class="input" name="address2" value="${v('address2')}" ${locked ? 'disabled' : ''}></div>
+    <div><label class="f">Ciudad o municipio</label><input class="input" name="city" value="${v('city')}" ${locked ? 'disabled' : ''}></div>
+    <div><label class="f">País</label><select class="input" name="country" ${locked ? 'disabled' : ''}>${isNew ? `<option value="" ${!sh.country ? 'selected' : ''}>El de la ficha del cliente</option>` : ''}${COUNTRIES.map(x => `<option value="${x[0]}" ${x[0] === (isNew ? sh.country : country) ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></div>
+    <div><label class="f">Estado o departamento</label><input class="input" name="state" value="${v('state')}" placeholder="TX · San Salvador" ${locked ? 'disabled' : ''}></div>
+    <div><label class="f">Código postal</label><input class="input" name="zip" value="${v('zip')}" ${locked ? 'disabled' : ''}></div>
+    <div><label class="f">Correo para avisos</label><input class="input" type="email" name="email" value="${v('email')}" ${locked ? 'disabled' : ''}></div>
+    <div><label class="f">Transportista</label><select class="input" name="carrier">${isNew && c.settings.label_provider ? '<option value="">Lo elijo al comprar la guía</option>' : ''}${shipCarrierOptions(sh.carrier || (isNew && c.settings.label_provider ? '' : 'propio'))}</select></div>
+    <div><label class="f">Número de guía</label><input class="input" name="tracking_number" value="${v('tracking_number')}" placeholder="Si ya la tienes" ${locked ? 'disabled' : ''}></div>
+    <div><label class="f">Cobrado al cliente por envío</label><input class="input" name="shipping_cost" inputmode="decimal" value="${sh.shipping_cost !== undefined ? v('shipping_cost') : esc(c.settings.default_fee || '')}"></div>
+    <div><label class="f">Cobrar al entregar (contra entrega)</label><input class="input" name="cod_amount" inputmode="decimal" value="${v('cod_amount')}" placeholder="0.00"></div>
+    <div class="ship-dims wide"><label class="f">Paquete (${c.settings.parcel.units === 'metric' ? 'cm y kg' : 'pulgadas y libras'})</label>
+      <div class="ship-dims-row">${['length', 'width', 'height', 'weight'].map(k => `<input class="input" name="${k}" inputmode="decimal" aria-label="${{ length: 'Largo', width: 'Ancho', height: 'Alto', weight: 'Peso' }[k]}" placeholder="${{ length: 'Largo', width: 'Ancho', height: 'Alto', weight: 'Peso' }[k]}" value="${sh[k] !== undefined ? v(k) : esc(c.settings.parcel[k])}" ${locked ? 'disabled' : ''}>`).join('')}</div></div>
+    <div class="wide"><label class="f">Indicaciones para la entrega</label><input class="input" name="notes" maxlength="500" value="${v('notes')}" placeholder="Portón negro, llamar al llegar"></div>
+    <label class="chk wide"><input type="checkbox" name="notify" ${sh.notify !== false ? 'checked' : ''}> Avisar al cliente por correo cuando cambie el estado</label>
+  </form>`, async () => {
+    const f = $('#sfm'), data = {};
+    Array.from(f.elements).forEach(el => { if (el.name && !el.disabled) data[el.name] = el.type === 'checkbox' ? el.checked : el.value; });
+    ['shipping_cost', 'cod_amount', 'length', 'width', 'height', 'weight'].forEach(k => { if (data[k] !== undefined) data[k] = data[k] === '' ? 0 : numIn(data[k]); });
+    if (isNew) {
+      if (sh.sale_id) data.sale_id = sh.sale_id;
+      const d = await api('apiShipCreate', S.token, data);
+      toast('Envío ' + d.number + ' creado'); swrClear(); if (after) after();
+      setTimeout(() => openShipment(d.id, after), 0);
+    } else {
+      await api('apiShipUpdate', S.token, sh.id, data);
+      toast('Envío actualizado'); if (after) after();
+      setTimeout(() => openShipment(sh.id, after), 0);
+    }
+  }, isNew ? 'Crear envío' : 'Guardar', true);
+}
+
+/** Etiqueta propia (4×6) para envíos sin guía de proveedor: destinatario, remitente y QR de seguimiento. */
+function printShipLabel(sh) {
+  const o = sh.origin || {};
+  const html = `<div class="ship-label">
+    <div class="sl-from"><b>De:</b> ${esc(o.name || sh.business || '')}<br>${esc([o.street1, o.city, o.state, o.zip].filter(Boolean).join(', '))}${o.phone ? '<br>' + esc(o.phone) : ''}</div>
+    <div class="sl-to"><span>PARA</span><b>${esc(sh.recipient_name)}</b>${esc(sh.address1)}${sh.address2 ? '<br>' + esc(sh.address2) : ''}<br>${esc([sh.city, sh.state, sh.zip].filter(Boolean).join(' '))}<br>${esc((COUNTRIES.find(x => x[0] === sh.country) || [0, sh.country])[1])}${sh.phone ? '<br>Tel. ' + esc(sh.phone) : ''}</div>
+    ${sh.notes ? `<div class="sl-notes">${esc(sh.notes)}</div>` : ''}
+    <div class="sl-foot"><div>${qrSvg(sh.public_url, 120)}</div><div><b class="sl-num">${esc(sh.number)}</b>${sh.sale_number ? '<br>Pedido ' + esc(sh.sale_number) : ''}${sh.carrier_name ? '<br>' + esc(sh.carrier_name) : ''}${sh.tracking_number ? '<br>Guía ' + esc(sh.tracking_number) : ''}
+      ${Number(sh.cod_amount) > 0 && sh.cod_status !== 'cobrado' ? '<div class="sl-cod">COBRAR ' + esc(moneyIn(sh.cod_amount)) + '</div>' : ''}</div></div>
+  </div>`;
+  let area = $('#printArea');
+  if (!area) { area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+  area.className = 'ship-print';
+  area.innerHTML = html;
+  let ps = $('#printPage');
+  if (!ps) { ps = document.createElement('style'); ps.id = 'printPage'; document.head.appendChild(ps); }
+  ps.textContent = '@page { size: 4in 6in; margin: 0; }';
+  document.body.classList.add('printing');
+  const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  setTimeout(() => window.print(), 60);
+}
+
+/* ---------- Ajustes y conexiones ---------- */
+
+function shipSettings() {
+  const c = SHIP.cfg, s = c.settings, o = s.origin, p = s.parcel, con = c.connected;
+  const INFO = {
+    shippo: ['Guías y rastreo · EE. UU. e internacional', 'USPS, UPS, FedEx y DHL con una sola cuenta. Las claves de prueba empiezan con shippo_test_.', 'https:\/\/apps.goshippo.com/settings/api'],
+    easypost: ['Guías y rastreo · EE. UU. e internacional', 'Más de 100 transportistas. Las claves de prueba empiezan con EZTK.', 'https:\/\/www.easypost.com/account/api-keys'],
+    aftership: ['Rastreo de más de 1,000 transportistas', 'Incluye Correo El Salvador. La API está en los planes de pago.', 'https:\/\/admin.aftership.com/settings/api-keys'],
+    trackingmore: ['Rastreo de más de 1,000 transportistas', 'Detecta el transportista por el número de guía.', 'https:\/\/admin.trackingmore.com/developer/api-key'],
+    ship24: ['Rastreo de más de 1,000 transportistas', 'Cobra por guía rastreada.', 'https:\/\/dashboard.ship24.com/integrations/api-keys'],
+  };
+  const inp = (name, label, val, attrs) => `<div><label class="f">${label}</label><input class="input" name="${name}" value="${esc(val === undefined || val === null ? '' : val)}" ${attrs || ''}></div>`;
+  $('#shBody').innerHTML = `<div class="dte-cfg">
+    <div class="card pad">
+      <h3>De dónde salen tus paquetes</h3>
+      <form class="form" id="shOrigin">
+        ${inp('name', 'Nombre', o.name)}${inp('company', 'Empresa', o.company)}
+        <div class="wide">${inp('street1', 'Dirección', o.street1)}</div>${inp('street2', 'Referencia', o.street2)}${inp('city', 'Ciudad', o.city)}
+        ${inp('state', 'Estado o departamento', o.state)}${inp('zip', 'Código postal', o.zip)}
+        <div><label class="f">País</label><select class="input" name="country">${COUNTRIES.map(x => `<option value="${x[0]}" ${x[0] === o.country ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></div>
+        ${inp('phone', 'Teléfono', o.phone, 'inputmode="tel"')}
+        <div class="wide" style="display:flex;justify-content:flex-end"><button class="btn primary" type="submit">Guardar dirección</button></div>
+      </form>
+    </div>
+    <div class="card pad">
+      <h3>Paquete y avisos</h3>
+      <form class="form" id="shPrefs">
+        <div><label class="f">Unidades</label><select class="input" name="units"><option value="imperial" ${p.units !== 'metric' ? 'selected' : ''}>Pulgadas y libras</option><option value="metric" ${p.units === 'metric' ? 'selected' : ''}>Centímetros y kilos</option></select></div>
+        ${inp('default_fee', 'Costo de envío por defecto', s.default_fee || '', 'inputmode="decimal"')}
+        <div class="ship-dims wide"><label class="f">Paquete más común</label><div class="ship-dims-row">${['length', 'width', 'height', 'weight'].map(k => `<input class="input" name="${k}" inputmode="decimal" aria-label="${{ length: 'Largo', width: 'Ancho', height: 'Alto', weight: 'Peso' }[k]}" placeholder="${{ length: 'Largo', width: 'Ancho', height: 'Alto', weight: 'Peso' }[k]}" value="${esc(p[k])}">`).join('')}</div></div>
+        <label class="chk wide"><input type="checkbox" name="notify_email" ${s.notify_email !== false ? 'checked' : ''}> Avisar al cliente por correo en cada paso (preparando, enviado, sale a entrega, entregado)</label>
+        <div class="wide" style="display:flex;justify-content:flex-end"><button class="btn primary" type="submit">Guardar</button></div>
+      </form>
+    </div>
+    <div class="card pad dte-data">
+      <h3>Conexiones</h3>
+      <p class="muted">Conecta tu propia cuenta de cada servicio. Las claves se guardan en tu servidor de Google y no se vuelven a mostrar.</p>
+      <div class="two ship-use">
+        <div><label class="f">Comprar guías con</label><select class="input" id="shLabelP"><option value="">No comprar guías aquí</option>${Object.keys(c.label_providers).map(k => `<option value="${k}" ${s.label_provider === k ? 'selected' : ''} ${con[k].set ? '' : 'disabled'}>${c.label_providers[k]}${con[k].set ? '' : ' (no conectado)'}</option>`).join('')}</select></div>
+        <div><label class="f">Rastrear guías puestas a mano con</label><select class="input" id="shTrackP"><option value="">A mano (sin rastreo automático)</option>${Object.keys(c.track_providers).map(k => `<option value="${k}" ${s.track_provider === k ? 'selected' : ''} ${con[k].set ? '' : 'disabled'}>${c.track_providers[k]}${con[k].set ? '' : ' (no conectado)'}</option>`).join('')}</select></div>
+      </div>
+      <div class="ship-provs">${Object.keys(c.providers).map(k => `<div class="ship-prov" data-p="${k}">
+        <div class="ship-prov-h"><b>${esc(c.providers[k])}</b>${con[k].set ? `<span class="tag pagada">Conectado ${esc(con[k].hint)}${con[k].test ? ' · prueba' : ''}</span>` : '<span class="tag">Sin conectar</span>'}</div>
+        <div class="sm">${esc(INFO[k][0])}</div><div class="muted sm">${esc(INFO[k][1])}</div>
+        <form class="cash-row"><input class="input" type="password" name="key" autocomplete="off" placeholder="${con[k].set ? 'Cambiar la clave' : 'Pega tu clave de API'}" aria-label="Clave de API de ${esc(c.providers[k])}"><button class="btn" type="submit">${con[k].set ? 'Cambiar' : 'Conectar'}</button></form>
+        <div class="chips"><a class="hint" href="${esc(INFO[k][2])}" target="_blank" rel="noopener">Dónde está mi clave</a>${con[k].set ? `<button type="button" class="btn sm danger" data-rm="${k}">Desconectar</button>` : ''}</div>
+      </div>`).join('')}</div>
+      <div class="note"><b>Stripe:</b> en tu enlace de pago o Checkout activa <b>Recopilar direcciones de envío</b> (y si quieres, tarifas de envío). Cada pago con dirección crea su envío aquí solo. Igual con Shopify, WooCommerce o tu propia tienda.</div>
+    </div>
+    <div class="card pad dte-data">
+      <h3>Transportistas</h3>
+      <p class="muted">Pon la página de rastreo de cada empresa con <b>{n}</b> donde va el número de guía. Así el cliente puede abrirla desde su seguimiento.</p>
+      <div class="ship-carriers">${c.carriers.map(x => `<form class="ship-carrier" data-code="${esc(x.code)}"><b>${esc(x.name)}</b><input class="input" name="url" value="${esc(x.url)}" placeholder="https:\/\/…{n}" aria-label="Página de rastreo de ${esc(x.name)}"><button class="btn sm" type="submit">Guardar</button>${x.custom ? `<button class="btn sm danger" type="button" data-rmc="${esc(x.code)}">Quitar</button>` : ''}</form>`).join('')}</div>
+      <form class="cash-row" id="shAddC" style="margin-top:12px"><input class="input" name="name" placeholder="Otra empresa de envíos" aria-label="Nombre de la empresa"><input class="input" name="url" placeholder="https:\/\/…{n} (opcional)" aria-label="Página de rastreo"><button class="btn" type="submit">Agregar</button></form>
+    </div>
+  </div>`;
+  const save = async (data, msg) => { SHIP.cfg = await api('apiShipSaveSettings', S.token, data); toast(msg || 'Guardado'); shipSettings(); };
+  $('#shOrigin').onsubmit = async ev => { ev.preventDefault(); const f = ev.target, d = {}; Array.from(f.elements).forEach(el => { if (el.name) d[el.name] = el.value; });
+    try { await save({ origin: d }, 'Dirección guardada'); } catch (e) { toast(e.message, true); } };
+  $('#shPrefs').onsubmit = async ev => { ev.preventDefault(); const f = ev.target;
+    try { await save({ parcel: { units: f.units.value, length: numIn(f.length.value), width: numIn(f.width.value), height: numIn(f.height.value), weight: numIn(f.weight.value) },
+      default_fee: numIn(f.default_fee.value), notify_email: f.notify_email.checked }); } catch (e) { toast(e.message, true); } };
+  $('#shLabelP').onchange = async ev => { try { await save({ label_provider: ev.target.value }); } catch (e) { toast(e.message, true); shipSettings(); } };
+  $('#shTrackP').onchange = async ev => { try { await save({ track_provider: ev.target.value }); } catch (e) { toast(e.message, true); shipSettings(); } };
+  document.querySelectorAll('.ship-prov form').forEach(f => f.onsubmit = async ev => {
+    ev.preventDefault();
+    const k = f.closest('.ship-prov').dataset.p, btn = f.querySelector('button');
+    btn.disabled = true; btn.textContent = 'Probando…';
+    try { SHIP.cfg = await api('apiShipSaveKey', S.token, k, f.key.value); toast(c.providers[k] + ' conectado'); shipSettings(); }
+    catch (e) { toast(e.message, true); btn.disabled = false; btn.textContent = 'Conectar'; }
+  });
+  document.querySelectorAll('[data-rm]').forEach(b => b.onclick = () => openModal('Desconectar ' + c.providers[b.dataset.rm], '<p>Se borra la clave de este sistema. Los envíos ya creados no cambian; los que se rastreaban con este servicio pasan a manual.</p>',
+    async () => { SHIP.cfg = await api('apiShipRemoveKey', S.token, b.dataset.rm); toast('Desconectado'); shipSettings(); }, 'Desconectar'));
+  document.querySelectorAll('.ship-carrier').forEach(f => f.onsubmit = async ev => { ev.preventDefault();
+    try { await save({ carrier: { code: f.dataset.code, url: f.url.value } }, 'Transportista guardado'); } catch (e) { toast(e.message, true); } });
+  document.querySelectorAll('[data-rmc]').forEach(b => b.onclick = async () => { try { await save({ carrier: { code: b.dataset.rmc, remove: true } }, 'Quitado'); } catch (e) { toast(e.message, true); } });
+  $('#shAddC').onsubmit = async ev => { ev.preventDefault(); const f = ev.target;
+    if (!f.name.value.trim()) { toast('Escribe el nombre de la empresa.', true); return; }
+    try { await save({ carrier: { code: f.name.value, name: f.name.value, url: f.url.value } }, 'Transportista agregado'); } catch (e) { toast(e.message, true); } };
+}
+
+/* ---------- Envío en el punto de venta ---------- */
+
+async function openPosShip() {
+  const c = POS.cart;
+  try { await shipLoad(); } catch (e) { toast(e.message, true); return; }
+  const cfg = SHIP.cfg, s = c.ship || {};
+  const cu = c.customer || {};
+  openModal('Envío a domicilio', `<form class="form" id="psForm" autocomplete="off">
+    <p class="muted sm wide" style="margin:0">${c.customer && c.customer.id ? 'Deja en blanco lo que ya está en la ficha de ' + esc(cu.name) + '.' : 'Elige al cliente primero para guardar su dirección en su ficha.'}</p>
+    <div><label class="f">Quién recibe</label><input class="input" name="recipient_name" value="${esc(s.recipient_name || cu.name || '')}"></div>
+    <div><label class="f">Teléfono</label><input class="input" name="phone" inputmode="tel" value="${esc(s.phone || cu.phone || '')}"></div>
+    <div class="wide"><label class="f">Dirección</label><input class="input" name="address1" value="${esc(s.address1 || '')}" placeholder="${cu.id ? 'La de su ficha' : 'Calle, número, colonia'}"></div>
+    <div><label class="f">Ciudad o municipio</label><input class="input" name="city" value="${esc(s.city || '')}"></div>
+    <div><label class="f">País</label><select class="input" name="country">${cu.id ? `<option value="" ${!s.country ? 'selected' : ''}>El de su ficha</option>` : ''}${COUNTRIES.map(x => `<option value="${x[0]}" ${x[0] === (s.country || (cu.id ? '' : cfg.settings.origin.country)) ? 'selected' : ''}>${x[1]}</option>`).join('')}</select></div>
+    <div><label class="f">Transportista</label><select class="input" name="carrier">${shipCarrierOptions(s.carrier || 'propio')}</select></div>
+    <div><label class="f">Costo del envío</label><input class="input pos-money" name="fee" inputmode="decimal" value="${esc(s.fee !== undefined ? s.fee : cfg.settings.default_fee || '')}" placeholder="0.00"></div>
+    <div class="wide"><label class="f">Indicaciones</label><input class="input" name="notes" maxlength="300" value="${esc(s.notes || '')}" placeholder="Portón negro, llamar al llegar"></div>
+    <label class="chk wide"><input type="checkbox" name="cod" ${c.cod ? 'checked' : ''}> Cobrar al entregar (contra entrega): lo que no se cobre ahora lo cobra el repartidor</label>
+  </form>`, async () => {
+    const f = $('#psForm');
+    const ship = { recipient_name: f.recipient_name.value.trim(), phone: f.phone.value.trim(), address1: f.address1.value.trim(), city: f.city.value.trim(),
+      country: f.country.value, carrier: f.carrier.value, fee: r2(numIn(f.fee.value)), notes: f.notes.value.trim() };
+    if (!ship.address1 && !(c.customer && c.customer.id)) throw new Error('Escribe la dirección de entrega.');
+    if (!ship.recipient_name && !c.customer) throw new Error('Escribe quién recibe.');
+    if (ship.fee < 0) throw new Error('El costo de envío no puede ser negativo.');
+    c.ship = ship; c.cod = f.cod.checked; drawPosCart();
+  }, 'Listo', true);
+  if (c.ship) {
+    const rm = document.createElement('button'); rm.type = 'button'; rm.className = 'btn danger'; rm.textContent = 'Quitar envío';
+    rm.onclick = () => { delete c.ship; c.cod = false; closeModal(true); drawPosCart(); };
+    $('#modal footer').insertBefore(rm, $('#modal footer').firstChild.nextSibling);
+  }
+}
+
+/** Envío dentro del detalle de una venta. */
+async function saleShipBlock(s) {
+  const box = $('#saleShip');
+  if (!box) return;
+  let d;
+  try { d = await api('apiShipList', S.token, { sale_id: s.id, status: '' }); } catch (e) { box.innerHTML = ''; return; }
+  if (!$('#saleShip')) return;
+  const sh = d.rows[0];
+  box.innerHTML = sh ? `<div class="dte-sale"><button class="btn sm" id="saleShipOpen"><span class="tag ${SHIP_TAG[sh.status] || ''}">${esc(sh.status_label)}</span> Envío ${esc(sh.number)}${sh.tracking_number ? ' · ' + esc(sh.tracking_number) : ''}</button></div>`
+    : can('shipping:write') && ['cancelada', 'reembolsada'].indexOf(s.status) < 0 ? '<div class="dte-sale"><button class="btn sm" id="saleShipNew">Enviar a domicilio</button></div>' : '';
+  if ($('#saleShipOpen')) $('#saleShipOpen').onclick = () => openShipment(sh.id, null);
+  if ($('#saleShipNew')) $('#saleShipNew').onclick = () => openShipForm({ sale_id: s.id, sale_number: s.number, recipient_name: s.customer_name && s.customer_name !== 'Consumidor final' ? s.customer_name : '' }, null);
 }
 
 /* ---------- Ventas sin conexión: se guardan en el dispositivo y se envían solas ---------- */
@@ -5119,6 +6095,15 @@ function receiptDoc(rc, link) {
     if (p.tendered && p.change) { d.push({ t: 'lr', l: '  Recibido', r: m(p.tendered) }); d.push({ t: 'lr', l: '  Cambio', r: m(p.change) }); }
   });
   if (rc.refunded) d.push({ t: 'lr', l: 'Reembolsado', r: '-' + m(rc.refunded) });
+  if (rc.dte) {
+    d.push({ t: 'sep' });
+    d.push({ t: 'center', v: rc.dte.name + ' electrónica' });
+    if (rc.dte.test) d.push({ t: 'center', v: 'AMBIENTE DE PRUEBAS - SIN VALIDEZ FISCAL' });
+    d.push({ t: 'sub', v: 'Código de generación:' }); d.push({ t: 'sub', v: rc.dte.codigo });
+    d.push({ t: 'sub', v: 'Número de control:' }); d.push({ t: 'sub', v: rc.dte.control });
+    d.push({ t: 'sub', v: rc.dte.sello ? 'Sello: ' + rc.dte.sello : 'Pendiente del sello de Hacienda' });
+    if (rc.dte.qr) { d.push({ t: 'qr', v: rc.dte.qr }); d.push({ t: 'center', v: 'Consulta en Hacienda' }); }
+  }
   if (link) { d.push({ t: 'feed' }); d.push({ t: 'qr', v: link }); d.push({ t: 'center', v: 'Tu recibo en línea' }); }
   if (rc.footer) { d.push({ t: 'feed' }); d.push({ t: 'center', v: rc.footer }); }
   return d;
