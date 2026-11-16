@@ -58,7 +58,7 @@
     .then(function (res) {
       if (!res.ok) return fail(res.error || 'No encontramos este recibo.');
       var r = res.data;
-      var m = function (v) { try { return new Intl.NumberFormat('es', { style: 'currency', currency: r.currency || 'USD' }).format(Number(v || 0)); } catch (e) { return Number(v || 0).toFixed(2); } };
+      var m = function (v) { try { return new Intl.NumberFormat('en-US', { style: 'currency', currency: r.currency || 'USD', currencyDisplay: 'narrowSymbol' }).format(Number(v || 0)); } catch (e) { return Number(v || 0).toFixed(2); } };
       document.title = 'Recibo ' + r.number + ' · ' + r.business;
       var html = '<article class="paper">' +
         '<h1 class="biz">' + esc(r.business) + '</h1>' +
