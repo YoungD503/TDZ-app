@@ -2348,7 +2348,7 @@ function scanCamera(opts) {
         <div class="scan-log"></div>
         <div class="scan-actions">
           <button type="button" class="btn" data-act="torch" hidden>Linterna</button>
-          <label class="btn">Tomar foto<input type="file" accept="image/*" capture="environment" hidden></label>
+          <label class="btn">Tomar foto<input type="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" capture="environment" hidden></label>
           <button type="button" class="btn primary" data-act="close">${opts.continuous ? 'Listo' : 'Cancelar'}</button>
         </div>
       </div>`;
@@ -3944,8 +3944,8 @@ async function openExpense(edit) {
       <div class="two" id="exRepRow" hidden><div><label class="f">Cada cuánto</label><select class="input" name="frequency">${Object.keys(cfg.frequencies).map(k => `<option value="${k}" ${k === 'mensual' ? 'selected' : ''}>${esc(cfg.frequencies[k])}</option>`).join('')}</select></div>
         <div><label class="f">Al repetirse</label><select class="input" name="auto_pay"><option value="0">Registrarlo por pagar y avisarme</option><option value="1">Registrarlo ya pagado</option></select></div></div>
       <div class="exp-file"><label class="f">Comprobante (foto o PDF)</label>
-        <div class="chips"><label class="btn"><input type="file" name="photo" accept="image/*" capture="environment" hidden>${ICONS.camera} Tomar foto</label>
-          <label class="btn"><input type="file" name="file" accept="image/*,application/pdf" hidden>Subir archivo</label></div>
+        <div class="chips"><label class="btn"><input type="file" name="photo" accept="image/png,image/jpeg,image/webp,image/heic,image/heif" capture="environment" hidden>${ICONS.camera} Tomar foto</label>
+          <label class="btn"><input type="file" name="file" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,application/pdf" hidden>Subir archivo</label></div>
         <div id="exPrev" class="exp-prev"></div></div>`}
     </form>`, async () => {
     const f = $('#exForm');
@@ -4052,7 +4052,7 @@ async function openExpenseDetail(id) {
       </div>
       <div class="exp-att">
         ${e.attachment_url ? `<a class="btn" href="${esc(e.attachment_url)}" target="_blank" rel="noopener">${ICONS.clip} Ver comprobante</a>` : '<p class="muted sm">Sin comprobante.</p>'}
-        ${w && e.status !== 'anulado' ? `<label class="btn"><input type="file" id="attFile" accept="image/*,application/pdf" capture="environment" hidden>${e.attachment_url ? 'Cambiar comprobante' : ICONS.camera + ' Agregar foto o PDF'}</label>` : ''}
+        ${w && e.status !== 'anulado' ? `<label class="btn"><input type="file" id="attFile" accept="image/png,image/jpeg,image/webp,image/heic,image/heif,application/pdf" capture="environment" hidden>${e.attachment_url ? 'Cambiar comprobante' : ICONS.camera + ' Agregar foto o PDF'}</label>` : ''}
       </div>
     </div>
     ${w && e.status !== 'anulado' ? `<div class="chips" style="margin-top:16px">
@@ -5799,4 +5799,251 @@ function showGuide(i, key) {
   const d = S.int;
   const base = d.webAppUrl || 'https:\/\/script.google.com/macros/s/TU_ID/exec';
   const k = key || i.public_key || '';
-  const 
+  const K = k || 'TU_CLAVE_SECRETA';
+  const relay = (d.relayUrl || 'https:\/\/TU-RELEVO.workers.dev') + '/in/' + K;
+  if (i.is_pull) { openModal('Cómo funciona: ' + i.name, (i.is_d1 ? GUIDES.cloudflare_d1 : GUIDES.google_sheet)({ base, i }), null, null, true); return; }
+  let html = '';
+  if (key) html += `<div class="note ok-note"><b>Tu clave${i.is_public ? '' : ' secreta'}:</b><div class="secret" style="margin-top:8px">${esc(key)}</div>
+    ${i.is_public ? 'Es pública: puede ir en tu página web, solo sirve para ' + (i.platform === 'catalog' ? 'leer el catálogo' : 'enviar prospectos') + '.' : '<b>Cópiala ahora:</b> por seguridad no se volverá a mostrar. Ya va incluida en las instrucciones de abajo.'}</div>`;
+  else if (!k) html += `<div class="note">La clave secreta solo se muestra al crearla. Donde diga <code>TU_CLAVE_SECRETA</code> usa la que guardaste, o genera una con "Nueva clave".</div>`;
+  if (i.needs_relay && !d.relayUrl) html += `<div class="note">Antes, instala el <b>relevo</b> (sección "Relevo" en esta pantalla) y guarda su URL.</div>`;
+  html += (GUIDES[i.platform] || (() => ''))({ base, key: K, relay, i });
+  openModal('Conectar: ' + i.name, html, null, null, true);
+}
+
+const fieldsHint = '<p class="muted">El sistema reconoce automáticamente campos como <code>name / nombre</code>, <code>email / correo</code>, <code>phone / telefono / whatsapp</code>, <code>company / empresa</code>, <code>message / mensaje</code> y los parámetros <code>utm_*</code>. Cualquier otro campo se guarda en el mensaje del prospecto.</p>';
+
+const GUIDES = {
+  web_form: ({ base, key }) => `
+    <h3>Opción A — Formulario listo (lo más fácil)</h3>
+    <p>Pega esto en tu página (WordPress: bloque "HTML personalizado"; Wix: "Insertar código"; Shopify: sección "HTML personalizado"; Webflow/Squarespace: "Embed"):</p>
+    ${codeBlock(`<iframe src="${base}?action=form&key=${key}&title=Cont%C3%A1ctanos&utm_source=web"
+  style="width:100%;max-width:520px;height:560px;border:0" loading="lazy"></iframe>`)}
+    <p class="muted">Parámetros opcionales en la URL: <code>fields=name,email,phone,company,message</code> · <code>button=Quiero%20info</code> · <code>thanks=…</code> · <code>color=0f766e</code> · <code>utm_campaign=promo-noviembre</code>.</p>
+    <h3>Opción B — Tu propio formulario con tu diseño</h3>
+    <p>Mantén tu HTML y agrega este script. Captura también los <code>utm_</code> de la URL:</p>
+    ${codeBlock(`<form id="nexo-form">
+  <input name="name" placeholder="Nombre" required>
+  <input name="email" type="email" placeholder="Correo">
+  <input name="phone" placeholder="Teléfono">
+  <textarea name="message" placeholder="¿En qué te ayudamos?"></textarea>
+  <input name="_hp" style="display:none" tabindex="-1" autocomplete="off">
+  <button>Enviar</button>
+</form>
+<script>
+document.getElementById('nexo-form').addEventListener('submit', async function (e) {
+  e.preventDefault();
+  var data = Object.fromEntries(new FormData(this));
+  new URLSearchParams(location.search).forEach(function (v, k) { if (k.indexOf('utm_') === 0) data[k] = v; });
+  data.page_url = location.href;
+  this.querySelector('button').disabled = true;
+  await fetch('${base}?key=${key}', { method: 'POST', body: JSON.stringify(data) });
+  this.innerHTML = '<p>¡Gracias! Te contactaremos pronto.</p>';
+});
+<\/script>`)}
+    <h3>Opción C — Formulario HTML sin JavaScript</h3>
+    ${codeBlock(`<form method="post" action="${base}?key=${key}&redirect=https:\/\/tusitio.com">`)}
+    <p class="muted">Muestra una página de "Gracias" con un enlace para volver a tu sitio.</p>${fieldsHint}`,
+
+  wordpress: ({ base, key }) => `
+    <p>URL del webhook para tu plugin de formularios:</p>${codeBlock(`${base}?key=${key}&format=json`)}
+    <ul class="steps">
+      <li><b>Contact Form 7:</b> instala el plugin gratuito <i>CF7 to Webhook</i>, abre tu formulario → pestaña <i>Webhook</i> → pega la URL.</li>
+      <li><b>Elementor Pro:</b> en el formulario → <i>Acciones después de enviar</i> → agrega <i>Webhook</i> → pega la URL. Activa "Datos avanzados".</li>
+      <li><b>WPForms:</b> complemento <i>Webhooks</i> (licencia Elite) → Método POST, formato JSON → pega la URL.</li>
+      <li><b>Gravity Forms / Fluent Forms / Forminator:</b> usa su complemento de Webhooks con método POST.</li>
+    </ul>${fieldsHint}`,
+
+  google_forms: ({ base, key }) => `
+    <ol class="steps">
+      <li>Abre tu Google Form → menú ⋮ → <b>Editor de secuencias de comandos</b>.</li>
+      <li>Pega este código y guarda:</li></ol>
+    ${codeBlock(`function enviarANexo(e) {
+  var data = { form_name: FormApp.getActiveForm().getTitle() };
+  e.response.getItemResponses().forEach(function (r) {
+    var v = r.getResponse();
+    data[r.getItem().getTitle()] = Array.isArray(v) ? v.join(', ') : v;
+  });
+  if (e.response.getRespondentEmail()) data.email = data.email || e.response.getRespondentEmail();
+  UrlFetchApp.fetch('${base}?key=${key}&format=json', {
+    method: 'post', contentType: 'application/json',
+    payload: JSON.stringify(data), followRedirects: true, muteHttpExceptions: true
+  });
+}`)}
+    <ol class="steps" start="3"><li>Ve a <b>Activadores</b> (reloj) → <b>Agregar activador</b> → función <code>enviarANexo</code> → evento <b>Al enviar el formulario</b> → guarda y autoriza.</li>
+      <li>Nombra tus preguntas como "Nombre", "Correo", "Teléfono", "Mensaje" para que se reconozcan solas.</li></ol>`,
+
+  shopify: ({ relay }) => `
+    <ol class="steps">
+      <li>En Shopify: <b>Configuración → Notificaciones → Webhooks</b> → <b>Crear webhook</b>.</li>
+      <li>Formato <b>JSON</b>, versión de la API la más reciente, y esta URL:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>Crea un webhook con esa misma URL para cada evento: <b>Creación de pedido</b>, <b>Pago de pedido</b>, <b>Cancelación de pedido</b>, <b>Actualización de pedido</b> y (opcional) <b>Creación de cliente</b>.</li>
+      <li>Abajo de la lista Shopify muestra <i>"Tus webhooks se firmarán con…"</i>. Copia ese valor y pégalo en <b>Editar → Secreto de firma</b> de esta integración.</li>
+      <li>Usa los <b>mismos SKU</b> en Shopify y en "Productos y servicios" para que se descuente el inventario.</li>
+      <li>Prueba con "Enviar notificación de prueba" y revisa la <b>Actividad reciente</b>.</li></ol>`,
+
+  woocommerce: ({ relay }) => `
+    <ol class="steps">
+      <li>En WordPress: <b>WooCommerce → Ajustes → Avanzado → Webhooks → Añadir webhook</b>.</li>
+      <li>Estado <b>Activo</b>, tema <b>Pedido creado</b>, versión de la API <b>WP REST API v3</b>, y URL de entrega:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>En <b>Secreto</b> escribe una frase larga e inventada. Pega <b>la misma</b> en <b>Editar → Secreto de firma</b> de esta integración.</li>
+      <li>Repite con el tema <b>Pedido actualizado</b> (para pagos, cancelaciones y reembolsos), con la misma URL y secreto.</li>
+      <li>Usa los <b>mismos SKU</b> en WooCommerce y en "Productos y servicios".</li></ol>`,
+
+  stripe: ({ relay }) => `
+    <ol class="steps">
+      <li>En Stripe: <b>Desarrolladores → Webhooks → Agregar destino</b> (endpoint) con esta URL:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="2">
+      <li>Eventos: <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.async_payment_failed</code> y <code>charge.refunded</code>.</li>
+      <li>Copia el <b>Secreto de firma</b> (<code>whsec_…</code>) y pégalo en <b>Editar → Secreto de firma</b>.</li>
+      <li>Funciona con <b>Payment Links</b> y <b>Checkout</b>.</li></ol>
+    <h3>Ver qué productos se compraron</h3>
+    <p class="muted">El aviso de Stripe no trae los productos; el CRM se los pregunta a Stripe con una clave de <b>solo lectura</b>.</p>
+    <ol class="steps">
+      <li>En Stripe: <b>Developers → API keys → Create restricted key</b> (hazlo en el modo que estés usando: prueba o real).</li>
+      <li>Nombre: <code>CRM</code>. Permisos en <b>Read</b>: <b>Checkout Sessions</b>, <b>Products</b> y <b>Prices</b>. Todo lo demás en <b>None</b>.</li>
+      <li>Crea la clave, cópiala (<code>rk_test_…</code> o <code>rk_live_…</code>) y pégala en <b>Editar → Clave de lectura de Stripe</b> del modo correspondiente.</li>
+      <li><b>Para ligar con tu catálogo e inventario:</b> en cada producto de Stripe agrega en <b>Metadata</b> la clave <code>sku</code> con el SKU de ese producto en tu CRM.</li></ol>`,
+
+  wompi: ({ relay }) => `
+    <ol class="steps">
+      <li>Entra a <b>panel.wompi.sv</b> → <b>Aplicativos</b> → edita el aplicativo con el que cobras.</li>
+      <li>En <b>"Notifica vía Webhook"</b> pega esta URL y guarda:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>En el mismo aplicativo copia el <b>API Secret</b> y pégalo en <b>Editar → Secreto de firma</b> de esta integración. Con él se verifica el encabezado <code>wompi_hash</code> de cada aviso.</li>
+      <li><b>Liga el pago a tu catálogo:</b> al crear un enlace de pago, usa como <b>Identificador del comercio</b> el <b>SKU</b> del producto o servicio. Así la venta descuenta inventario y aparece con su producto.</li>
+      <li>Haz un pago de prueba. Las transacciones de <b>prueba</b> aparecen en la actividad como "conexión funciona" y <b>no</b> se registran como venta. Los pagos reales se registran como venta <b>pagada</b>.</li></ol>
+    <p class="muted">Si creas enlaces por API, también puedes poner esta URL en <code>configuracion.urlWebhook</code> de cada enlace.</p>`,
+
+  n1co: ({ relay }) => `
+    <ol class="steps">
+      <li>Entra al portal <b>n1co Business</b> → <b>Configuración</b> (menú arriba a la derecha) → <b>Opciones para desarrolladores</b> → <b>Webhook</b>.</li>
+      <li>Pega esta URL:</li></ol>
+    ${codeBlock(relay)}
+    <ol class="steps" start="3">
+      <li>Pulsa <b>generar clave secreta</b>, guarda, y pega esa clave en <b>Editar → Secreto de firma</b> de esta integración. Con ella se verifica el encabezado <code>X-H4B-Hmac-Sha256</code>.</li>
+      <li>Usa los <b>mismos SKU</b> en n1co y en "Productos y servicios" para que se descuente inventario.</li></ol>
+    <p class="muted">Qué se registra: <b>pago exitoso</b> → venta pagada con sus productos y cliente · <b>cancelación</b> → venta cancelada (devuelve inventario) · <b>reversión</b> → venta reembolsada. Funciona con n1co Links, tienda, API y QR.</p>`,
+
+  webhook: ({ base, key }) => `
+    <p>URL para Zapier, Make, n8n, Wix Automations o tu propio sistema (método <b>POST</b>, cuerpo <b>JSON</b>):</p>${codeBlock(`${base}?key=${key}&format=json`)}
+    <p class="muted">Zapier: "Webhooks by Zapier → POST", tipo de carga JSON. Make: módulo HTTP "Make a request" con "Follow redirect" activado. n8n: nodo "HTTP Request". Wix: Automatizaciones → "Enviar solicitud HTTP".</p>
+    <h3>Prospecto</h3>${codeBlock(`{ "type": "lead", "name": "Ana Torres", "email": "ana@correo.com", "phone": "+52 555 123 4567",
+  "message": "Quiero una cotización", "utm_campaign": "facebook-noviembre" }`)}
+    <h3>Cliente</h3>${codeBlock(`{ "type": "customer", "name": "Carlos Rivera", "email": "carlos@empresa.com", "company": "Rivera SA" }`)}
+    <h3>Suscriptor de newsletter</h3>${codeBlock(`{ "type": "subscriber", "email": "lector@correo.com", "language": "es", "status": "active" }`)}
+    <h3>Venta / pedido</h3>${codeBlock(`{
+  "type": "order", "id": "A-1029", "number": "1029", "status": "paid",
+  "currency": "USD", "total": 448.0, "tax": 48.0, "payment_method": "Square",
+  "customer": { "name": "Laura Méndez", "email": "laura@correo.com", "phone": "555 101 2020" },
+  "items": [
+    { "sku": "0001", "name": "Camiseta básica", "qty": 2, "price": 100 },
+    { "sku": "S-001", "name": "Personalización", "qty": 1, "price": 200 }
+  ]
+}`)}
+    <p class="muted"><code>status</code>: paid · pending · partial · cancelled · refunded. Si envías el mismo <code>id</code> otra vez, la venta se <b>actualiza</b> (no se duplica): úsalo para avisar pagos o cancelaciones.</p>`,
+
+  google_sheet: ({ base, i }) => `
+    <p>El sistema lee tu hoja <b>cada 10 minutos</b> (y cuando pulsas <b>Sincronizar ahora</b>). No tienes que tocar la hoja ni tu sitio.</p>
+    ${i.source_url ? '<p>Hoja conectada: <a href="' + esc(i.source_url) + '" target="_blank" rel="noopener">abrir</a>' + (i.source_sheet ? ' · pestaña <b>' + esc(i.source_sheet) + '</b>' : '') + '</p>' : ''}
+    <ul class="steps">
+      <li><b>Columnas que reconoce:</b> Email / Correo (obligatoria), ID, Idioma (es, en, both/ambos), Estado (active, pending, unsubscribed, activo, pendiente, baja…), Registrado, Confirmado y Baja.</li>
+      <li><b>No duplica:</b> cada correo es un solo suscriptor. Si cambia de pendiente a activo, o se da de baja, se actualiza.</li>
+      <li><b>No borra:</b> si alguien desaparece de la hoja, se conserva en el CRM con su último estado.</li>
+      <li>Cada suscriptor se liga solo con su ficha si ya es <b>cliente</b> o <b>prospecto</b> (mismo correo).</li>
+    </ul>
+    <h3>¿Quieres tiempo real?</h3>
+    <p class="muted">La hoja solo se actualiza cuando tu sitio la exporta. Si tu sitio puede avisar en el momento de cada alta, confirmación o baja, crea una integración <b>Zapier / Make / otros</b> y envía:</p>
+    ${codeBlock(`POST ${base}?key=TU_CLAVE_sk&format=json
+{ "type": "subscriber", "id": 4, "email": "lector@correo.com", "language": "es", "status": "pending" }`)}`,
+
+  cloudflare_d1: ({ i }) => `
+    <p>El CRM está conectado <b>directamente a la base de datos de tu newsletter</b>: la lee cada 10 minutos y actúa sobre la lista real.</p>
+    <ul class="steps">
+      <li><b>Dar de baja o eliminar</b> a alguien en <b>Suscriptores</b> lo da de baja en el newsletter al instante (deja de recibir el correo).</li>
+      <li><b>Agregar</b> a alguien le envía el <b>correo de confirmación</b> de tu newsletter. Aparece como activo cuando lo confirma.</li>
+      <li>El <b>consentimiento se registra solo</b> con la fecha en que la persona confirmó por correo.</li>
+      <li>Cambiar el <b>idioma</b> en el CRM también lo cambia en el newsletter.</li>
+      <li>El CRM nunca activa a nadie sin su confirmación.</li>
+    </ul>
+    ${i.site_url ? '<p class="muted">Invitaciones desde: ' + esc(i.site_url) + '</p>' : '<div class="note">Para poder invitar desde el CRM, edita la integración y escribe la página de suscripción de tu newsletter.</div>'}
+    <h3>Crear el token de Cloudflare</h3>
+    <ol class="steps">
+      <li>En <b>dash.cloudflare.com</b> → tu perfil (arriba a la derecha) → <b>API Tokens</b> → <b>Create Token</b> → <b>Create Custom Token</b>.</li>
+      <li>Nombre: <code>CRM newsletter</code>. Permisos: <b>Account · D1 · Edit</b>. Recursos: tu cuenta.</li>
+      <li><b>Continue to summary → Create Token</b>, copia el token y pégalo en <b>Editar → Token de API de Cloudflare</b>.</li>
+    </ol>
+    <p class="muted">El token solo puede leer y editar bases D1. Se guarda en las propiedades privadas del script, no en la hoja de cálculo.</p>`,
+
+  catalog: ({ base, key }) => `
+    <p>Tu catálogo (productos y servicios activos, con precio y disponibilidad) en JSON:</p>${codeBlock(`${base}?action=catalog&key=${key}`)}
+    <p>Ejemplo para mostrarlo en tu sitio:</p>${codeBlock(`<div id="catalogo"></div>
+<script>
+fetch('${base}?action=catalog&key=${key}')
+  .then(function (r) { return r.json(); })
+  .then(function (d) {
+    var fmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: d.currency, currencyDisplay: 'narrowSymbol' });
+    document.getElementById('catalogo').innerHTML = d.products.map(function (p) {
+      return '<div><b>' + p.name + '</b> — ' + fmt.format(p.price) + (p.available ? '' : ' (agotado)') + '</div>';
+    }).join('');
+  });
+<\/script>`)}
+    <p class="muted">Se actualiza solo: cambia un precio en el sistema y en menos de un minuto cambia en tu web.</p>`,
+};
+
+function relayGuideHtml() {
+  const base = S.int.webAppUrl || 'https:\/\/script.google.com/macros/s/TU_ID/exec';
+  return `<p>El relevo es un programa pequeño que corre gratis en Cloudflare (hasta 100,000 avisos al día). No guarda datos ni secretos.</p>
+    <ol class="steps">
+      <li>Crea una cuenta gratuita en <b>dash.cloudflare.com</b>.</li>
+      <li>Ve a <b>Workers y Pages → Crear → Worker</b>, nómbralo <code>nexo-relay</code> y pulsa <b>Implementar</b>.</li>
+      <li>Pulsa <b>Editar código</b>, borra todo y pega el contenido del archivo <code>relay/worker.js</code> que viene con el sistema. Pulsa <b>Implementar</b>.</li>
+      <li>En <b>Configuración → Variables y secretos</b> agrega la variable <code>APPS_SCRIPT_URL</code> con este valor:</li></ol>
+    ${codeBlock(base)}
+    <ol class="steps" start="5"><li>Copia la URL del Worker (algo como <code>https:\/\/nexo-relay.tu-cuenta.workers.dev</code>) y guárdala en la sección <b>Relevo</b> de esta pantalla.</li>
+      <li>Ábrela en el navegador: debe decir <i>Nexo relay OK</i>.</li></ol>`;
+}
+
+function hookGuideHtml() {
+  return `<p>Cada aviso es un <b>POST JSON</b> con esta forma:</p>
+    ${codeBlock(`{
+  "id": "OBX-…", "event": "sale.created", "created_at": "2026-11-03T16:40:00Z",
+  "data": { "number": "V-000123", "external_number": "#1029", "status": "pagada",
+            "total": 448, "currency": "USD", "customer": { "name": "…", "email": "…" }, "items": [ … ] }
+}`)}
+    <p>Eventos: <code>lead.created</code>, <code>customer.created</code>, <code>sale.created</code>, <code>sale.updated</code>. Se envían en menos de un minuto, con hasta 6 reintentos si el destino falla.</p>
+    <p>Para verificar que el aviso viene de tu sistema, compara el encabezado <code>X-Nexo-Signature</code> (Node.js):</p>
+    ${codeBlock(`const crypto = require('crypto');
+const expected = crypto.createHmac('sha256', process.env.NEXO_SECRET).update(rawBody).digest('hex');
+const valido = crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(req.headers['x-nexo-signature']));`)}`;
+}
+
+/* ============================ Próximamente ============================ */
+
+function viewSoon(m) {
+  const notes = {
+    pos: 'Venta en mostrador con escaneo QR, carrito, impuestos, descuentos, facturas con folio y pagos parciales. Las ventas en línea ya llegan solas a "Ventas".',
+    inventory: 'Entradas de mercancía, ajustes, alertas de stock mínimo y etiquetas QR. Las ventas en línea ya descuentan existencias automáticamente.',
+    finance: 'Ingresos y gastos, cuentas por cobrar y por pagar, flujo de caja y ganancia bruta y neta.',
+    marketing: 'Campañas, cupones, embudo de prospectos, conversiones y retorno de inversión.',
+  };
+  $('#main').innerHTML = pageHeader(m.label) + `<div class="card pad" style="max-width:640px">
+    <span class="tag">Fase ${m.phase}</span><p>${esc(notes[m.id] || '')}</p>
+    <p class="muted">Las tablas de este módulo ya existen en la base de datos, así que se conectará sin migraciones.</p></div>`;
+}
+
+// Desde GitHub la app queda guardada en el dispositivo: abre aunque no haya señal (para vender en eventos).
+if (!ON_GOOGLE && 'serviceWorker' in navigator && location.protocol === 'https:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => { /* sin modo sin conexión */ }));
+}
+
+start();
+</script>
+</body>
+</html>
