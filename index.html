@@ -275,6 +275,12 @@
   .hist-tools #hQ { max-width: 300px; }
   .hist-modal table td:last-child { white-space: normal; min-width: 180px; }
 
+  .ss-link { border: 1px solid var(--line); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+  .ss-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 10px 12px; background: var(--raised); }
+  .ss-head a { color: var(--muted); overflow-wrap: anywhere; }
+  .ss-item { display: flex; justify-content: space-between; gap: 14px; padding: 10px 12px; border-top: 1px solid var(--line); }
+  .ss-item .num { text-align: right; white-space: nowrap; }
+  .note.bad-note { border-color: var(--danger); }
   .stock-alert { margin-bottom: 14px; border-color: var(--sand-line); }
   .sa-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
   .sa-head h3 { margin: 0; }
@@ -829,7 +835,7 @@ async function viewHome() {
 
 const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', invite: 'Invitación', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
   password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar',
-  import: 'Importación', stock_entrada: 'Entrada de inventario', stock_ajuste: 'Ajuste de inventario', stock_conteo: 'Conteo de inventario', stock_traslado: 'Traslado de inventario' };
+  import: 'Importación', stock_entrada: 'Entrada de inventario', stock_ajuste: 'Ajuste de inventario', stock_conteo: 'Conteo de inventario', stock_traslado: 'Traslado de inventario', stock_sync: 'Inventario → Stripe' };
 const ENTITY_NAMES = { Customers: 'Cliente', Products: 'Producto/servicio', Users: 'Usuario', Tenants: 'Empresa', Leads: 'Prospecto',
   Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor', Stock_Movements: 'Inventario' };
 const actionLabel = a => ACTIONS[a] || a;
@@ -2587,7 +2593,7 @@ function drawIntegrations() {
       <tbody>${d.integrations.map(i => `<tr><td>${esc(i.name)}</td><td>${esc(i.platform_label)}${i.supports_signature ? (i.has_secret ? ' <span class="tag activo">firmado</span>' : ' <span class="tag pendiente">sin firma</span>') : ''}</td>
         <td>${i.is_pull ? '<span class="muted" title="' + esc(i.last_sync_result || '') + '">Cada 10 min</span>' : '<code>' + esc(i.key_hint) + '</code>'}</td><td><span class="tag ${i.status === 'activo' ? 'activo' : 'inactivo'}">${i.status === 'activo' ? 'Activa' : 'Pausada'}</span></td>
         <td class="num">${esc(i.events_count)}</td><td class="muted">${i.last_event_at ? fmtDate(i.last_event_at) : 'Nunca'}</td>
-        <td class="actions">${i.is_pull && w ? `<button class="btn sm primary" data-sync="${esc(i.id)}">Sincronizar ahora</button>` : ''}<button class="btn sm" data-guide="${esc(i.id)}">${i.is_pull ? 'Cómo funciona' : 'Cómo conectar'}</button>${w ? `<button class="btn sm" data-edit="${esc(i.id)}">Editar</button>
+        <td class="actions">${i.is_pull && w ? `<button class="btn sm primary" data-sync="${esc(i.id)}">Sincronizar ahora</button>` : ''}${i.platform === 'stripe' ? `<button class="btn sm ${i.stock_sync ? 'primary' : ''}" data-stock="${esc(i.id)}">Inventario</button>` : ''}<button class="btn sm" data-guide="${esc(i.id)}">${i.is_pull ? 'Cómo funciona' : 'Cómo conectar'}</button>${w ? `<button class="btn sm" data-edit="${esc(i.id)}">Editar</button>
           ${i.is_pull ? '' : `<button class="btn sm" data-rotate="${esc(i.id)}">Nueva clave</button>`}<button class="btn sm danger" data-del="${esc(i.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table>`
       : `<div class="empty">Conecta tu primer formulario, tienda o plataforma de pagos.<br><br>${w ? '<button class="btn primary" id="newInt2">+ Conectar plataforma</button>' : ''}</div>`}</div>
 
@@ -2631,6 +2637,7 @@ function drawIntegrations() {
     try { const r = await api('apiIntegrationSync', S.token, b.dataset.sync); S.int = await api('apiIntegrations', S.token); drawIntegrations(); showSyncResult(r); }
     catch (e) { toast(e.message, true); b.disabled = false; b.textContent = 'Sincronizar ahora'; }
   });
+  on('[data-stock]', b => openStockSync(d.integrations.find(i => i.id === b.dataset.stock)));
   on('[data-del]', b => deleteIntegration(d.integrations.find(i => i.id === b.dataset.del)));
   on('[data-re]', async b => { b.disabled = true; try { const st = await api('apiIntegrationReprocess', S.token, b.dataset.re); toast('Reprocesado: ' + st); viewIntegrations(); } catch (e) { toast(e.message, true); b.disabled = false; } });
   on('[data-htest]', async b => { b.disabled = true; try { await api('apiWebhookTest', S.token, b.dataset.htest); toast('El destino respondió correctamente'); viewIntegrations(); } catch (e) { toast(e.message, true); b.disabled = false; } });
@@ -2690,11 +2697,46 @@ function togglePlatformFields(rec) {
     const p = S.int.platforms[sel.value] || {};
     [['webhook_secret', !!p.signature], ['source_url', !!p.pull && !p.d1], ['source_sheet', !!p.pull && !p.d1], ['notify_email', !p.pull],
      ['api_token', !!p.d1], ['d1_database_id', !!p.d1], ['d1_account_id', !!p.d1], ['site_url', !!p.d1], ['record_tests', !!p.testable],
-     ['stripe_key_test', sel.value === 'stripe'], ['stripe_key_live', sel.value === 'stripe']]
+     ['stripe_key_test', sel.value === 'stripe'], ['stripe_key_live', sel.value === 'stripe'], ['stock_sync', sel.value === 'stripe']]
       .forEach(([n, show]) => { const w = wrap(n); if (w) w.style.display = show ? '' : 'none'; });
   };
   sel.addEventListener('change', apply);
   apply();
+}
+
+/* Inventario ↔ enlaces de pago de Stripe */
+async function openStockSync(integ) {
+  const w = can('integrations:write');
+  openModal('Inventario en Stripe · ' + integ.name, '<div id="ssBody"><div class="empty">Cargando…</div></div>', null, null, true);
+  const draw = d => {
+    const st = d.status;
+    const linkRow = l => {
+      const state = l.active ? '<span class="tag activo">Activo</span>' : l.by_crm ? '<span class="tag agotado">Pausado por inventario</span>' : '<span class="tag inactivo">Desactivado por ti</span>';
+      return `<div class="ss-link">
+        <div class="ss-head"><span>${state} <span class="tag ${l.mode === 'test' ? 'prueba' : ''}">${l.mode === 'test' ? 'PRUEBA' : 'REAL'}</span></span>
+          ${l.url ? `<a href="${esc(l.url)}" target="_blank" rel="noopener" class="sm">${esc(l.url.replace(/^https:\/\//, ''))}</a>` : ''}</div>
+        ${l.items.map(it => `<div class="ss-item">
+          <span><b>${esc(it.name)}</b><br><span class="muted sm">${it.product ? 'Ligado a ' + esc(it.product) + (it.sku ? ' · ' + esc(it.sku) : '') : 'Sin ligar: ponle el metadato sku en Stripe o el mismo nombre que en tu catálogo'}</span></span>
+          <span class="num">${it.product ? (it.tracked ? `<b class="qty ${it.stock <= 0 ? 'agotado' : ''}">${qtyFmt(it.stock)}</b> <span class="muted sm">en existencia</span>` : '<span class="muted sm">No controla inventario</span>') : ''}
+            ${it.adjustable ? `<br><span class="muted sm">Máx. por compra: <b>${it.max}</b>${it.user_max && it.user_max !== it.max ? ' (tu tope: ' + it.user_max + ')' : ''}</span>` : `<br><span class="muted sm">Cantidad fija: ${it.qty}</span>`}</span>
+        </div>`).join('')}
+      </div>`;
+    };
+    $('#ssBody').innerHTML = `
+      <p class="muted" style="margin-top:0">${d.enabled
+        ? 'Activado. Cuando un producto se agota, su enlace de pago se pausa; cuando recibes mercadería, se reactiva. La cantidad máxima por compra nunca supera lo que tienes.'
+        : 'Apagado. Actívalo en <b>Editar</b> → "Pausar enlaces de pago cuando se agote el inventario". Mientras tanto puedes revisar qué enlaces están ligados a tu catálogo.'}</p>
+      ${st ? `<div class="note ${st.ok ? '' : 'bad-note'}">${st.ok ? '' : '<b>Error:</b> '}${esc(st.message || '')} <span class="muted sm">· ${fmtDate(st.at)}</span></div>` : ''}
+      ${w ? '<div style="margin:10px 0 14px"><button class="btn primary" id="ssRun">Revisar ahora</button> <span class="muted sm">Lee tus enlaces de Stripe y los ajusta. También se hace solo cada hora y con cada movimiento de inventario.</span></div>' : ''}
+      ${d.links.length ? d.links.map(linkRow).join('') : '<div class="empty">Todavía no hay enlaces leídos. Pulsa "Revisar ahora".</div>'}`;
+    if ($('#ssRun')) $('#ssRun').onclick = async ev => {
+      ev.target.disabled = true; ev.target.textContent = 'Revisando…';
+      try { draw(await api('apiStockSyncRun', S.token, integ.id)); toast('Enlaces revisados'); }
+      catch (e) { toast(e.message, true); ev.target.disabled = false; ev.target.textContent = 'Revisar ahora'; }
+    };
+  };
+  try { draw(await api('apiStockSyncStatus', S.token, integ.id)); }
+  catch (e) { $('#ssBody').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; }
 }
 
 function rotateKey(i) {
