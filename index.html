@@ -199,6 +199,143 @@
   table.no-cards th { padding: 8px; }
   table.no-cards td { padding: 8px 10px; }
 
+  /* ============ Inventario ============ */
+  .muted.sm, .sm { font-size: 12.5px; }
+  td .muted.sm { display: block; margin-top: 1px; }
+  .pos { color: var(--brand); }
+  .neg { color: var(--danger); }
+  .warn { color: var(--warn) !important; }
+  .bad { color: var(--danger) !important; }
+  .qty { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .qty.bajo { color: var(--warn); }
+  .qty.agotado { color: var(--danger); }
+  .tag.bajo { background: var(--sand-soft); color: var(--sand); }
+  .tag.agotado { background: var(--danger-soft); color: var(--danger); }
+  tr.click { cursor: pointer; }
+  .inv-kpis .kpi .v.m { font-size: clamp(20px, 2.6vw, 34px); white-space: nowrap; }
+  .kbtn { text-align: left; font: inherit; color: inherit; cursor: pointer; }
+  .kbtn:hover { border-color: var(--brand-line); }
+  .kbtn.on { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+  .inv-acts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 14px; }
+  .inv-act { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 10px 14px; border-radius: var(--radius);
+             border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink); font: 600 15px var(--font); }
+  .inv-act svg { color: var(--brand); flex: none; }
+  .inv-act:hover { border-color: var(--brand); background: var(--brand-soft); }
+  .scanbox { display: flex; gap: 8px; flex: 1 1 320px; max-width: 480px; }
+  .scanbox .input { max-width: none !important; flex: 1; }
+  .scanbox .btn { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+  .inv-tools { align-items: center; }
+  .with-scan { position: relative; }
+  .with-scan .input { padding-right: 52px; }
+  .field-scan { position: absolute; right: 4px; top: 26px; min-height: 34px; height: 34px; padding: 0 9px; display: grid; place-items: center; }
+
+  .sheet-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
+  .big-qty { font: 700 56px/1 var(--display); letter-spacing: -.03em; color: var(--brand); font-variant-numeric: tabular-nums; }
+  .big-qty.bajo { color: var(--warn); }
+  .big-qty.agotado { color: var(--danger); }
+  .sheet-code { text-align: center; }
+  .sheet-code .bc { width: 190px; height: 64px; display: block; border-radius: 6px; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px 18px; margin: 0 0 14px; }
+  .facts > div { border-top: 1px solid var(--line); padding-top: 8px; }
+  .facts .wide { grid-column: 1 / -1; }
+  .facts dt { color: var(--muted); font-size: 12.5px; }
+  .facts dd { margin: 2px 0 0; font-weight: 600; }
+  .sheet-acts { margin-top: 4px; }
+  .moves .num { text-align: right; white-space: nowrap; }
+
+  .mv-head { margin-bottom: 12px; }
+  .mv-head:has(> div:only-child) { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mv-extra { margin-top: 14px; }
+  .mv-scan { max-width: none; margin-bottom: 8px; }
+  .mv-all { margin: 4px 0 8px; }
+  .pick { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+  .mv-create { margin: 8px 0; border-color: var(--brand-line); }
+  .mv-lines { border: 1px solid var(--line); border-radius: var(--radius); margin-top: 8px; }
+  .mv-empty { padding: 28px 16px; }
+  .mline { display: grid; grid-template-columns: 1fr auto auto auto; gap: 10px 12px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .mline:last-child { border-bottom: 0; }
+  .mline.flash { animation: mflash .9s ease-out; }
+  @keyframes mflash { from { background: var(--brand-soft); } to { background: transparent; } }
+  .ml-name { min-width: 0; display: flex; flex-direction: column; }
+  .ml-name b { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ml-cost { display: flex; flex-direction: column; width: 96px; }
+  .ml-cost .input { min-height: 38px; padding: 6px 8px; text-align: right; }
+  .ml-x { border: 0; background: none; color: var(--muted); width: 34px; height: 34px; border-radius: 8px; }
+  .ml-x:hover { background: var(--danger-soft); color: var(--danger); }
+  .stepper { display: inline-flex; align-items: stretch; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); overflow: hidden; background: var(--bg); }
+  .stepper button { width: 40px; border: 0; background: var(--raised); color: var(--ink); font-size: 20px; line-height: 1; }
+  .stepper button:active { background: var(--brand-soft); }
+  .stepper .input { width: 64px; min-height: 40px; border: 0; border-radius: 0; text-align: center; font-weight: 600; padding: 4px; }
+  .stepper.sm button { width: 34px; font-size: 17px; }
+  .stepper.sm .input { width: 50px; min-height: 34px; }
+  .mv-sum { margin-top: 10px; color: var(--muted); min-height: 20px; }
+  .mv-sum b { color: var(--ink); }
+
+  .hist-tools .input { max-width: 220px; }
+  .hist-tools #hQ { max-width: 300px; }
+  .hist-modal table td:last-child { white-space: normal; min-width: 180px; }
+
+  .stock-alert { margin-bottom: 14px; border-color: var(--sand-line); }
+  .sa-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .sa-head h3 { margin: 0; }
+
+  .lb-opts { margin-bottom: 10px; }
+  .lb-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px; }
+  .lb-bar .input { flex: 1 1 200px; }
+  .lb-list { max-height: 38vh; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+  .lb-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 12px; border-bottom: 1px solid var(--line); }
+  .lb-row:last-child { border-bottom: 0; }
+  .lb-row > span { display: flex; flex-direction: column; min-width: 0; }
+  .lb-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 14px; flex-wrap: wrap; }
+  .lb-foot > div:last-child { display: flex; align-items: center; gap: 12px; }
+  .lb-preview { background: repeating-conic-gradient(var(--raised) 0 25%, var(--bg) 0 50%) 0 0 / 14px 14px; padding: 12px; border-radius: var(--radius-sm); }
+  .lb-preview .label { box-shadow: 0 2px 10px rgba(0, 0, 0, .3); }
+
+  /* Etiqueta (pantalla y papel) */
+  .label { background: #fff; color: #000; display: flex; flex-direction: column; justify-content: space-between; padding: 4% 6%; overflow: hidden;
+           font-family: "Instrument Sans", Arial, sans-serif; box-sizing: border-box; }
+  .label .lb-name { font-size: 9pt; font-weight: 600; line-height: 1.1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .label .lb-code { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 2% 0; }
+  .label .lb-code svg { width: 100%; height: 100%; display: block; }
+  .label.qr { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto 1fr; column-gap: 6%; }
+  .label.qr .lb-code { grid-row: 1 / 3; grid-column: 1; aspect-ratio: 1; height: 100%; padding: 0; }
+  .label.qr .lb-name { grid-column: 2; }
+  .label.qr .lb-meta { grid-column: 2; flex-direction: column; align-items: flex-start; justify-content: flex-end; }
+  .label .lb-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; font-size: 7pt; font-variant-numeric: tabular-nums; }
+  .label .lb-meta b { font-size: 10pt; }
+  #printArea { display: none; }
+
+  /* Escáner a pantalla completa */
+  .scanner { position: fixed; inset: 0; z-index: 90; background: #000; color: #fff; display: flex; flex-direction: column; }
+  .scanner video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .scanner.nocam video { display: none; }
+  .scan-top { position: relative; display: flex; justify-content: space-between; align-items: center; padding: max(14px, env(safe-area-inset-top)) 16px 14px;
+              background: linear-gradient(rgba(0, 0, 0, .7), transparent); font: 600 17px var(--display); }
+  .scan-x { width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, .14); color: #fff; font-size: 18px; }
+  .scan-frame { position: relative; margin: auto; width: min(78vw, 420px); aspect-ratio: 16 / 10; border-radius: 18px;
+                box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .45); }
+  .scan-frame::before { content: ""; position: absolute; inset: 0; border-radius: 18px; border: 3px solid transparent;
+                        background: linear-gradient(#3FD49A, #3FD49A) top left / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) top left / 3px 34px no-repeat,
+                                    linear-gradient(#3FD49A, #3FD49A) top right / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) top right / 3px 34px no-repeat,
+                                    linear-gradient(#3FD49A, #3FD49A) bottom left / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) bottom left / 3px 34px no-repeat,
+                                    linear-gradient(#3FD49A, #3FD49A) bottom right / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) bottom right / 3px 34px no-repeat; }
+  .scan-frame i { position: absolute; left: 8%; right: 8%; top: 50%; height: 2px; background: #3FD49A; box-shadow: 0 0 12px #3FD49A; opacity: .8; animation: scanline 2.2s ease-in-out infinite; }
+  @keyframes scanline { 0%, 100% { transform: translateY(-70px); } 50% { transform: translateY(70px); } }
+  .scanner.nocam .scan-frame { display: none; }
+  .scanner.hit .scan-frame { animation: scanhit .5s ease-out; }
+  .scanner.miss .scan-frame { animation: scanmiss .5s ease-out; }
+  @keyframes scanhit { from { box-shadow: 0 0 0 100vmax rgba(63, 212, 154, .45); } to { box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .45); } }
+  @keyframes scanmiss { from { box-shadow: 0 0 0 100vmax rgba(255, 110, 100, .45); } to { box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .45); } }
+  .scan-bottom { position: relative; padding: 16px 16px max(18px, env(safe-area-inset-bottom)); background: linear-gradient(transparent, rgba(0, 0, 0, .85) 30%); }
+  .scanner.nocam .scan-bottom { margin-top: auto; }
+  .scan-msg { font-size: 16px; text-align: center; min-height: 24px; margin-bottom: 10px; }
+  .scan-log { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 12px; min-height: 4px; }
+  .scan-log .tag { font-size: 13px; }
+  .scan-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .scan-actions .btn { min-height: 48px; padding: 10px 20px; background: rgba(255, 255, 255, .14); color: #fff; border-color: rgba(255, 255, 255, .25); }
+  .scan-actions .btn.primary { background: #3FD49A; color: #06281B; border-color: #3FD49A; }
+  body[data-view="inventory"] .fab { display: none !important; }
+
   /* ============ Pantallas medianas (tablets, laptops pequeñas) ============ */
   @media (max-width: 1100px) {
     main { padding: 22px 22px 40px; }
@@ -244,6 +381,13 @@
     table.rt td.actions::before { content: none; }
     table.rt td.actions .btn { margin: 0; }
     table.rt td:empty { display: none; }
+    .inv-acts { grid-template-columns: 1fr 1fr; }
+    .mline { grid-template-columns: 1fr auto; }
+    .mline .ml-name { grid-column: 1 / -1; padding-right: 30px; }
+    .mline { position: relative; }
+    .mline .ml-x { position: absolute; top: 6px; right: 6px; }
+    .mline .ml-cost { flex-direction: row; align-items: center; gap: 6px; width: auto; }
+    .mline .ml-cost .input { width: 90px; }
 
   }
 
@@ -267,6 +411,20 @@
     .check { padding-top: 0; }
     .qr-grid { grid-template-columns: 1fr; }
     .qr-card { flex-direction: column; text-align: center; }
+    .scanbox { flex-basis: auto; max-width: none; width: 100%; }
+    .scanbox .btn span { display: none; }
+    .scanbox .btn { min-width: 52px; justify-content: center; }
+    .inv-act { min-height: 58px; font-size: 15.5px; }
+    .big-qty { font-size: 48px; }
+    .stepper button { width: 46px; }
+    .stepper .input { width: 64px; min-height: 46px; }
+    .hist-tools .input, .hist-tools #hQ { max-width: none; }
+    .lb-list { max-height: 34vh; }
+    .lb-foot > div:last-child { width: 100%; justify-content: space-between; }
+    .kbtn .l { min-height: 2.6em; }
+    .inv-kpis .kpi .v.m { font-size: clamp(18px, 5.6vw, 26px); }
+    .mv-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+    .mv-modal .body > p.muted { font-size: 14px; margin-bottom: 10px; }
 
     /* Ventanas a pantalla completa, como hoja inferior */
     .backdrop { padding: 0; place-items: end stretch; }
@@ -274,6 +432,19 @@
     .modal footer { padding-bottom: max(14px, env(safe-area-inset-bottom)); }
     .modal footer .btn { flex: 1 1 auto; }
     .modal footer .err { flex-basis: 100%; }
+  }
+
+  /* ============ Impresión de etiquetas ============ */
+  @media print {
+    body.printing > *:not(#printArea) { display: none !important; }
+    body.printing { background: #fff !important; margin: 0; }
+    body.printing #printArea { display: block; }
+    #printArea .lb-page { display: grid; box-sizing: border-box; page-break-after: always; break-after: page; overflow: hidden; }
+    #printArea .lb-page:last-child { page-break-after: auto; break-after: auto; }
+    #printArea .label { width: 100%; height: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    #printArea.small .label .lb-name { font-size: 7.5pt; }
+    #printArea.small .label .lb-meta { font-size: 6.5pt; }
+    #printArea.small .label .lb-meta b { font-size: 9pt; }
   }
 </style>
 
@@ -372,6 +543,7 @@ function fmtDate(iso) {
 }
 
 const ICONS = {
+  scan: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 9v6M10 9v6M13 9v6M17 9v6"/></svg>',
   plus: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   menu: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
   mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
@@ -596,12 +768,15 @@ document.addEventListener('keydown', ev => {
 
 function go(view) {
   S.view = view;
+  S.onScan = null;
+  document.body.dataset.view = view;
   document.querySelectorAll('.nav').forEach(n => n.classList.toggle('on', n.dataset.view === view));
   const m = S.boot.menu.find(x => x.id === view);
   if (m && m.soon) return viewSoon(m);
   if (view === 'inicio') return viewHome();
   if (view === 'users') return viewUsers();
   if (view === 'sales') return viewSales();
+  if (view === 'inventory') return viewInventory();
   if (view === 'subscribers') return viewSubscribers();
   if (view === 'integrations') return viewIntegrations();
   if (view === 'audit') return viewAudit();
@@ -624,7 +799,7 @@ async function viewHome() {
   const kpi = (l, v) => `<div class="card pad kpi"><div class="l">${l}</div><div class="v">${v}</div></div>`;
   const phases = [
     ['Base de datos, usuarios y permisos', true], ['CRM, prospectos e integraciones', true],
-    ['Inventario por movimientos', false], ['POS, facturas y cobro con QR', false],
+    ['Inventario por movimientos', true], ['POS, facturas y cobro con QR', false],
     ['Finanzas: ingresos, gastos, flujo de caja', false], ['Marketing y automatizaciones', false],
   ];
   main.innerHTML = pageHeader('Hola, ' + S.boot.user.name.split(' ')[0]) + `
@@ -632,6 +807,11 @@ async function viewHome() {
       ${kpi('Clientes activos', d.customers)}${kpi('Prospectos', d.prospects)}
       ${kpi('Productos', d.products)}${kpi('Servicios', d.services)}${d.subscribers !== null && d.subscribers !== undefined ? kpi('Suscriptores activos', d.subscribers) : kpi('Usuarios', d.users)}
     </div>
+    ${d.stock && (d.stock.low || d.stock.out) ? `<div class="card pad stock-alert">
+      <div class="sa-head"><h3>Reponer inventario</h3><button class="btn sm" id="homeInv">Abrir inventario</button></div>
+      <p class="muted" style="margin:0 0 8px">${d.stock.out ? '<b class="neg">' + d.stock.out + ' agotado(s)</b>' : ''}${d.stock.out && d.stock.low ? ' y ' : ''}${d.stock.low ? '<b class="warn">' + d.stock.low + ' bajo el mínimo</b>' : ''}</p>
+      <ul class="list">${d.stock.items.map(i => `<li><span>${esc(i.name)}${i.sku ? ' <span class="muted">' + esc(i.sku) + '</span>' : ''}</span><span><b class="qty ${i.level}">${qtyFmt(i.qty)}</b>${i.min_stock ? ' <span class="muted">/ mín. ' + qtyFmt(i.min_stock) + '</span>' : ''}</span></li>`).join('')}</ul>
+    </div>` : ''}
     <div class="grid two">
       <div class="card pad"><h3>Clientes recientes</h3>
         ${d.recentCustomers.length ? '<ul class="list">' + d.recentCustomers.map(c =>
@@ -644,12 +824,14 @@ async function viewHome() {
           : phases.map((p, i) => `<div class="phase"><span class="dot ${p[1] ? 'done' : ''}"></span>Fase ${i + 1}: ${p[0]}</div>`).join('')}
       </div>
     </div>`;
+  if ($('#homeInv')) $('#homeInv').onclick = () => { S.invFilter = { level: '', location: '', q: '' }; go('inventory'); };
 }
 
 const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', invite: 'Invitación', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
-  password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar' };
+  password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar',
+  import: 'Importación', stock_entrada: 'Entrada de inventario', stock_ajuste: 'Ajuste de inventario', stock_conteo: 'Conteo de inventario', stock_traslado: 'Traslado de inventario' };
 const ENTITY_NAMES = { Customers: 'Cliente', Products: 'Producto/servicio', Users: 'Usuario', Tenants: 'Empresa', Leads: 'Prospecto',
-  Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor' };
+  Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor', Stock_Movements: 'Inventario' };
 const actionLabel = a => ACTIONS[a] || a;
 const entityLabel = e => ENTITY_NAMES[e] || e;
 
@@ -696,15 +878,17 @@ function drawTable(key) {
   $('#list').querySelectorAll('[data-del]').forEach(b => b.onclick = () => deleteRecord(key, S.rows.find(r => r.id === b.dataset.del)));
 }
 
-function editRecord(key, rec) {
+function editRecord(key, rec, opts) {
+  opts = opts || {};
   const def = S.boot.entities[key];
   const readOnly = !can(def.resource + ':write');
   openForm({
     title: (rec ? (readOnly ? '' : 'Editar ') : 'Nuevo ') + def.singular,
-    fields: def.fields, record: rec, readOnly: readOnly,
+    fields: def.fields, record: rec || opts.prefill, readOnly: readOnly,
     onSave: async values => {
       if (rec) values.id = rec.id;
       const saved = await api('apiSave', S.token, key, values);
+      if (opts.onSaved) { opts.onSaved(saved); toast(rec ? 'Cambios guardados' : 'Registro creado'); return; }
       const i = S.rows.findIndex(r => r.id === saved.id);
       if (i >= 0) S.rows[i] = saved; else S.rows.unshift(saved);
       drawTable(key);
@@ -775,10 +959,19 @@ function openForm(opts) {
     if (!form.reportValidity()) throw new Error('Revisa los campos marcados.');
     await opts.onSave(readFormValues(form, opts.fields));
   }, 'Guardar');
+  // Campo de código de barras: botón para leerlo con la cámara o con un lector.
+  const bc = document.querySelector('#recForm [name=barcode]');
+  if (bc && !opts.readOnly) {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn field-scan'; b.innerHTML = ICONS.scan; b.setAttribute('aria-label', 'Escanear código con la cámara');
+    bc.parentNode.insertBefore(b, bc.nextSibling);
+    bc.parentNode.classList.add('with-scan');
+    b.onclick = async () => { const code = await scanCamera({ title: 'Escanear código del producto' }); if (code) { bc.value = code; bc.focus(); } };
+  }
 }
 
 function openModal(title, bodyHtml, onOk, okLabel, wide) {
-  closeModal();
+  if (!closeModal()) return;
   const el = document.createElement('div');
   el.className = 'backdrop';
   el.id = 'modal';
@@ -794,7 +987,7 @@ function openModal(title, bodyHtml, onOk, okLabel, wide) {
     const ok = $('#modalOk');
     const run = async () => {
       ok.disabled = true; $('#modalErr').textContent = '';
-      try { await onOk(); closeModal(); }
+      try { await onOk(); closeModal(true); }
       catch (e) { $('#modalErr').textContent = e.message; ok.disabled = false; }
     };
     ok.onclick = run;
@@ -805,9 +998,13 @@ function openModal(title, bodyHtml, onOk, okLabel, wide) {
   if (first) first.focus();
 }
 
-function closeModal() {
+function closeModal(force) {
   const m = $('#modal');
-  if (m) m.remove();
+  if (!m) return true;
+  if (!force && m._guard && !m._guard()) return false;
+  if (m._onClose) m._onClose();
+  m.remove();
+  return true;
 }
 
 function showSecret(title, intro, secret) {
@@ -1354,6 +1551,842 @@ async function openQr() {
     });
   };
   draw();
+}
+
+/* ============================ Escáner: cámara y lectores ============================ */
+
+/*
+ * Cámara: usa el lector nativo del navegador (Android/Chrome, Mac) y, donde no existe
+ * (iPhone, Windows), carga un lector de respaldo (ZXing) solo la primera vez que se usa.
+ * Lectores USB/Bluetooth: escriben el código como un teclado y terminan con Enter.
+ */
+const BD_URL = 'https:\/\/fastly.jsdelivr.net/npm/barcode-detector@3.2.4/dist/iife/ponyfill.js';
+const BD_SRI = 'sha384-V0LFv1UaolwYOQ6Y1C07pBzM25t1t+HbAAwyN47cJtg/Sqa2jYnTPGGt+oL1kjS/';
+const SCAN_FORMATS = ['ean_13', 'ean_8', 'upc_a', 'upc_e', 'code_128', 'code_39', 'code_93', 'itf', 'codabar', 'qr_code', 'data_matrix'];
+let detectorP = null;
+
+function loadScript(src, sri) {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    if (sri) { s.integrity = sri; s.crossOrigin = 'anonymous'; }
+    s.onload = resolve;
+    s.onerror = () => reject(new Error('No se pudo cargar el lector de códigos. Revisa tu internet.'));
+    document.head.appendChild(s);
+  });
+}
+
+function getDetector() {
+  if (detectorP) return detectorP;
+  detectorP = (async () => {
+    if ('BarcodeDetector' in window) {
+      try {
+        const sup = await window.BarcodeDetector.getSupportedFormats();
+        const f = SCAN_FORMATS.filter(x => sup.indexOf(x) >= 0);
+        if (f.length >= 3) return new window.BarcodeDetector({ formats: f });
+      } catch (e) { /* usa el respaldo */ }
+    }
+    await loadScript(BD_URL, BD_SRI);
+    return new window.BarcodeDetectionAPI.BarcodeDetector({ formats: SCAN_FORMATS });
+  })();
+  detectorP.catch(() => { detectorP = null; });
+  return detectorP;
+}
+
+let audioCtx = null;
+function beep(good) {
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime;
+    o.frequency.value = good === false ? 300 : 1250;
+    g.gain.setValueAtTime(0.12, t);
+    g.gain.exponentialRampToValueAtTime(0.001, t + (good === false ? 0.25 : 0.12));
+    o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + 0.26);
+  } catch (e) { /* sin sonido */ }
+  if (navigator.vibrate) navigator.vibrate(good === false ? [70, 50, 70] : 35);
+}
+
+/**
+ * Abre la cámara a pantalla completa.
+ * opts.continuous: sigue leyendo (para contar o recibir varios productos).
+ * opts.onCode(code) → { ok, label } : qué pasó con el código (se muestra abajo).
+ * Devuelve una promesa con el código leído (modo simple) o vacío al cerrar.
+ */
+function scanCamera(opts) {
+  opts = opts || {};
+  return new Promise(resolve => {
+    const el = document.createElement('div');
+    el.className = 'scanner';
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-label', opts.title || 'Escanear código');
+    el.innerHTML = `<video playsinline muted autoplay></video>
+      <div class="scan-top"><b>${esc(opts.title || 'Escanear código')}</b><button type="button" class="scan-x" data-act="close" aria-label="Cerrar">✕</button></div>
+      <div class="scan-frame" aria-hidden="true"><i></i></div>
+      <div class="scan-bottom">
+        <div class="scan-msg" aria-live="polite">Abriendo la cámara…</div>
+        <div class="scan-log"></div>
+        <div class="scan-actions">
+          <button type="button" class="btn" data-act="torch" hidden>Linterna</button>
+          <label class="btn">Tomar foto<input type="file" accept="image/*" capture="environment" hidden></label>
+          <button type="button" class="btn primary" data-act="close">${opts.continuous ? 'Listo' : 'Cancelar'}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(el);
+    const video = el.querySelector('video'), msg = el.querySelector('.scan-msg'), log = el.querySelector('.scan-log');
+    let stream = null, track = null, alive = true, last = '', lastAt = 0, busy = false, torchOn = false, result = '';
+
+    const close = () => {
+      if (!alive) return;
+      alive = false;
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      document.removeEventListener('keydown', onKey, true);
+      el.remove();
+      resolve(result);
+    };
+    const onKey = ev => { if (ev.key === 'Escape') { ev.stopPropagation(); ev.preventDefault(); close(); } };
+    document.addEventListener('keydown', onKey, true);
+    el.querySelectorAll('[data-act=close]').forEach(b => b.onclick = close);
+
+    const handle = async code => {
+      const now = Date.now();
+      if (code === last && now - lastAt < 1800) return;
+      last = code; lastAt = now;
+      if (!opts.continuous) { beep(true); result = code; close(); return; }
+      let r = { ok: true, label: code };
+      try { if (opts.onCode) r = (await opts.onCode(code)) || r; } catch (e) { r = { ok: false, label: e.message }; }
+      beep(r.ok !== false);
+      el.classList.remove('hit', 'miss'); void el.offsetWidth; el.classList.add(r.ok === false ? 'miss' : 'hit');
+      msg.textContent = r.label;
+      const chip = document.createElement('span');
+      chip.className = 'tag ' + (r.ok === false ? 'error' : 'ok');
+      chip.textContent = r.short || r.label;
+      log.prepend(chip);
+      while (log.children.length > 6) log.lastChild.remove();
+    };
+
+    el.querySelector('input[type=file]').onchange = async ev => {
+      const file = ev.target.files[0];
+      ev.target.value = '';
+      if (!file) return;
+      msg.textContent = 'Buscando el código en la foto…';
+      try {
+        const det = await getDetector();
+        const img = await createImageBitmap(file);
+        const found = await det.detect(img);
+        if (found.length) await handle(found[0].rawValue);
+        else { beep(false); msg.textContent = 'No encontré un código en la foto. Acércate más, con buena luz, y vuelve a intentar.'; }
+      } catch (e) { msg.textContent = e.message; }
+    };
+
+    const tick = async () => {
+      if (!alive) return;
+      if (!busy && video.readyState >= 2) {
+        busy = true;
+        try {
+          const det = await getDetector();
+          const found = await det.detect(video);
+          if (found.length && alive) await handle(found[0].rawValue);
+        } catch (e) { /* cuadro sin código */ }
+        busy = false;
+      }
+      if (alive) setTimeout(tick, 140);
+    };
+
+    (async () => {
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('nocam');
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false });
+        if (!alive) { stream.getTracks().forEach(t => t.stop()); return; }
+        video.srcObject = stream;
+        await video.play().catch(() => {});
+        track = stream.getVideoTracks()[0];
+        const caps = track && track.getCapabilities ? track.getCapabilities() : {};
+        if (caps.torch) {
+          const b = el.querySelector('[data-act=torch]');
+          b.hidden = false;
+          b.onclick = () => { torchOn = !torchOn; track.applyConstraints({ advanced: [{ torch: torchOn }] }).catch(() => {}); b.classList.toggle('primary', torchOn); };
+        }
+        msg.textContent = opts.continuous ? 'Apunta a cada código. Suena cuando lo lee.' : 'Apunta al código de barras o QR.';
+        getDetector().catch(e => { msg.textContent = e.message; });
+        tick();
+      } catch (e) {
+        el.classList.add('nocam');
+        msg.textContent = ON_GOOGLE
+          ? 'La cámara en vivo no funciona dentro de la página de Google. Usa "Tomar foto", o abre la app desde tu dirección de GitHub.'
+          : 'No pude abrir la cámara. Permite el acceso a la cámara para este sitio, o usa "Tomar foto".';
+      }
+    })();
+  });
+}
+
+/* Lectores USB / Bluetooth: llegan como teclas muy rápidas terminadas en Enter (o Tab). */
+const wedge = { buf: '', last: 0 };
+document.addEventListener('keydown', ev => {
+  if (!S.onScan || document.querySelector('.scanner')) return;
+  const t = ev.target;
+  const field = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable);
+  if (field) { wedge.buf = ''; return; }
+  const now = performance.now();
+  if (now - wedge.last > 90) wedge.buf = '';
+  wedge.last = now;
+  if (ev.key === 'Enter' || ev.key === 'Tab') {
+    if (wedge.buf.length >= 3) { ev.preventDefault(); const code = wedge.buf; wedge.buf = ''; S.onScan(code); }
+    return;
+  }
+  if (ev.key.length === 1 && !ev.ctrlKey && !ev.metaKey && !ev.altKey) wedge.buf += ev.key;
+}, true);
+
+const normCode = c => {
+  const s = String(c || '').trim().toLowerCase();
+  return /^\d+$/.test(s) ? s.replace(/^0+/, '') : s;
+};
+function findLocal(rows, code) {
+  const raw = String(code || '').trim(), n = normCode(raw);
+  if (!raw) return null;
+  return rows.find(p => p.id === raw) || rows.find(p => p.barcode && normCode(p.barcode) === n) || rows.find(p => p.sku && normCode(p.sku) === n) || null;
+}
+
+/* ============================ Códigos de barras (SVG) ============================ */
+
+const EAN_L = ['0001101', '0011001', '0010011', '0111101', '0100011', '0110001', '0101111', '0111011', '0110111', '0001011'];
+const EAN_PAR = ['LLLLLL', 'LLGLGG', 'LLGGLG', 'LLGGGL', 'LGLLGG', 'LGGLLG', 'LGGGLL', 'LGLGLG', 'LGLGGL', 'LGGLGL'];
+const eanR = d => EAN_L[d].replace(/./g, b => b === '0' ? '1' : '0');
+const eanG = d => eanR(d).split('').reverse().join('');
+
+function ean13Valid(code) {
+  if (!/^\d{13}$/.test(code)) return false;
+  let s = 0;
+  for (let i = 0; i < 12; i++) s += Number(code[i]) * (i % 2 ? 3 : 1);
+  return (10 - (s % 10)) % 10 === Number(code[12]);
+}
+
+/** Módulos (1 = barra) de un EAN-13, con marcas de guarda para dibujarlas más largas. */
+function ean13Modules(code) {
+  const d = code.split('').map(Number), par = EAN_PAR[d[0]];
+  let m = '101';
+  for (let i = 1; i <= 6; i++) m += par[i - 1] === 'L' ? EAN_L[d[i]] : eanG(d[i]);
+  m += '01010';
+  for (let i = 7; i <= 12; i++) m += eanR(d[i]);
+  m += '101';
+  return m;
+}
+
+const C128 = ['212222', '222122', '222221', '121223', '121322', '131222', '122213', '122312', '132212', '221213', '221312', '231212', '112232', '122132', '122231', '113222', '123122', '123221', '223211', '221132', '221231', '213212', '223112', '312131', '311222', '321122', '321221', '312212', '322112', '322211', '212123', '212321', '232121', '111323', '131123', '131321', '112313', '132113', '132311', '211313', '231113', '231311', '112133', '112331', '132131', '113123', '113321', '133121', '313121', '211331', '231131', '213113', '213311', '213131', '311123', '311321', '331121', '312113', '312311', '332111', '314111', '221411', '431111', '111224', '111422', '121124', '121421', '141122', '141221', '112214', '112412', '122114', '122411', '142112', '142211', '241211', '221114', '413111', '241112', '134111', '111242', '121142', '121241', '114212', '124112', '124211', '411212', '421112', '421211', '212141', '214121', '412121', '111143', '111341', '131141', '114113', '114311', '411113', '411311', '113141', '114131', '311141', '411131', '211412', '211214', '211232', '2331112'];
+
+function code128Modules(text) {
+  const vals = [];
+  if (/^\d+$/.test(text) && text.length % 2 === 0 && text.length >= 4) {
+    vals.push(105);
+    for (let i = 0; i < text.length; i += 2) vals.push(Number(text.substr(i, 2)));
+  } else {
+    vals.push(104);
+    for (const ch of text) { const c = ch.charCodeAt(0); vals.push(c >= 32 && c <= 126 ? c - 32 : 31); }
+  }
+  let sum = vals[0];
+  for (let i = 1; i < vals.length; i++) sum += vals[i] * i;
+  vals.push(sum % 103, 106);
+  let m = '';
+  vals.forEach(v => { C128[v].split('').forEach((w, i) => { m += (i % 2 ? '0' : '1').repeat(Number(w)); }); });
+  return m;
+}
+
+/** SVG de código de barras: EAN-13 si el código lo es; si no, Code 128. */
+function barcodeSvg(code, opts) {
+  opts = opts || {};
+  const isEan = ean13Valid(code);
+  const mods = isEan ? ean13Modules(code) : code128Modules(code);
+  const quiet = isEan ? 9 : 10, w = mods.length + quiet * 2, h = 60;
+  let path = '';
+  for (let i = 0; i < mods.length; i++) {
+    if (mods[i] !== '1') continue;
+    let j = i;
+    while (j + 1 < mods.length && mods[j + 1] === '1') j++;
+    const guard = isEan && (i < 3 || (i >= 45 && i < 50) || i >= 92);
+    path += `M${i + quiet} 0h${j - i + 1}v${guard ? h + 6 : h}h-${j - i + 1}z`;
+    i = j;
+  }
+  return `<svg class="bc" viewBox="0 0 ${w} ${h + 6}" preserveAspectRatio="${opts.stretch ? 'none' : 'xMidYMid meet'}" role="img" aria-label="Código ${esc(code)}" shape-rendering="crispEdges"><rect width="${w}" height="${h + 6}" fill="#fff"/><path d="${path}" fill="#000"/></svg>`;
+}
+
+/* ============================ Inventario ============================ */
+
+const LEVELS = { ok: ['Disponible', 'ok'], bajo: ['Bajo el mínimo', 'bajo'], agotado: ['Agotado', 'agotado'] };
+const MOVE_KINDS = {
+  entrada: { title: 'Recibir mercadería', save: 'Guardar entrada', verb: 'Recibir', hint: 'Escanea o busca cada producto que llegó. Si escaneas el mismo dos veces, suma 1.' },
+  ajuste: { title: 'Ajustar existencias', save: 'Guardar ajuste', verb: 'Ajustar', hint: 'Para mermas, daños, pérdidas o correcciones. Usa números negativos para restar.' },
+  conteo: { title: 'Contar inventario', save: 'Guardar conteo', verb: 'Contar', hint: 'Escanea cada pieza (cada lectura suma 1) o escribe cuántas hay. El sistema calcula la diferencia.' },
+  traslado: { title: 'Trasladar entre ubicaciones', save: 'Guardar traslado', verb: 'Trasladar', hint: 'Mueve existencias de una ubicación a otra, por ejemplo de bodega a tienda.' },
+};
+const locName = l => l === 'principal' ? 'Principal' : l;
+const qtyFmt = n => {
+  const v = Number(n || 0);
+  return (Math.round(v * 100) / 100).toLocaleString('es', { maximumFractionDigits: 2 });
+};
+
+async function loadInventory(opts) {
+  S.inv = await api('apiInventory', S.token, opts || {});
+  return S.inv;
+}
+
+async function viewInventory() {
+  const main = $('#main');
+  const w = can('inventory:write');
+  S.invFilter = S.invFilter || { level: '', location: '', q: '' };
+  main.innerHTML = pageHeader('Inventario',
+    `<button class="btn" id="invHist">Historial</button>${can('products:read') ? '<button class="btn" id="invLabels">Etiquetas</button>' : ''}${w ? '<button class="btn" id="invCfg" aria-label="Ajustes de inventario">Ajustes</button>' : ''}`) +
+    '<div id="invBody"><div class="empty">Cargando inventario…</div></div>';
+  $('#invHist').onclick = () => openHistory({});
+  if ($('#invLabels')) $('#invLabels').onclick = () => openLabels();
+  if ($('#invCfg')) $('#invCfg').onclick = openInvSettings;
+  S.onScan = code => { if (S.view === 'inventory' && !$('#modal')) openByCode(code); };
+  try { await loadInventory({ location: S.invFilter.location }); } catch (e) { $('#invBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  drawInventory();
+}
+
+function drawInventory() {
+  const d = S.inv, f = S.invFilter, w = can('inventory:write');
+  if (!d || S.view !== 'inventory') return;
+  const k = d.kpis;
+  const tile = (kind, icon) => `<button class="inv-act" data-kind="${kind}">${icon}<span>${MOVE_KINDS[kind].verb}</span></button>`;
+  $('#invBody').innerHTML = `
+    <div class="grid kpis inv-kpis">
+      <div class="card pad kpi"><div class="l">Valor al costo</div><div class="v m">${money(k.value)}</div><div class="hint">${qtyFmt(k.units)} unidades</div></div>
+      <div class="card pad kpi"><div class="l">Valor a precio de venta</div><div class="v m">${money(k.retail)}</div><div class="hint">${k.products} productos</div></div>
+      <button class="card pad kpi kbtn ${f.level === 'bajo' ? 'on' : ''}" data-level="bajo"><div class="l">Bajo el mínimo</div><div class="v ${k.low ? 'warn' : ''}">${k.low}</div></button>
+      <button class="card pad kpi kbtn ${f.level === 'agotado' ? 'on' : ''}" data-level="agotado"><div class="l">Agotados</div><div class="v ${k.out ? 'bad' : ''}">${k.out}</div></button>
+    </div>
+    ${w ? `<div class="inv-acts">
+      ${tile('entrada', '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 19h16"/></svg>')}
+      ${tile('ajuste', '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 8h14M5 16h14"/><circle cx="9" cy="8" r="2.2" fill="var(--panel)"/><circle cx="15" cy="16" r="2.2" fill="var(--panel)"/></svg>')}
+      ${tile('conteo', '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H6a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-3"/><path d="M9 3h6v4H9zM9 13l2 2 4-4"/></svg>')}
+      ${tile('traslado', '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg>')}
+    </div>` : ''}
+    ${d.untracked && can('products:write') ? `<div class="note">${d.untracked} producto(s) no controlan inventario, así que no aparecen aquí. <a href="#" id="invEnable">Activar el control en todos</a></div>` : ''}
+    <div class="toolbar inv-tools">
+      <div class="scanbox"><input class="input" id="invQ" placeholder="Buscar o escanear código…" value="${esc(f.q)}" autocomplete="off" data-scan>
+        <button class="btn primary" id="invCam" aria-label="Escanear con la cámara">${ICONS.scan}<span>Escanear</span></button></div>
+      <div class="chips" role="group" aria-label="Filtrar">
+        ${[['', 'Todos'], ['bajo', 'Bajo el mínimo'], ['agotado', 'Agotados']].map(o => `<button class="btn sm ${f.level === o[0] ? 'primary' : ''}" data-level="${o[0]}">${o[1]}</button>`).join('')}
+      </div>
+      ${d.locations.length > 1 ? `<select class="input" id="invLoc" style="max-width:200px"><option value="">Todas las ubicaciones</option>${d.locations.map(l => `<option value="${esc(l)}" ${f.location === l ? 'selected' : ''}>${esc(locName(l))}</option>`).join('')}</select>` : ''}
+    </div>
+    <div class="card tablewrap" id="invList"></div>`;
+  $('#invBody').querySelectorAll('[data-level]').forEach(b => b.onclick = () => { f.level = f.level === b.dataset.level ? '' : b.dataset.level; drawInventory(); });
+  $('#invBody').querySelectorAll('[data-kind]').forEach(b => b.onclick = () => openMove(b.dataset.kind));
+  if ($('#invEnable')) $('#invEnable').onclick = async ev => {
+    ev.preventDefault();
+    try { const r = await api('apiInventoryEnableTracking', S.token); toast(r.enabled + ' producto(s) ahora controlan inventario'); await loadInventory({ location: f.location }); drawInventory(); }
+    catch (e) { toast(e.message, true); }
+  };
+  if ($('#invLoc')) $('#invLoc').onchange = async ev => { f.location = ev.target.value; await loadInventory({ location: f.location }); drawInventory(); };
+  const q = $('#invQ');
+  q.oninput = () => { f.q = q.value; drawInvRows(); };
+  q.onkeydown = ev => {
+    if (ev.key !== 'Enter') return;
+    ev.preventDefault();
+    const p = findLocal(d.rows, q.value);
+    if (p) { q.value = ''; f.q = ''; drawInvRows(); openProductSheet(p.id); }
+    else if (q.value.trim()) openByCode(q.value.trim());
+  };
+  $('#invCam').onclick = async () => { const code = await scanCamera({ title: 'Buscar producto' }); if (code) openByCode(code); };
+  drawInvRows();
+}
+
+function drawInvRows() {
+  const d = S.inv, f = S.invFilter;
+  const text = normCode(f.q);
+  const rows = d.rows.filter(r => (!f.level || r.level === f.level) &&
+    (!text || (r.name + ' ' + r.sku + ' ' + r.barcode + ' ' + r.category).toLowerCase().indexOf(text) >= 0 || normCode(r.barcode) === text));
+  const box = $('#invList');
+  if (!d.rows.length) {
+    box.innerHTML = `<div class="empty">Todavía no hay productos que controlen inventario.<br>${can('products:write') ? 'Crea productos en <b>Productos y servicios</b> con "Controlar inventario" activado.' : ''}</div>`;
+    return;
+  }
+  if (!rows.length) { box.innerHTML = '<div class="empty">Ningún producto coincide con el filtro.</div>'; return; }
+  box.innerHTML = `<table><thead><tr><th>Producto</th><th class="num">Existencias</th><th class="num">Mínimo</th><th class="num">Costo prom.</th><th class="num">Valor</th></tr></thead><tbody>
+    ${rows.map(r => `<tr class="click" data-id="${esc(r.id)}" tabindex="0">
+      <td><b>${esc(r.name)}</b><div class="muted sm">${esc([r.sku, r.barcode && r.barcode !== r.sku ? r.barcode : '', r.category].filter(String).join(' · '))}</div></td>
+      <td class="num"><span class="qty ${r.level}">${qtyFmt(r.qty)}</span> <span class="tag ${LEVELS[r.level][1]}">${LEVELS[r.level][0]}</span></td>
+      <td class="num">${r.min_stock ? qtyFmt(r.min_stock) : '—'}</td>
+      <td class="num">${money(r.avg_cost)}</td>
+      <td class="num">${money(r.value)}</td></tr>`).join('')}
+  </tbody></table>`;
+  box.querySelectorAll('tr[data-id]').forEach(tr => {
+    tr.onclick = () => openProductSheet(tr.dataset.id);
+    tr.onkeydown = ev => { if (ev.key === 'Enter') openProductSheet(tr.dataset.id); };
+  });
+}
+
+async function openByCode(code) {
+  const local = S.inv ? findLocal(S.inv.rows, code) : null;
+  if (local) { beep(true); return openProductSheet(local.id); }
+  try {
+    const r = await api('apiInventoryLookup', S.token, code);
+    if (r.found) { beep(true); return openProductSheet(r.product.id); }
+    beep(false);
+    openModal('Código no encontrado', `<p>Ningún producto tiene el código <b>${esc(code)}</b>.</p>
+      ${can('products:write') ? '<p class="muted">Puedes crear el producto ahora con este código ya puesto.</p>' : ''}`,
+      can('products:write') ? async () => { setTimeout(() => editRecord('products', null, { prefill: { barcode: code, kind: 'producto', track_stock: true }, onSaved: () => S.view === 'inventory' && viewInventory() }), 0); } : null, 'Crear producto');
+  } catch (e) { toast(e.message, true); }
+}
+
+async function openProductSheet(id) {
+  openModal('Producto', '<div class="empty">Cargando…</div>', null, null, true);
+  let d;
+  try { d = await api('apiInventoryProduct', S.token, id); } catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+  const p = d.product, w = can('inventory:write');
+  $('#modal header h3').textContent = p.name;
+  const locs = Object.keys(p.by_location).filter(l => p.by_location[l] !== 0 || l === 'principal');
+  $('#modal .body').innerHTML = `
+    <div class="sheet-head">
+      <div><div class="big-qty ${p.level}">${qtyFmt(p.qty)}</div><div class="muted">${esc(p.unit)} en existencia · <span class="tag ${LEVELS[p.level][1]}">${LEVELS[p.level][0]}</span></div></div>
+      ${p.barcode || p.sku ? `<div class="sheet-code">${barcodeSvg(p.barcode || p.sku)}<div class="muted sm">${esc(p.barcode || p.sku)}</div></div>` : ''}
+    </div>
+    <dl class="facts">
+      <div><dt>SKU</dt><dd>${esc(p.sku || '—')}</dd></div>
+      <div><dt>Mínimo</dt><dd>${p.min_stock ? qtyFmt(p.min_stock) : 'Sin mínimo'}</dd></div>
+      <div><dt>Costo promedio</dt><dd>${money(p.avg_cost)}</dd></div>
+      <div><dt>Precio</dt><dd>${money(p.price)}</dd></div>
+      <div><dt>Valor al costo</dt><dd>${money(p.value)}</dd></div>
+      ${locs.length > 1 ? `<div class="wide"><dt>Por ubicación</dt><dd>${locs.map(l => esc(locName(l)) + ': <b>' + qtyFmt(p.by_location[l]) + '</b>').join(' · ')}</dd></div>` : ''}
+    </dl>
+    ${!d.tracked ? '<div class="note">Este producto no controla inventario. Actívalo en Productos y servicios para registrar movimientos.</div>' : ''}
+    <div class="chips sheet-acts">
+      ${w && d.tracked ? Object.keys(MOVE_KINDS).map(k => `<button class="btn ${k === 'entrada' ? 'primary' : ''}" data-move="${k}">${MOVE_KINDS[k].verb}</button>`).join('') : ''}
+      <button class="btn" data-label>Etiqueta</button>
+      <button class="btn" data-hist>Historial completo</button>
+    </div>
+    <h3 style="margin:18px 0 6px">Últimos movimientos</h3>
+    ${movementList(d.movements)}`;
+  $('#modal').querySelectorAll('[data-move]').forEach(b => b.onclick = () => openMove(b.dataset.move, [p]));
+  $('#modal [data-label]').onclick = () => openLabels([p.id]);
+  $('#modal [data-hist]').onclick = () => openHistory({ product_id: p.id, product: p.name });
+}
+
+function movementList(rows) {
+  if (!rows.length) return '<div class="muted">Sin movimientos todavía.</div>';
+  return `<ul class="list moves">${rows.map(m => `<li>
+      <span><b>${esc(m.type_label)}</b>${m.doc ? ' <span class="muted">' + esc(m.doc) + '</span>' : ''}<br>
+        <span class="muted sm">${fmtDate(m.created_at)}${m.user ? ' · ' + esc(m.user) : ''}${m.location !== 'principal' ? ' · ' + esc(locName(m.location)) : ''}${m.reason ? ' · ' + esc(m.reason) : ''}${m.notes ? ' · ' + esc(m.notes) : ''}</span></span>
+      <span class="num"><b class="${m.qty < 0 ? 'neg' : 'pos'}">${m.qty > 0 ? '+' : ''}${qtyFmt(m.qty)}</b>${m.qty_after !== '' ? '<br><span class="muted sm">queda ' + qtyFmt(m.qty_after) + '</span>' : ''}</span>
+    </li>`).join('')}</ul>`;
+}
+
+/* ---------- Documento de movimiento (recibir, ajustar, contar, trasladar) ---------- */
+
+async function openMove(kind, preset) {
+  const K = MOVE_KINDS[kind];
+  if (!S.inv) { try { await loadInventory({}); } catch (e) { toast(e.message, true); return; } }
+  const d = S.inv;
+  const st = { kind: kind, lines: [], location: S.invFilter && S.invFilter.location ? S.invFilter.location : 'principal', to: '', saved: false };
+  const products = d.rows;
+  const locOpts = sel => d.locations.map(l => `<option value="${esc(l)}" ${l === sel ? 'selected' : ''}>${esc(locName(l))}</option>`).join('');
+  const body = `
+    <p class="muted" style="margin-top:0">${K.hint}</p>
+    <div class="form mv-head">
+      <div><label class="f">${kind === 'traslado' ? 'Desde' : 'Ubicación'}</label><select class="input" id="mvLoc">${locOpts(st.location)}</select></div>
+      ${kind === 'traslado' ? `<div><label class="f">Hacia</label><input class="input" id="mvTo" list="mvLocs" placeholder="Ej. Tienda Centro"><datalist id="mvLocs">${d.locations.map(l => `<option value="${esc(l)}">`).join('')}</datalist></div>` : ''}
+      ${kind === 'ajuste' ? `<div><label class="f">Motivo *</label><select class="input" id="mvReason"><option value="">Elige…</option>${d.reasons.map(r => `<option>${esc(r)}</option>`).join('')}</select></div>` : ''}
+    </div>
+    <div class="scanbox mv-scan">
+      <input class="input" id="mvCode" list="mvProducts" placeholder="Escanea o escribe código o nombre…" autocomplete="off" data-scan>
+      <datalist id="mvProducts">${products.map(p => `<option value="${esc(p.name)}${p.sku ? ' · ' + esc(p.sku) : ''}">`).join('')}</datalist>
+      <button type="button" class="btn primary" id="mvCam" aria-label="Escanear con la cámara">${ICONS.scan}<span>Escanear</span></button>
+    </div>
+    <div id="mvNew"></div>
+    ${kind === 'conteo' ? '<div class="mv-all"><button type="button" class="btn sm" id="mvAll">Agregar todos los productos de la lista</button></div>' : ''}
+    <div id="mvLines" class="mv-lines"></div>
+    <div class="mv-sum" id="mvSum"></div>
+    <div class="form mv-extra">
+      ${kind === 'entrada' ? '<div><label class="f">Proveedor o factura</label><input class="input" id="mvRef" placeholder="Opcional"></div>' : ''}
+      <div class="${kind === 'entrada' ? '' : 'wide'}"><label class="f">Nota</label><input class="input" id="mvNotes" placeholder="Opcional"></div>
+    </div>`;
+
+  openModal(K.title, body, async () => {
+    const lines = st.lines.filter(l => kind !== 'conteo' || l.counted !== '');
+    if (!lines.length) throw new Error(kind === 'conteo' ? 'Escribe la cantidad contada de al menos un producto.' : 'Agrega al menos un producto.');
+    const doc = {
+      kind: kind, location: $('#mvLoc').value,
+      to_location: $('#mvTo') ? $('#mvTo').value.trim() : '',
+      reason: $('#mvReason') ? $('#mvReason').value : '',
+      reference: $('#mvRef') ? $('#mvRef').value : '', notes: $('#mvNotes').value,
+      lines: lines.map(l => ({ product_id: l.id, qty: Number(l.qty), unit_cost: l.unit_cost === '' ? '' : Number(l.unit_cost), counted: l.counted === '' ? '' : Number(l.counted) })),
+    };
+    const r = await api('apiInventoryMove', S.token, doc);
+    st.saved = true;
+    toast(r.message + (r.warnings.length ? ' Atención: ' + r.warnings[0] + (r.warnings.length > 1 ? ' y ' + (r.warnings.length - 1) + ' más' : '') + '.' : ''), r.warnings.length > 0);
+    S.inv = null;
+    if (S.view === 'inventory') viewInventory();
+  }, K.save, true);
+
+  const modal = $('#modal');
+  modal.classList.add('mv-modal');
+  modal._guard = () => st.saved || !st.lines.length || confirm('¿Cerrar sin guardar? Se perderán los ' + st.lines.length + ' producto(s) agregados.');
+  const prevScan = S.onScan;
+  modal._onClose = () => { S.onScan = prevScan; };
+
+  const onHandAt = p => {
+    const loc = $('#mvLoc').value;
+    return Number((p.by_location || {})[loc] || 0);
+  };
+
+  const addProduct = (p, n) => {
+    n = n === undefined ? 1 : n;
+    let l = st.lines.find(x => x.id === p.id);
+    if (l) {
+      if (kind === 'conteo') l.counted = Number(l.counted || 0) + n; else l.qty = Number(l.qty || 0) + (kind === 'ajuste' ? -n : n);
+      st.lines.splice(st.lines.indexOf(l), 1);
+      st.lines.unshift(l);
+    } else {
+      l = { id: p.id, name: p.name, sku: p.sku, unit: p.unit, p: p, qty: kind === 'ajuste' ? -n : n, unit_cost: kind === 'entrada' ? (p.avg_cost || p.cost || '') : '', counted: kind === 'conteo' ? n : '' };
+      st.lines.unshift(l);
+    }
+    drawLines(l.id);
+    return l;
+  };
+
+  const resolveCode = async code => {
+    const p = findLocal(products, code);
+    if (p) return { p: p };
+    const byName = products.filter(x => (x.name + (x.sku ? ' · ' + x.sku : '')).toLowerCase() === code.toLowerCase());
+    if (byName.length === 1) return { p: byName[0] };
+    const r = await api('apiInventoryLookup', S.token, code);
+    if (r.found && r.tracked) { products.push(r.product); return { p: r.product }; }
+    if (r.found) return { untracked: r.product };
+    const partial = products.filter(x => (x.name + ' ' + x.sku).toLowerCase().indexOf(code.toLowerCase()) >= 0);
+    return { partial: partial, code: code };
+  };
+
+  const handleCode = async (code, fromCamera) => {
+    code = String(code || '').trim();
+    if (!code) return { ok: false, label: '' };
+    $('#mvNew').innerHTML = '';
+    const r = await resolveCode(code);
+    if (r.p) {
+      const l = addProduct(r.p);
+      if (!fromCamera) beep(true);
+      const n = kind === 'conteo' ? l.counted : Math.abs(l.qty);
+      return { ok: true, label: r.p.name + ' — ' + qtyFmt(n), short: r.p.name + ' ×' + qtyFmt(n) };
+    }
+    if (!fromCamera) beep(false);
+    if (r.untracked) {
+      $('#mvNew').innerHTML = `<div class="note">"${esc(r.untracked.name)}" no controla inventario. ${can('products:write') ? '<button type="button" class="btn sm" id="mvTrack">Activar y agregar</button>' : ''}</div>`;
+      if ($('#mvTrack')) $('#mvTrack').onclick = async () => {
+        try {
+          await api('apiInventoryEnableTracking', S.token, [r.untracked.id]);
+          const lk = await api('apiInventoryLookup', S.token, r.untracked.id);
+          products.push(lk.product); addProduct(lk.product); $('#mvNew').innerHTML = '';
+        } catch (e) { toast(e.message, true); }
+      };
+      return { ok: false, label: r.untracked.name + ': no controla inventario' };
+    }
+    if (r.partial && r.partial.length && r.partial.length <= 8 && !/^\d{6,}$/.test(code)) {
+      $('#mvNew').innerHTML = `<div class="pick">${r.partial.map(p => `<button type="button" class="btn sm" data-pick="${esc(p.id)}">${esc(p.name)}${p.sku ? ' · ' + esc(p.sku) : ''}</button>`).join('')}</div>`;
+      $('#mvNew').querySelectorAll('[data-pick]').forEach(b => b.onclick = () => { addProduct(products.find(p => p.id === b.dataset.pick)); $('#mvNew').innerHTML = ''; $('#mvCode').focus(); });
+      return { ok: false, label: 'Varios productos coinciden' };
+    }
+    if (can('products:write')) {
+      $('#mvNew').innerHTML = `<form class="card pad mv-create" id="mvCreate">
+        <b>Código nuevo: ${esc(code)}</b><p class="muted" style="margin:4px 0 10px">Crea el producto aquí mismo y se agrega a la lista.</p>
+        <div class="form">
+          <div class="wide"><label class="f">Nombre *</label><input class="input" name="name" required></div>
+          <div><label class="f">Precio de venta *</label><input class="input" name="price" type="number" step="any" min="0" inputmode="decimal" required></div>
+          <div><label class="f">Costo</label><input class="input" name="cost" type="number" step="any" min="0" inputmode="decimal"></div>
+          <div><label class="f">Categoría</label><input class="input" name="category"></div>
+          <div><label class="f">Stock mínimo</label><input class="input" name="min_stock" type="number" step="any" min="0" inputmode="decimal"></div>
+        </div>
+        <div class="chips" style="margin-top:10px"><button class="btn primary">Crear y agregar</button><button type="button" class="btn" id="mvCreateX">Cancelar</button></div></form>`;
+      $('#mvCreateX').onclick = () => { $('#mvNew').innerHTML = ''; };
+      const f = $('#mvCreate');
+      setTimeout(() => f.name.focus(), 50);
+      f.onsubmit = async ev => {
+        ev.preventDefault(); ev.stopPropagation();
+        const b = f.querySelector('button.primary'); b.disabled = true;
+        try {
+          const isCode = /^\d{8,14}$/.test(code);
+          await api('apiSave', S.token, 'products', { kind: 'producto', name: f.name.value, price: f.price.value, cost: f.cost.value, category: f.category.value,
+            min_stock: f.min_stock.value, barcode: isCode ? code : '', sku: isCode ? '' : code, track_stock: true, status: 'activo', unit: 'pieza' });
+          const lk = await api('apiInventoryLookup', S.token, code);
+          products.push(lk.product);
+          addProduct(lk.product);
+          $('#mvNew').innerHTML = '';
+          $('#mvCode').focus();
+          toast('Producto creado');
+        } catch (e) { toast(e.message, true); b.disabled = false; }
+      };
+    } else {
+      $('#mvNew').innerHTML = `<div class="note">Ningún producto tiene el código <b>${esc(code)}</b>.</div>`;
+    }
+    return { ok: false, label: 'Código no registrado: ' + code };
+  };
+  S.onScan = code => { if (!document.querySelector('.scanner')) handleCode(code); };
+
+  const drawLines = flashId => {
+    const box = $('#mvLines');
+    if (!box) return;
+    if (!st.lines.length) {
+      box.innerHTML = '<div class="empty mv-empty">Escanea con la cámara o con tu lector, o escribe el nombre del producto.</div>';
+    } else {
+      box.innerHTML = st.lines.map((l, i) => {
+        const have = onHandAt(l.p);
+        return `<div class="mline ${l.id === flashId ? 'flash' : ''}" data-i="${i}">
+          <div class="ml-name"><b>${esc(l.name)}</b><span class="muted sm">${esc(l.sku || '')}${l.sku ? ' · ' : ''}hay ${qtyFmt(have)}${kind === 'conteo' ? '' : ''}</span>
+            ${kind === 'conteo' ? '<span class="ml-diff sm"></span>' : ''}</div>
+          <div class="stepper" role="group" aria-label="Cantidad">
+            <button type="button" data-d="-1" aria-label="Menos">−</button>
+            <input class="input" inputmode="decimal" aria-label="${kind === 'conteo' ? 'Cantidad contada' : 'Cantidad'}" value="${esc(kind === 'conteo' ? l.counted : l.qty)}" data-f="${kind === 'conteo' ? 'counted' : 'qty'}">
+            <button type="button" data-d="1" aria-label="Más">+</button>
+          </div>
+          ${kind === 'entrada' ? `<label class="ml-cost"><span class="muted sm">Costo c/u</span><input class="input" inputmode="decimal" value="${esc(l.unit_cost)}" data-f="unit_cost"></label>` : ''}
+          <button type="button" class="ml-x" aria-label="Quitar ${esc(l.name)}">✕</button>
+        </div>`;
+      }).join('');
+      box.querySelectorAll('.mline').forEach(row => {
+        const l = st.lines[Number(row.dataset.i)];
+        row.querySelectorAll('input[data-f]').forEach(inp => inp.oninput = () => { l[inp.dataset.f] = inp.value.replace(',', '.'); updateSum(); });
+        row.querySelectorAll('[data-d]').forEach(b => b.onclick = () => {
+          const fld = kind === 'conteo' ? 'counted' : 'qty';
+          let v = Number(l[fld] || 0) + Number(b.dataset.d);
+          if (kind !== 'ajuste' && v < 0) v = 0;
+          l[fld] = v;
+          row.querySelector('input[data-f=' + fld + ']').value = v;
+          updateSum();
+        });
+        row.querySelector('.ml-x').onclick = () => { st.lines.splice(st.lines.indexOf(l), 1); drawLines(); };
+      });
+    }
+    updateSum();
+  };
+
+  const updateSum = () => {
+    let units = 0, cost = 0, diffs = 0;
+    $('#mvLines').querySelectorAll('.mline').forEach(row => {
+      const l = st.lines[Number(row.dataset.i)];
+      if (kind === 'conteo') {
+        const el = row.querySelector('.ml-diff');
+        if (l.counted === '') { el.textContent = 'Sin contar'; el.className = 'ml-diff sm muted'; return; }
+        const diff = Math.round((Number(l.counted) - onHandAt(l.p)) * 100) / 100;
+        if (diff) diffs++;
+        el.textContent = diff === 0 ? 'Coincide' : (diff > 0 ? 'Sobran ' + qtyFmt(diff) : 'Faltan ' + qtyFmt(-diff));
+        el.className = 'ml-diff sm ' + (diff === 0 ? 'pos' : 'neg');
+        units += Number(l.counted || 0);
+      } else {
+        units += Number(l.qty || 0);
+        if (kind === 'entrada' && l.unit_cost !== '') cost += Number(l.qty || 0) * Number(l.unit_cost || 0);
+      }
+    });
+    const n = st.lines.length;
+    $('#mvSum').innerHTML = n ? `<b>${n}</b> producto${n === 1 ? '' : 's'} · <b>${qtyFmt(units)}</b> unidades${kind === 'entrada' && cost ? ' · costo total <b>' + money(cost) + '</b>' : ''}${kind === 'conteo' ? ' · <b>' + diffs + '</b> con diferencia' : ''}` : '';
+    const ok = $('#modalOk');
+    if (ok) ok.textContent = K.save + (n ? ' (' + n + ')' : '');
+  };
+
+  const codeIn = $('#mvCode');
+  codeIn.onkeydown = async ev => {
+    if (ev.key !== 'Enter') return;
+    ev.preventDefault();
+    const v = codeIn.value; codeIn.value = '';
+    await handleCode(v);
+  };
+  codeIn.onchange = () => {
+    // Elegido de la lista desplegable (sin Enter)
+    const v = codeIn.value;
+    const p = products.find(x => (x.name + (x.sku ? ' · ' + x.sku : '')) === v);
+    if (p) { codeIn.value = ''; addProduct(p); }
+  };
+  $('#mvCam').onclick = () => scanCamera({ title: K.title, continuous: true, onCode: code => handleCode(code, true) });
+  $('#mvLoc').onchange = () => drawLines();
+  if ($('#mvAll')) $('#mvAll').onclick = () => {
+    const list = S.invFilter && S.invFilter.level ? products.filter(p => p.level === S.invFilter.level) : products;
+    list.slice().reverse().forEach(p => { if (!st.lines.find(l => l.id === p.id)) st.lines.unshift({ id: p.id, name: p.name, sku: p.sku, unit: p.unit, p: p, qty: 0, unit_cost: '', counted: '' }); });
+    drawLines();
+  };
+  (preset || []).forEach(p => addProduct(p, kind === 'conteo' ? 0 : 1));
+  if (preset && preset.length && kind === 'conteo') { st.lines[0].counted = ''; drawLines(); }
+  drawLines();
+  setTimeout(() => codeIn.focus(), 60);
+}
+
+/* ---------- Historial ---------- */
+
+async function openHistory(q) {
+  q = Object.assign({ type: '', location: '', from: '', to: '', q: '' }, q || {});
+  const types = { '': 'Todos los tipos', entrada: 'Entradas', ajuste: 'Ajustes', conteo: 'Conteos', traslado: 'Traslados', venta: 'Ventas', devolucion: 'Devoluciones' };
+  openModal(q.product ? 'Historial · ' + q.product : 'Historial de movimientos', `
+    <div class="toolbar hist-tools">
+      <input class="input" id="hQ" placeholder="Buscar producto, documento o nota" value="${esc(q.q)}">
+      <select class="input" id="hType">${Object.keys(types).map(k => `<option value="${k}" ${q.type === k ? 'selected' : ''}>${types[k]}</option>`).join('')}</select>
+      <input class="input" type="date" id="hFrom" aria-label="Desde" value="${esc(q.from)}">
+      <input class="input" type="date" id="hTo" aria-label="Hasta" value="${esc(q.to)}">
+      <button class="btn" id="hCsv">Descargar CSV</button>
+    </div>
+    <div id="hList"><div class="empty">Cargando…</div></div>`, null, null, true);
+  $('#modal').classList.add('hist-modal');
+  let data = null, timer;
+  const load = async () => {
+    q.q = $('#hQ').value; q.type = $('#hType').value; q.from = $('#hFrom').value; q.to = $('#hTo').value;
+    try { data = await api('apiInventoryHistory', S.token, Object.assign({}, q, { limit: 500 })); }
+    catch (e) { $('#hList').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+    if (!$('#hList')) return;
+    $('#hList').innerHTML = !data.rows.length ? '<div class="empty">No hay movimientos con estos filtros.</div>' :
+      `<div class="card tablewrap"><table><thead><tr><th>Fecha</th><th>Producto</th><th>Movimiento</th><th class="num">Cantidad</th><th class="num">Queda</th><th>Detalle</th></tr></thead><tbody>
+      ${data.rows.map(m => `<tr><td>${fmtDate(m.created_at)}</td><td><b>${esc(m.product)}</b>${m.sku ? '<div class="muted sm">' + esc(m.sku) + '</div>' : ''}</td>
+        <td>${esc(m.type_label)}${m.doc ? '<div class="muted sm">' + esc(m.doc) + '</div>' : ''}</td>
+        <td class="num"><b class="${m.qty < 0 ? 'neg' : 'pos'}">${m.qty > 0 ? '+' : ''}${qtyFmt(m.qty)}</b></td>
+        <td class="num">${m.qty_after === '' ? '' : qtyFmt(m.qty_after)}</td>
+        <td><span class="sm">${esc([m.location !== 'principal' ? locName(m.location) : '', m.reason, m.notes, m.user].filter(String).join(' · '))}</span></td></tr>`).join('')}
+      </tbody></table></div>${data.total > data.rows.length ? '<p class="muted">Mostrando ' + data.rows.length + ' de ' + data.total + '. Usa los filtros para acotar.</p>' : ''}`;
+  };
+  $('#hQ').oninput = () => { clearTimeout(timer); timer = setTimeout(load, 350); };
+  ['#hType', '#hFrom', '#hTo'].forEach(s => { $(s).onchange = load; });
+  $('#hCsv').onclick = async () => {
+    const all = await api('apiInventoryHistory', S.token, Object.assign({}, q, { limit: 5000 }));
+    const head = ['Fecha', 'Producto', 'SKU', 'Movimiento', 'Documento', 'Ubicación', 'Cantidad', 'Queda', 'Costo unitario', 'Motivo', 'Nota', 'Usuario'];
+    const cell = v => { const s = String(v === undefined || v === null ? '' : v); return /[",\n;]/.test(s) || /^[=+\-@]/.test(s) ? '"' + s.replace(/^([=+\-@])/, "'$1").replace(/"/g, '""') + '"' : s; };
+    const lines = [head.join(',')].concat(all.rows.map(m => [new Date(m.created_at).toLocaleString('es'), m.product, m.sku, m.type_label, m.doc, locName(m.location), m.qty, m.qty_after, m.unit_cost, m.reason, m.notes, m.user].map(cell).join(',')));
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' }));
+    a.download = 'movimientos-inventario-' + new Date().toISOString().slice(0, 10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+  };
+  load();
+}
+
+/* ---------- Ajustes de inventario ---------- */
+
+function openInvSettings() {
+  const d = S.inv || { locations: ['principal'], stock_alert_email: '' };
+  openModal('Ajustes de inventario', `<form class="form" id="invCfgForm">
+      <div class="wide"><label class="f">Ubicaciones</label>
+        <textarea class="input" name="locations" rows="3" placeholder="Bodega, Tienda Centro, Tienda Escalón">${esc(d.locations.filter(l => l !== 'principal').join(', '))}</textarea>
+        <div class="hint">Separadas por comas. "Principal" siempre existe: ahí se descuentan las ventas en línea.</div></div>
+      <div class="wide"><label class="f">Correo para alertas de stock</label>
+        <input class="input" name="stock_alert_email" type="text" value="${esc(d.stock_alert_email)}" placeholder="Vacío = a los administradores">
+        <div class="hint">Cada mañana, si cambió la lista de productos bajo el mínimo o agotados, te llega un correo con ella. Puedes poner varios separados por coma.</div></div>
+    </form>`, async () => {
+    const f = $('#invCfgForm');
+    await api('apiInventorySettings', S.token, { locations: f.locations.value, stock_alert_email: f.stock_alert_email.value });
+    toast('Ajustes guardados');
+    if (S.view === 'inventory') viewInventory();
+  }, 'Guardar');
+}
+
+/* ---------- Etiquetas ---------- */
+
+const LABEL_FORMATS = {
+  carta30: { name: 'Hoja carta · 30 por hoja (Avery 5160)', page: '8.5in 11in', w: 2.625, h: 1, unit: 'in', cols: 3, rows: 10, top: 0.5, left: 0.1875, gapX: 0.125, gapY: 0 },
+  a4_24: { name: 'Hoja A4 · 24 por hoja (70 × 37 mm)', page: '210mm 297mm', w: 70, h: 37, unit: 'mm', cols: 3, rows: 8, top: 0.5, left: 0, gapX: 0, gapY: 0 },
+  rollo50: { name: 'Rollo · 50 × 25 mm (impresora de etiquetas)', page: '50mm 25mm', w: 50, h: 25, unit: 'mm', cols: 1, rows: 1, top: 0, left: 0, gapX: 0, gapY: 0 },
+  rollo57: { name: 'Rollo · 57 × 32 mm (2¼ × 1¼ in)', page: '57mm 32mm', w: 57, h: 32, unit: 'mm', cols: 1, rows: 1, top: 0, left: 0, gapX: 0, gapY: 0 },
+};
+
+async function openLabels(ids) {
+  openModal('Imprimir etiquetas', '<div class="empty">Cargando productos…</div>', null, null, true);
+  let all;
+  try { all = (await api('apiList', S.token, 'products')).filter(p => p.kind === 'producto' && p.status !== 'inactivo'); }
+  catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
+  const pre = ids && ids.length ? new Set(ids) : null;
+  const st = {
+    fmt: localStorage.getItem('nx_label_fmt') || 'carta30', type: localStorage.getItem('nx_label_type') || 'barcode', price: localStorage.getItem('nx_label_price') !== '0',
+    copies: {},
+  };
+  all.forEach(p => { st.copies[p.id] = pre ? (pre.has(p.id) ? 1 : 0) : 0; });
+  const codeOf = p => String(p.barcode || p.sku || '').trim();
+  const draw = () => {
+    const missing = all.filter(p => st.copies[p.id] > 0 && !codeOf(p));
+    const total = all.reduce((s, p) => s + (codeOf(p) ? Number(st.copies[p.id] || 0) : 0), 0);
+    $('#modal .body').innerHTML = `
+      <div class="form lb-opts">
+        <div><label class="f">Formato</label><select class="input" id="lbFmt">${Object.keys(LABEL_FORMATS).map(k => `<option value="${k}" ${st.fmt === k ? 'selected' : ''}>${LABEL_FORMATS[k].name}</option>`).join('')}</select></div>
+        <div><label class="f">Código</label><select class="input" id="lbType"><option value="barcode" ${st.type === 'barcode' ? 'selected' : ''}>Código de barras</option><option value="qr" ${st.type === 'qr' ? 'selected' : ''}>Código QR</option></select></div>
+        <div class="check"><input type="checkbox" id="lbPrice" ${st.price ? 'checked' : ''}><label for="lbPrice">Mostrar precio</label></div>
+      </div>
+      <div class="lb-bar">
+        <input class="input" id="lbQ" placeholder="Filtrar productos…" autocomplete="off">
+        <button type="button" class="btn sm" id="lbStock">Una por unidad en existencia</button>
+        <button type="button" class="btn sm" id="lbOne">Una de cada</button>
+        <button type="button" class="btn sm" id="lbNone">Ninguna</button>
+      </div>
+      ${missing.length ? `<div class="note">${missing.length} producto(s) elegidos no tienen código ni SKU. ${can('products:write') ? '<button type="button" class="btn sm" id="lbGen">Generar códigos de barras</button>' : 'Pide a un administrador que les asigne uno.'}</div>` : ''}
+      <div class="lb-list">${all.map(p => `<div class="lb-row" data-name="${esc((p.name + ' ' + (p.sku || '') + ' ' + (p.barcode || '')).toLowerCase())}">
+          <span><b>${esc(p.name)}</b><span class="muted sm">${esc(codeOf(p) || 'Sin código')}${p.stock !== '' && p.stock !== undefined ? ' · hay ' + qtyFmt(p.stock) : ''}</span></span>
+          <div class="stepper sm" role="group" aria-label="Copias de ${esc(p.name)}"><button type="button" data-d="-1" data-id="${esc(p.id)}" aria-label="Menos">−</button><input class="input" inputmode="numeric" value="${st.copies[p.id]}" data-id="${esc(p.id)}" aria-label="Copias"><button type="button" data-d="1" data-id="${esc(p.id)}" aria-label="Más">+</button></div>
+        </div>`).join('')}</div>
+      <div class="lb-foot"><div class="lb-preview" id="lbPrev"></div>
+        <div><div class="muted" id="lbCount"><b>${total}</b> etiqueta(s)${pagesFor(total) ? ' · ' + pagesFor(total) + ' hoja(s)' : ''}</div>
+        <button class="btn primary" id="lbPrint" ${total ? '' : 'disabled'}>Imprimir ${total || ''}</button></div></div>`;
+    const sample = all.find(p => st.copies[p.id] > 0 && codeOf(p)) || all.find(codeOf);
+    $('#lbPrev').innerHTML = sample ? labelHtml(sample, st, true) : '';
+    bind();
+  };
+  const pagesFor = n => { const f = LABEL_FORMATS[st.fmt]; return f.cols * f.rows > 1 ? Math.ceil(n / (f.cols * f.rows)) : 0; };
+  const refreshCount = () => {
+    const total = all.reduce((s, p) => s + (codeOf(p) ? Number(st.copies[p.id] || 0) : 0), 0);
+    $('#lbCount').innerHTML = `<b>${total}</b> etiqueta(s)${pagesFor(total) ? ' · ' + pagesFor(total) + ' hoja(s)' : ''}`;
+    $('#lbPrint').disabled = !total; $('#lbPrint').textContent = 'Imprimir ' + (total || '');
+  };
+  const bind = () => {
+    const body = $('#modal .body');
+    $('#lbFmt').onchange = ev => { st.fmt = ev.target.value; localStorage.setItem('nx_label_fmt', st.fmt); draw(); };
+    $('#lbType').onchange = ev => { st.type = ev.target.value; localStorage.setItem('nx_label_type', st.type); draw(); };
+    $('#lbPrice').onchange = ev => { st.price = ev.target.checked; localStorage.setItem('nx_label_price', st.price ? '1' : '0'); draw(); };
+    $('#lbQ').oninput = ev => { const t = ev.target.value.toLowerCase(); body.querySelectorAll('.lb-row').forEach(r => { r.hidden = t && r.dataset.name.indexOf(t) < 0; }); };
+    const visible = () => all.filter(p => { const r = body.querySelector('.lb-row[data-name="' + CSS.escape((p.name + ' ' + (p.sku || '') + ' ' + (p.barcode || '')).toLowerCase()) + '"]'); return !r || !r.hidden; });
+    $('#lbStock').onclick = () => { visible().forEach(p => { st.copies[p.id] = Math.max(0, Math.ceil(Number(p.stock || 0))); }); draw(); };
+    $('#lbOne').onclick = () => { visible().forEach(p => { st.copies[p.id] = 1; }); draw(); };
+    $('#lbNone').onclick = () => { all.forEach(p => { st.copies[p.id] = 0; }); draw(); };
+    body.querySelectorAll('.lb-row input').forEach(inp => inp.oninput = () => { st.copies[inp.dataset.id] = Math.max(0, Math.min(999, parseInt(inp.value, 10) || 0)); refreshCount(); });
+    body.querySelectorAll('.lb-row [data-d]').forEach(b => b.onclick = () => {
+      const id = b.dataset.id; st.copies[id] = Math.max(0, Math.min(999, (st.copies[id] || 0) + Number(b.dataset.d)));
+      b.parentNode.querySelector('input').value = st.copies[id]; refreshCount();
+    });
+    if ($('#lbGen')) $('#lbGen').onclick = async ev => {
+      ev.target.disabled = true;
+      try {
+        const r = await api('apiInventoryAssignCodes', S.token, all.filter(p => st.copies[p.id] > 0 && !codeOf(p)).map(p => p.id));
+        r.items.forEach(it => { const p = all.find(x => x.id === it.id); if (p) p.barcode = it.barcode; });
+        toast(r.assigned + ' código(s) generados'); draw();
+      } catch (e) { toast(e.message, true); ev.target.disabled = false; }
+    };
+    $('#lbPrint').onclick = () => printLabels(all, st);
+  };
+  draw();
+}
+
+function labelHtml(p, st, preview) {
+  const code = String(p.barcode || p.sku || '').trim();
+  const f = LABEL_FORMATS[st.fmt];
+  const style = preview ? `style="width:${f.w}${f.unit};height:${f.h}${f.unit}"` : '';
+  const graphic = st.type === 'qr' ? qrSvg(code, '100%') : barcodeSvg(code, { stretch: true });
+  return `<div class="label ${st.type}" ${style}>
+    <div class="lb-name">${esc(p.name)}</div>
+    <div class="lb-code">${graphic}</div>
+    <div class="lb-meta"><span>${esc(code)}</span>${st.price ? '<b>' + esc(money(p.price)) + '</b>' : ''}</div>
+  </div>`;
+}
+
+function printLabels(all, st) {
+  const f = LABEL_FORMATS[st.fmt];
+  const list = [];
+  all.forEach(p => { const n = String(p.barcode || p.sku || '').trim() ? Number(st.copies[p.id] || 0) : 0; for (let i = 0; i < n; i++) list.push(p); });
+  if (!list.length) return;
+  const per = f.cols * f.rows, u = f.unit;
+  let html = '';
+  for (let i = 0; i < list.length; i += per) {
+    html += `<div class="lb-page" style="width:${f.page.split(' ')[0]};height:${f.page.split(' ')[1]};padding:${f.top}${u} 0 0 ${f.left}${u};grid-template-columns:repeat(${f.cols}, ${f.w}${u});grid-auto-rows:${f.h}${u};column-gap:${f.gapX}${u};row-gap:${f.gapY}${u}">
+      ${list.slice(i, i + per).map(p => labelHtml(p, st)).join('')}</div>`;
+  }
+  let area = $('#printArea');
+  if (!area) { area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+  area.innerHTML = html;
+  area.className = 'fmt-' + st.fmt + (f.unit === 'mm' && f.h <= 32 ? ' small' : '');
+  let ps = $('#printPage');
+  if (!ps) { ps = document.createElement('style'); ps.id = 'printPage'; document.head.appendChild(ps); }
+  ps.textContent = '@page { size: ' + f.page + '; margin: 0; }';
+  document.body.classList.add('printing');
+  const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  setTimeout(() => window.print(), 60);
 }
 
 /* ============================ Suscriptores ============================ */
