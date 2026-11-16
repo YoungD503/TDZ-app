@@ -31,6 +31,9 @@
   .item { padding: 5px 0; }
   .total { font: 700 22px "Geist", sans-serif; border-top: 1px solid #111; margin-top: 8px; padding-top: 8px; }
   .refund { color: #b42318; }
+  .dte { border-top: 1px dashed #999; margin-top: 12px; padding-top: 10px; font-size: 13px; }
+  .dte .code { font: 12px ui-monospace, Menlo, monospace; word-break: break-all; margin-bottom: 4px; }
+  .dte .hacienda { display: inline-block; margin-top: 6px; color: inherit; font-weight: 600; }
   .foot { text-align: center; color: #555; margin-top: 16px; font-size: 13px; }
   .acts { display: flex; gap: 10px; margin-top: 22px; }
   button { flex: 1; min-height: 50px; border-radius: 12px; font: 600 15px "Geist", sans-serif; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--ink); }
@@ -76,6 +79,11 @@
         '<div class="row total"><span>Total</span><span>' + m(r.total) + '</span></div>' +
         r.payments.map(function (p) { return '<div class="row sub"><span>' + esc(p.method) + '</span><span>' + m(p.amount) + '</span></div>'; }).join('') +
         (r.refunded ? '<div class="row refund"><span>Reembolsado</span><span>−' + m(r.refunded) + '</span></div>' : '') +
+        (r.dte ? '<div class="dte"><b>' + esc(r.dte.name) + ' electrónica</b>' + (r.dte.test ? '<div class="test">Ambiente de pruebas — sin validez fiscal</div>' : '') +
+          '<div class="row sub"><span>Código de generación</span></div><div class="code">' + esc(r.dte.codigo) + '</div>' +
+          '<div class="row sub"><span>Número de control</span></div><div class="code">' + esc(r.dte.control) + '</div>' +
+          (r.dte.sello ? '<div class="row sub"><span>Sello de recepción</span></div><div class="code">' + esc(r.dte.sello) + '</div>' : '<div class="sub">Pendiente del sello de Hacienda.</div>') +
+          (r.dte.qr ? '<a class="hacienda" href="' + esc(r.dte.qr) + '" target="_blank" rel="noopener">Consultar en Hacienda</a>' : '') + '</div>' : '') +
         (r.footer ? '<div class="foot">' + esc(r.footer) + '</div>' : '') +
         '</article><div class="acts"><button class="primary" id="print">Guardar o imprimir</button><button id="share">Compartir</button></div>';
       app.innerHTML = html;
