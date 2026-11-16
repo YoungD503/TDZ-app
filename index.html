@@ -11,47 +11,49 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Michroma&display=swap" rel="stylesheet">
 <script>try { document.documentElement.setAttribute("data-theme", localStorage.getItem("nx_theme") || "dark"); } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }</script>
 <style>
   /* ============ Tema: The Desert ZONE de noche (oscuro) y de día (claro) ============ */
   :root, [data-theme="dark"] {
+    /* Negro neutro como el newsletter; el verde queda solo como acento */
     color-scheme: dark;
-    --bg: #0F1412; --panel: #161D1A; --raised: #1C2521; --line: #26322D; --line-strong: #34433C;
-    --ink: #E6EEE9; --muted: #8DA197; --faint: #5E7068;
-    --brand: #3FD49A; --brand-ink: #06281B; --brand-soft: rgba(63, 212, 154, .12); --brand-line: rgba(63, 212, 154, .35);
+    --bg: #000000; --panel: #141414; --raised: #1C1C1C; --line: #262626; --line-strong: #333333; --input-bg: #0D0D0D;
+    --ink: #F5F5F5; --muted: #9B9B9B; --faint: #6B6B6B;
+    --brand: #2F6FE4; --brand-ink: #FFFFFF; --brand-text: #7DB2FF; --brand-hover: #3D7DF0; --brand-soft: rgba(47, 111, 228, .16); --brand-line: rgba(61, 125, 240, .45);
     --sand: #E2C08A; --sand-soft: rgba(226, 192, 138, .12); --sand-line: rgba(226, 192, 138, .35);
-    --danger: #FF8A80; --danger-soft: rgba(255, 138, 128, .12);
-    --info: #8CC8FF; --info-soft: rgba(140, 200, 255, .12);
-    --side: #0B100E; --side-ink: #B9C9C1; --side-hover: rgba(230, 238, 233, .06);
-    --code-bg: #0A0E0C; --code-ink: #D5E6DD;
-    --scrim: rgba(3, 8, 6, .62); --shadow: 0 18px 50px rgba(0, 0, 0, .45);
+    --danger: #F87171; --danger-soft: rgba(248, 113, 113, .12);
+    --info: #7DB2FF; --info-soft: rgba(125, 178, 255, .12);
+    --side: #000000; --side-ink: #B5B5B5; --side-hover: rgba(255, 255, 255, .06);
+    --code-bg: #0B0B0B; --code-ink: #E0E0E0;
+    --scrim: rgba(0, 0, 0, .72); --shadow: 0 18px 50px rgba(0, 0, 0, .6);
     --warn: var(--sand);
   }
   [data-theme="light"] {
     color-scheme: light;
     --bg: #F2F4F0; --panel: #FFFFFF; --raised: #F7F9F6; --line: #DDE3DE; --line-strong: #C7D0CA;
     --ink: #14211B; --muted: #5C6E66; --faint: #8A9A92;
-    --brand: #0B8457; --brand-ink: #FFFFFF; --brand-soft: rgba(11, 132, 87, .10); --brand-line: rgba(11, 132, 87, .35);
+    --brand: #1F5BD0; --brand-ink: #FFFFFF; --brand-text: #1F5BD0; --brand-hover: #2F6FE4; --brand-soft: rgba(31, 91, 208, .10); --brand-line: rgba(31, 91, 208, .35);
     --sand: #9A6B1E; --sand-soft: rgba(154, 107, 30, .10); --sand-line: rgba(154, 107, 30, .35);
     --danger: #B42318; --danger-soft: rgba(180, 35, 24, .08);
     --info: #1D5FA8; --info-soft: rgba(29, 95, 168, .08);
     --side: #12201A; --side-ink: #C3D3CB; --side-hover: rgba(255, 255, 255, .07);
     --code-bg: #12201A; --code-ink: #DDEBE3;
     --scrim: rgba(10, 20, 15, .45); --shadow: 0 18px 50px rgba(20, 33, 27, .18);
-    --warn: var(--sand);
+    --warn: var(--sand); --input-bg: #FFFFFF;
   }
   :root {
     --radius: 12px; --radius-sm: 8px;
-    --font: "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    --display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
+    --font: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --display: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --brandfont: "Michroma", "Geist", sans-serif;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
   body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
   button { font: inherit; cursor: pointer; }
   input, select, textarea { font: inherit; color: inherit; }
-  a { color: var(--brand); }
+  a { color: var(--brand-text); }
   :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
 
@@ -63,7 +65,7 @@
   .btn.danger:hover { border-color: var(--danger); background: var(--danger-soft); }
   .btn.sm { padding: 4px 10px; font-size: 13px; min-height: 30px; }
   .btn:disabled { opacity: .55; cursor: wait; }
-  .input { width: 100%; padding: 9px 11px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--bg); min-height: 40px; }
+  .input { width: 100%; padding: 9px 11px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--input-bg); min-height: 40px; }
   .input:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
   .input:disabled { opacity: .7; }
   input[type="checkbox"] { accent-color: var(--brand); width: 16px; height: 16px; }
@@ -84,14 +86,15 @@
   .shell { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
   .side { background: var(--side); color: var(--side-ink); padding: 18px 12px; display: flex; flex-direction: column; gap: 1px;
           position: sticky; top: 0; height: 100vh; overflow-y: auto; border-right: 1px solid var(--line); }
-  .side .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 20px; color: #fff; font: 600 16px var(--display); }
+  .side .brand { display: flex; align-items: center; gap: 10px; padding: 4px 10px 20px; color: #fff; font: 400 13px var(--brandfont); letter-spacing: .02em; }
+  .side .brand .logo { font-family: var(--display); font-weight: 700; }
   .side .brand .logo { margin: 0; width: 32px; height: 32px; font-size: 13px; }
   .side .group { font-size: 12px; color: var(--faint); padding: 18px 12px 6px; }
   .nav { position: relative; display: flex; justify-content: space-between; align-items: center; width: 100%; text-align: left; background: none; border: 0;
          color: inherit; padding: 9px 12px; border-radius: var(--radius-sm); min-height: 38px; }
   .nav:hover { background: var(--side-hover); color: #fff; }
-  .nav.on { background: rgba(63, 212, 154, .10); color: #fff; }
-  .nav.on::before { content: ""; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: #3FD49A; }
+  .nav.on { background: rgba(47, 111, 228, .16); color: #fff; }
+  .nav.on::before { content: ""; position: absolute; left: -12px; top: 8px; bottom: 8px; width: 3px; border-radius: 0 3px 3px 0; background: #2F6FE4; }
   .nav.soon { opacity: .5; }
   .pill { font-size: 10.5px; padding: 1px 7px; border-radius: 99px; background: rgba(255, 255, 255, .07); color: var(--side-ink); }
   .side .foot { margin-top: auto; padding: 14px 12px 4px; border-top: 1px solid rgba(255, 255, 255, .07); font-size: 13px; }
@@ -111,7 +114,7 @@
   .card h3 { margin: 0 0 12px; font: 600 16px var(--display); }
   .grid { display: grid; gap: 14px; }
   .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin-bottom: 14px; }
-  .kpi .v { font: 600 34px/1.1 var(--display); margin-top: 6px; color: var(--brand); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
+  .kpi .v { font: 600 34px/1.1 var(--display); margin-top: 6px; color: var(--brand-text); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
   .kpi .l { color: var(--muted); font-size: 13px; }
   .kpi .hint { color: var(--faint); }
   .two { grid-template-columns: 1fr 1fr; }
@@ -122,7 +125,7 @@
   table { width: 100%; border-collapse: collapse; }
   th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--line); white-space: nowrap; vertical-align: middle; }
   th { font-size: 12.5px; color: var(--muted); font-weight: 500; background: var(--raised); }
-  tbody tr:hover td { background: rgba(63, 212, 154, .035); }
+  tbody tr:hover td { background: rgba(47, 111, 228, .035); }
   td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
   tr:last-child td { border-bottom: 0; }
   td.actions { text-align: right; white-space: normal; min-width: 250px; }
@@ -134,7 +137,7 @@
   .cv { display: contents; }
 
   .tag { display: inline-block; font-size: 12px; line-height: 1.6; padding: 1px 9px; border-radius: 99px; background: rgba(141, 161, 151, .14); color: var(--muted); white-space: nowrap; }
-  .tag.activo, .tag.pagada, .tag.creado, .tag.enviado, .tag.ganado, .tag.ok, .tag.reprocesado { background: var(--brand-soft); color: var(--brand); }
+  .tag.activo, .tag.pagada, .tag.creado, .tag.enviado, .tag.ganado, .tag.ok, .tag.reprocesado { background: var(--brand-soft); color: var(--brand-text); }
   .tag.prospecto, .tag.pendiente, .tag.parcial, .tag.nuevo, .tag.actualizado, .tag.duplicado { background: var(--info-soft); color: var(--info); }
   .tag.cancelada, .tag.reembolsada, .tag.error, .tag.rechazado, .tag.fallido, .tag.perdido { background: var(--danger-soft); color: var(--danger); }
   .tag.contactado, .tag.calificado, .tag.cotizado, .tag.producto, .tag.prueba { background: var(--sand-soft); color: var(--sand); }
@@ -173,7 +176,7 @@
   .section h3 { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
   .chips { display: flex; flex-wrap: wrap; gap: 6px; }
   .ic { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; margin-left: 4px; border-radius: 7px; color: var(--muted); vertical-align: middle; text-decoration: none; }
-  .ic:hover { background: var(--brand-soft); color: var(--brand); }
+  .ic:hover { background: var(--brand-soft); color: var(--brand-text); }
   .ic svg { width: 16px; height: 16px; }
   .drift { display: block; font-size: 11.5px; color: var(--sand); margin-top: 2px; }
   #toast { position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg);
@@ -251,7 +254,7 @@
   .c-list { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
   .c-row { display: flex; flex-direction: column; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
   .c-row:hover { border-color: var(--brand); }
-  .c-new summary { cursor: pointer; color: var(--brand); font-weight: 600; margin-top: 6px; }
+  .c-new summary { cursor: pointer; color: var(--brand-text); font-weight: 600; margin-top: 6px; }
   .pay-total { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
   #payLeft b { font: inherit; }
   .pay-total > b { font: 700 40px/1.1 var(--display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
@@ -271,7 +274,7 @@
   .done-head { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 14px; }
   .change-big { display: flex; flex-direction: column; align-items: center; }
   .change-big b { font: 700 44px/1.05 var(--display); color: var(--sand); font-variant-numeric: tabular-nums; }
-  .change-big.ok b { color: var(--brand); }
+  .change-big.ok b { color: var(--brand-text); }
   .done-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: start; }
   .rc-preview { background: repeating-conic-gradient(var(--raised) 0 25%, var(--bg) 0 50%) 0 0 / 14px 14px; padding: 12px; border-radius: var(--radius-sm); overflow: auto; max-height: 60vh; }
   .close-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
@@ -280,11 +283,11 @@
   @media (prefers-reduced-motion: reduce) { .dot-pulse { animation: none; opacity: 1; } }
 
   /* Recibo (pantalla e impresión) */
-  .receipt { background: #fff; color: #000; font: 12px/1.35 "Instrument Sans", Arial, sans-serif; padding: 10px 12px; box-sizing: border-box; }
+  .receipt { background: #fff; color: #000; font: 12px/1.35 "Geist", Arial, sans-serif; padding: 10px 12px; box-sizing: border-box; }
   .receipt.r-58 { width: 58mm; font-size: 10.5px; padding: 8px 6px; }
   .receipt.r-80 { width: 80mm; }
   .receipt.r-carta { width: 100%; max-width: 640px; font-size: 13px; padding: 0; }
-  .r-biz { font: 700 1.5em/1.15 "Bricolage Grotesque", Arial, sans-serif; text-align: center; }
+  .r-biz { font: 700 1.5em/1.15 "Geist", Arial, sans-serif; text-align: center; }
   .r-meta { text-align: center; color: #333; font-size: .9em; margin: 2px 0 6px; }
   .r-test { text-align: center; font-weight: 700; border: 1px dashed #000; padding: 2px; margin: 4px 0; }
   .r-row { display: flex; justify-content: space-between; gap: 8px; }
@@ -293,7 +296,7 @@
   .r-items { border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin: 5px 0; padding: 4px 0; }
   .r-item { padding: 2px 0; }
   .r-sub { color: #333; font-size: .9em; }
-  .r-total { font: 700 1.35em "Bricolage Grotesque", Arial, sans-serif; border-top: 1px solid #000; margin-top: 4px; padding-top: 4px; }
+  .r-total { font: 700 1.35em "Geist", Arial, sans-serif; border-top: 1px solid #000; margin-top: 4px; padding-top: 4px; }
   .r-qr { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 8px; font-size: .85em; }
   .r-qr svg { display: block; }
   .r-foot { text-align: center; margin-top: 8px; font-size: .92em; }
@@ -308,7 +311,7 @@
   /* ============ Inventario ============ */
   .muted.sm, .sm { font-size: 12.5px; }
   td .muted.sm { display: block; margin-top: 1px; }
-  .pos { color: var(--brand); }
+  .pos { color: var(--brand-text); }
   .neg { color: var(--danger); }
   .warn { color: var(--warn) !important; }
   .bad { color: var(--danger) !important; }
@@ -325,7 +328,7 @@
   .inv-acts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0 0 14px; }
   .inv-act { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 10px 14px; border-radius: var(--radius);
              border: 1px solid var(--line-strong); background: var(--panel); color: var(--ink); font: 600 15px var(--font); }
-  .inv-act svg { color: var(--brand); flex: none; }
+  .inv-act svg { color: var(--brand-text); flex: none; }
   .inv-act:hover { border-color: var(--brand); background: var(--brand-soft); }
   .scanbox { display: flex; gap: 8px; flex: 1 1 320px; max-width: 480px; }
   .scanbox .input { max-width: none !important; flex: 1; }
@@ -336,7 +339,7 @@
   .field-scan { position: absolute; right: 4px; top: 26px; min-height: 34px; height: 34px; padding: 0 9px; display: grid; place-items: center; }
 
   .sheet-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 14px; }
-  .big-qty { font: 700 56px/1 var(--display); letter-spacing: -.03em; color: var(--brand); font-variant-numeric: tabular-nums; }
+  .big-qty { font: 700 56px/1 var(--display); letter-spacing: -.03em; color: var(--brand-text); font-variant-numeric: tabular-nums; }
   .big-qty.bajo { color: var(--warn); }
   .big-qty.agotado { color: var(--danger); }
   .sheet-code { text-align: center; }
@@ -381,6 +384,9 @@
   .hist-tools #hQ { max-width: 300px; }
   .hist-modal table td:last-child { white-space: normal; min-width: 180px; }
 
+  .geo-row { flex-wrap: wrap; }
+  .geo-row .input { flex: 1 1 220px; }
+  .card-note { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 14px; }
   .rf-head { display: flex; justify-content: space-between; align-items: center; margin: 14px 0 8px; }
   .rf-items { border: 1px solid var(--line); border-radius: var(--radius); }
   .rf-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
@@ -413,7 +419,7 @@
 
   /* Etiqueta (pantalla y papel) */
   .label { background: #fff; color: #000; display: flex; flex-direction: column; justify-content: space-between; padding: 4% 6%; overflow: hidden;
-           font-family: "Instrument Sans", Arial, sans-serif; box-sizing: border-box; }
+           font-family: "Geist", Arial, sans-serif; box-sizing: border-box; }
   .label .lb-name { font-size: 9pt; font-weight: 600; line-height: 1.1; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
   .label .lb-code { flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 2% 0; }
   .label .lb-code svg { width: 100%; height: 100%; display: block; }
@@ -435,16 +441,16 @@
   .scan-frame { position: relative; margin: auto; width: min(78vw, 420px); aspect-ratio: 16 / 10; border-radius: 18px;
                 box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .45); }
   .scan-frame::before { content: ""; position: absolute; inset: 0; border-radius: 18px; border: 3px solid transparent;
-                        background: linear-gradient(#3FD49A, #3FD49A) top left / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) top left / 3px 34px no-repeat,
-                                    linear-gradient(#3FD49A, #3FD49A) top right / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) top right / 3px 34px no-repeat,
-                                    linear-gradient(#3FD49A, #3FD49A) bottom left / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) bottom left / 3px 34px no-repeat,
-                                    linear-gradient(#3FD49A, #3FD49A) bottom right / 34px 3px no-repeat, linear-gradient(#3FD49A, #3FD49A) bottom right / 3px 34px no-repeat; }
-  .scan-frame i { position: absolute; left: 8%; right: 8%; top: 50%; height: 2px; background: #3FD49A; box-shadow: 0 0 12px #3FD49A; opacity: .8; animation: scanline 2.2s ease-in-out infinite; }
+                        background: linear-gradient(#2F6FE4, #2F6FE4) top left / 34px 3px no-repeat, linear-gradient(#2F6FE4, #2F6FE4) top left / 3px 34px no-repeat,
+                                    linear-gradient(#2F6FE4, #2F6FE4) top right / 34px 3px no-repeat, linear-gradient(#2F6FE4, #2F6FE4) top right / 3px 34px no-repeat,
+                                    linear-gradient(#2F6FE4, #2F6FE4) bottom left / 34px 3px no-repeat, linear-gradient(#2F6FE4, #2F6FE4) bottom left / 3px 34px no-repeat,
+                                    linear-gradient(#2F6FE4, #2F6FE4) bottom right / 34px 3px no-repeat, linear-gradient(#2F6FE4, #2F6FE4) bottom right / 3px 34px no-repeat; }
+  .scan-frame i { position: absolute; left: 8%; right: 8%; top: 50%; height: 2px; background: #2F6FE4; box-shadow: 0 0 12px #2F6FE4; opacity: .8; animation: scanline 2.2s ease-in-out infinite; }
   @keyframes scanline { 0%, 100% { transform: translateY(-70px); } 50% { transform: translateY(70px); } }
   .scanner.nocam .scan-frame { display: none; }
   .scanner.hit .scan-frame { animation: scanhit .5s ease-out; }
   .scanner.miss .scan-frame { animation: scanmiss .5s ease-out; }
-  @keyframes scanhit { from { box-shadow: 0 0 0 100vmax rgba(63, 212, 154, .45); } to { box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .45); } }
+  @keyframes scanhit { from { box-shadow: 0 0 0 100vmax rgba(47, 111, 228, .45); } to { box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .45); } }
   @keyframes scanmiss { from { box-shadow: 0 0 0 100vmax rgba(255, 110, 100, .45); } to { box-shadow: 0 0 0 100vmax rgba(0, 0, 0, .45); } }
   .scan-bottom { position: relative; padding: 16px 16px max(18px, env(safe-area-inset-bottom)); background: linear-gradient(transparent, rgba(0, 0, 0, .85) 30%); }
   .scanner.nocam .scan-bottom { margin-top: auto; }
@@ -453,7 +459,7 @@
   .scan-log .tag { font-size: 13px; }
   .scan-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .scan-actions .btn { min-height: 48px; padding: 10px 20px; background: rgba(255, 255, 255, .14); color: #fff; border-color: rgba(255, 255, 255, .25); }
-  .scan-actions .btn.primary { background: #3FD49A; color: #06281B; border-color: #3FD49A; }
+  .scan-actions .btn.primary { background: #2F6FE4; color: #FFFFFF; border-color: #2F6FE4; }
   body[data-view="inventory"] .fab { display: none !important; }
 
   /* ============ Pantallas medianas (tablets, laptops pequeñas) ============ */
@@ -475,7 +481,7 @@
                  padding: 8px 12px; padding-top: max(8px, env(safe-area-inset-top)); border-bottom: 1px solid var(--line); }
     .mobilebar button { background: none; border: 0; color: #fff; width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; }
     .mobilebar button:hover { background: var(--side-hover); }
-    .mobilebar b { font: 600 16px var(--display); }
+    .mobilebar b { font: 400 13px var(--brandfont); letter-spacing: .02em; }
     .fab { display: grid; }
     main { padding-bottom: 96px; }
     .two { grid-template-columns: 1fr; }
@@ -1821,6 +1827,50 @@ function showQrFull(item, info) {
   el.onclick = ev => { if (ev.target === el || ev.target.tagName === 'BUTTON') el.remove(); };
 }
 
+/* Tarjeta de contacto digital (lo que el prospecto guarda en su agenda) */
+async function openMyCard(qrInfo) {
+  let d;
+  try { d = await api('apiCardGet', S.token); } catch (e) { toast(e.message, true); return; }
+  const c = Object.assign({}, d.card), df = d.defaults;
+  const v = k => esc(c[k] !== undefined ? c[k] : '');
+  openModal('Mi tarjeta de contacto', `
+    <p class="muted" style="margin-top:0">Esto es lo que se guarda en el teléfono de quien escanee tus QR. Lo que dejes vacío no aparece.${Object.keys(c).length ? '' : ' Mientras no la llenes, se usan los datos del negocio.'}</p>
+    <form class="form" id="cardForm">
+      <div><label class="f">Nombre</label><input class="input" name="name" value="${v('name')}" placeholder="${esc(df.name)}" autocomplete="name"></div>
+      <div><label class="f">Cargo</label><input class="input" name="title" value="${v('title')}" placeholder="Ej. Ventas · Fundador"></div>
+      <div><label class="f">Empresa</label><input class="input" name="company" value="${v('company')}" placeholder="${esc(df.company)}"></div>
+      <div><label class="f">Teléfono</label><input class="input" name="phone" type="tel" inputmode="tel" value="${v('phone')}" placeholder="${esc(df.phone || '+503 7000 0000')}"></div>
+      <div><label class="f">WhatsApp <span class="muted">(si es otro número)</span></label><input class="input" name="whatsapp" type="tel" inputmode="tel" value="${v('whatsapp')}"></div>
+      <div><label class="f">Correo</label><input class="input" name="email" type="email" inputmode="email" value="${v('email')}" placeholder="${esc(df.email)}"></div>
+      <div class="wide"><label class="f">Sitio web o red social</label><input class="input" name="website" inputmode="url" value="${v('website')}" placeholder="youngdesert.com o instagram.com/thedesertzone"></div>
+      <div class="wide"><label class="f">Dirección</label><input class="input" name="address" value="${v('address')}" placeholder="${esc(df.address || 'Colonia, ciudad')}"></div>
+      <div class="wide"><label class="f">Ubicación en el mapa</label>
+        <div class="cash-row geo-row"><input class="input" name="maps_url" inputmode="url" value="${v('maps_url')}" placeholder="Pega un enlace de Google Maps (opcional)">
+          <button type="button" class="btn" id="geoBtn">Usar mi ubicación actual</button></div>
+        <div class="hint" id="geoInfo">${c.lat !== undefined ? 'Ubicación guardada: ' + esc(c.lat) + ', ' + esc(c.lng) + ' · <a href="#" id="geoClear">quitar</a>' : 'Úsala solo si estás en tu tienda u oficina.'}</div></div>
+      <div class="wide"><label class="f">Nota</label><input class="input" name="note" value="${v('note')}" maxlength="200" placeholder="Ej. Pedidos al por mayor y personalizados"></div>
+    </form>`, async () => {
+    const f = $('#cardForm');
+    const data = {};
+    ['name', 'title', 'company', 'phone', 'whatsapp', 'email', 'website', 'address', 'maps_url', 'note'].forEach(k => { data[k] = f[k].value; });
+    if (c.lat !== undefined) { data.lat = c.lat; data.lng = c.lng; }
+    await api('apiCardSave', S.token, data);
+    toast('Tarjeta guardada: tus QR ya la usan');
+  }, 'Guardar', true);
+  const bindClear = () => { if ($('#geoClear')) $('#geoClear').onclick = ev => { ev.preventDefault(); delete c.lat; delete c.lng; $('#geoInfo').textContent = 'Ubicación quitada.'; }; };
+  bindClear();
+  $('#geoBtn').onclick = () => {
+    if (!navigator.geolocation) { toast('Este navegador no da la ubicación. Pega un enlace de Google Maps.', true); return; }
+    $('#geoInfo').textContent = 'Buscando tu ubicación…';
+    navigator.geolocation.getCurrentPosition(pos => {
+      c.lat = Math.round(pos.coords.latitude * 1e6) / 1e6; c.lng = Math.round(pos.coords.longitude * 1e6) / 1e6;
+      $('#geoInfo').innerHTML = 'Ubicación lista: ' + c.lat + ', ' + c.lng + ' (±' + Math.round(pos.coords.accuracy) + ' m) · <a href="#" id="geoClear">quitar</a>';
+      bindClear();
+    }, () => { $('#geoInfo').textContent = ON_GOOGLE ? 'La ubicación no funciona dentro de la página de Google. Ábrela desde tu dirección de GitHub o pega un enlace de Google Maps.' : 'No se pudo obtener la ubicación. Permite el acceso o pega un enlace de Google Maps.'; },
+    { enableHighAccuracy: true, timeout: 12000 });
+  };
+}
+
 async function openQr() {
   openModal('Mi QR de contacto', '<div id="qrBody"><div class="empty">Cargando…</div></div>', null, null, true);
   const draw = async () => {
@@ -1828,7 +1878,8 @@ async function openQr() {
     try { info = await api('apiQrList', S.token); } catch (e) { $('#qrBody').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; return; }
     const w = can('leads:write');
     $('#qrBody').innerHTML = `
-      <p class="muted" style="margin-top:0">Muestra el QR desde tu teléfono o imprímelo. La persona lo escanea con su cámara, escribe <b>ella misma</b> sus datos y aparece en Prospectos con el nombre del evento. Crea uno por evento o lugar para saber de dónde viene cada contacto.</p>
+      <p class="muted" style="margin-top:0">Muestra el QR desde tu teléfono o imprímelo. Quien lo escanea puede <b>guardar tu contacto</b> en su agenda con un toque y, si quiere, <b>dejarte sus datos</b>: aparece en Prospectos con el nombre del evento. Crea uno por evento o lugar para saber de dónde viene cada contacto.</p>
+      <div class="note card-note"><span>Tu tarjeta de contacto es lo que la persona guarda en su teléfono.</span><button type="button" class="btn sm primary" id="myCard">Mi tarjeta</button></div>
       ${w ? `<form id="qrNew" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
         <input class="input" name="name" placeholder="Nombre del evento o lugar (ej. Expo San Salvador 2026)" style="flex:1 1 240px" maxlength="60" required>
         <button class="btn primary">Crear QR</button></form>` : ''}
@@ -1845,6 +1896,7 @@ async function openQr() {
             </div></div></div>`).join('')}</div>`
         : '<div class="empty">Todavía no tienes un QR. Crea el primero con el nombre de tu próximo evento.</div>'}`;
     const find = id => info.items.find(x => x.id === id);
+    $('#myCard').onclick = () => openMyCard(info);
     if ($('#qrNew')) $('#qrNew').onsubmit = async ev => {
       ev.preventDefault();
       const b = ev.target.querySelector('button'); b.disabled = true;
