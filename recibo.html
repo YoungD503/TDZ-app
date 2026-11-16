@@ -5,22 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#0F1412">
+<meta name="theme-color" content="#000000">
 <title>Tu recibo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Michroma&display=swap" rel="stylesheet">
 <script>window.NEXO_API_URL = 'https://script.google.com/macros/s/AKfycby5LWM73dCEKGmDvc1LJBrw_eQYuLRLcZUCm_XJwXJt365-TEtkeKhr1N4GfkWFfiLT/exec';</script>
 <style>
-  :root { color-scheme: dark; --bg: #0F1412; --ink: #E6EEE9; --muted: #8DA197; --brand: #3FD49A; --brand-ink: #06281B; --line: #2C3934; --sand: #E2C08A; }
+  :root { color-scheme: dark; --bg: #000000; --ink: #F5F5F5; --muted: #9B9B9B; --brand: #2F6FE4; --brand-ink: #FFFFFF; --brand-text: #7DB2FF; --line: #262626; --sand: #E2C08A; }
   * { box-sizing: border-box; }
-  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 15px/1.5 "Instrument Sans", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 15px/1.5 "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
   .wrap { max-width: 440px; margin: 0 auto; padding: max(24px, env(safe-area-inset-top)) 16px 40px; }
   .paper { background: #fff; color: #111; border-radius: 4px; padding: 22px 20px 26px; box-shadow: 0 18px 50px rgba(0, 0, 0, .45);
            /* borde inferior dentado, como un ticket */
            -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, radial-gradient(circle 6px at 10px 100%, transparent 98%, #000) bottom / 20px 9px repeat-x;
                    mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, radial-gradient(circle 6px at 10px 100%, transparent 98%, #000) bottom / 20px 9px repeat-x; }
-  .biz { font: 700 26px/1.1 "Bricolage Grotesque", sans-serif; letter-spacing: -.02em; text-align: center; margin: 0; }
+  .biz { font: 700 26px/1.1 "Geist", sans-serif; letter-spacing: -.02em; text-align: center; margin: 0; }
   .meta { text-align: center; color: #555; font-size: 13px; margin: 4px 0 14px; }
   .test { text-align: center; font-weight: 700; border: 1px dashed #a15c00; color: #a15c00; padding: 4px; margin-bottom: 10px; font-size: 13px; }
   .row { display: flex; justify-content: space-between; gap: 10px; }
@@ -29,11 +29,11 @@
   .sub { color: #666; font-size: 13px; }
   .items { border-top: 1px dashed #999; border-bottom: 1px dashed #999; margin: 10px 0; padding: 8px 0; }
   .item { padding: 5px 0; }
-  .total { font: 700 22px "Bricolage Grotesque", sans-serif; border-top: 1px solid #111; margin-top: 8px; padding-top: 8px; }
+  .total { font: 700 22px "Geist", sans-serif; border-top: 1px solid #111; margin-top: 8px; padding-top: 8px; }
   .refund { color: #b42318; }
   .foot { text-align: center; color: #555; margin-top: 16px; font-size: 13px; }
   .acts { display: flex; gap: 10px; margin-top: 22px; }
-  button { flex: 1; min-height: 50px; border-radius: 12px; font: 600 15px "Instrument Sans", sans-serif; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--ink); }
+  button { flex: 1; min-height: 50px; border-radius: 12px; font: 600 15px "Geist", sans-serif; cursor: pointer; border: 1px solid var(--line); background: transparent; color: var(--ink); }
   button.primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
   .msg { text-align: center; color: var(--muted); padding-top: 30vh; }
   @media print {
