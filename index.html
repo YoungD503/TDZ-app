@@ -189,6 +189,16 @@
   .fab { display: none; position: fixed; right: 18px; bottom: max(18px, env(safe-area-inset-bottom)); z-index: 35; width: 58px; height: 58px; border-radius: 50%;
          border: 0; background: var(--brand); color: var(--brand-ink); box-shadow: 0 10px 28px rgba(0, 0, 0, .35); place-items: center; }
   .fab:active { transform: scale(.96); }
+  .fab svg { transition: transform .18s ease; }
+  .fab.open svg { transform: rotate(45deg); }
+  .fab-scrim { position: fixed; inset: 0; z-index: 34; background: rgba(0, 0, 0, .55); }
+  .fab-menu { position: fixed; right: 18px; bottom: calc(max(18px, env(safe-area-inset-bottom)) + 70px); z-index: 36; display: grid; gap: 10px; justify-items: end; }
+  .fab-menu button { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 18px 0 14px; border-radius: 26px; border: 1px solid var(--line-strong);
+                     background: var(--raised); color: var(--ink); font: 600 16px var(--font); box-shadow: var(--shadow); }
+  .fab-menu button svg { color: var(--brand-text); flex: none; }
+  .fab-menu button:active { transform: scale(.98); }
+  .qr-pick-row { display: flex !important; width: 100%; justify-content: space-between; align-items: center; gap: 12px; min-height: 54px; margin-bottom: 8px; font-size: 16px; text-align: left; }
+  @media (prefers-reduced-motion: reduce) { .fab svg { transition: none; } }
   .qr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
   .qr-card { display: flex; gap: 14px; align-items: center; }
   .qr-mini { flex: none; border-radius: 10px; overflow: hidden; line-height: 0; }
@@ -779,6 +789,8 @@ function fmtDate(iso) {
 }
 
 const ICONS = {
+  qrcode: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></svg>',
+  personAdd: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7M19 8v6M16 11h6"/></svg>',
   scan: '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M7 9v6M10 9v6M13 9v6M17 9v6"/></svg>',
   plus: '<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
   menu: '<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>',
@@ -919,7 +931,7 @@ function renderShell() {
   app().innerHTML = `
     <div class="mobilebar"><button id="menuBtn" aria-label="Abrir menú" aria-expanded="false">${ICONS.menu}</button><b>${esc(b.tenant.name)}</b></div>
     <div class="scrim" id="scrim"></div>
-    ${can('leads:write') ? `<button class="fab" id="fab" aria-label="Captura rápida de un prospecto">${ICONS.plus}</button>` : ''}
+    ${can('leads:write') ? `<button class="fab" id="fab" aria-label="Acciones rápidas" aria-expanded="false">${ICONS.plus}</button>` : ''}
     <div class="shell">
       <aside class="side" id="side">
         <div class="brand"><span class="logo">Nx</span><span>${esc(b.tenant.name)}</span></div>
@@ -939,7 +951,7 @@ function renderShell() {
   }));
   $('#menuBtn').onclick = () => setDrawer(!$('#side').classList.contains('open'));
   $('#scrim').onclick = () => setDrawer(false);
-  if ($('#fab')) $('#fab').onclick = () => quickCapture();
+  if ($('#fab')) $('#fab').onclick = () => fabMenu();
   paintThemeLink();
   $('#themeLink').onclick = () => { setTheme(currentTheme() === 'dark' ? 'light' : 'dark'); paintThemeLink(); };
   $('#pwdLink').onclick = () => renderPasswordChange(false);
@@ -1514,6 +1526,48 @@ async function openRefund(id) {
 
 const contactsApi = () => 'contacts' in navigator && 'select' in navigator.contacts;
 
+/* Botón + en móvil: mostrar mi QR o capturar un prospecto */
+function fabMenu() {
+  const fab = $('#fab');
+  if (document.querySelector('.fab-menu')) { closeFab(); return; }
+  const scrim = document.createElement('div'); scrim.className = 'fab-scrim';
+  const menu = document.createElement('div'); menu.className = 'fab-menu'; menu.setAttribute('role', 'menu');
+  menu.innerHTML = `<button type="button" role="menuitem" data-a="qr">${ICONS.qrcode}<span>Mostrar mi QR</span></button>
+    <button type="button" role="menuitem" data-a="lead">${ICONS.personAdd}<span>Nuevo prospecto</span></button>`;
+  document.body.append(scrim, menu);
+  fab.classList.add('open'); fab.setAttribute('aria-expanded', 'true');
+  scrim.onclick = closeFab;
+  menu.onclick = ev => {
+    const b = ev.target.closest('button'); if (!b) return;
+    closeFab();
+    if (b.dataset.a === 'qr') showMyQr(); else quickCapture();
+  };
+  menu.querySelector('button').focus();
+}
+function closeFab() {
+  document.querySelectorAll('.fab-scrim, .fab-menu').forEach(el => el.remove());
+  if ($('#fab')) { $('#fab').classList.remove('open'); $('#fab').setAttribute('aria-expanded', 'false'); }
+}
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape' && document.querySelector('.fab-menu')) closeFab(); });
+
+async function showMyQr() {
+  let info;
+  try { info = await api('apiQrList', S.token); } catch (e) { toast(e.message, true); return; }
+  const items = info.items || [];
+  if (!items.length) { toast('Crea tu primer QR con el nombre del evento o lugar'); openQr(); return; }
+  let last = ''; try { last = localStorage.getItem('nx_lastqr') || ''; } catch (e) { /* sin almacenamiento */ }
+  const show = it => { try { localStorage.setItem('nx_lastqr', it.id); } catch (e) { /* sin almacenamiento */ } showQrFull(it, info, items.length > 1 ? () => pick() : null); };
+  const pick = () => {
+    openModal('¿Qué QR quieres mostrar?', `<div class="qr-pick">${items.map(it => `<button type="button" class="btn qr-pick-row" data-id="${esc(it.id)}">
+      <span>${esc(it.name)}</span><span class="muted">${it.leads} contacto(s)</span></button>`).join('')}</div>`, null, null);
+    document.querySelectorAll('.qr-pick [data-id]').forEach(b => b.onclick = () => { closeModal(true); show(items.find(x => x.id === b.dataset.id)); });
+  };
+  if (items.length === 1) return show(items[0]);
+  const prev = items.find(x => x.id === last);
+  if (prev) return show(prev);
+  pick();
+}
+
 async function quickCapture(prefill) {
   prefill = prefill || {};
   let channels = [];
@@ -1813,7 +1867,7 @@ function qrPng(text, name) {
   document.body.appendChild(a); a.click(); a.remove();
 }
 
-function showQrFull(item, info) {
+function showQrFull(item, info, onSwitch) {
   const url = contactUrl(item, info);
   const el = document.createElement('div');
   el.className = 'qr-full';
@@ -1821,10 +1875,19 @@ function showQrFull(item, info) {
       <div class="qr-biz">${esc(info.business)}</div>
       ${qrSvg(url, 'min(78vw, 62vh)')}
       <div class="qr-event">${esc(item.name)}</div>
-      <p>Escanea con la cámara para dejarme tus datos</p>
-      <button class="btn" type="button">Cerrar</button></div>`;
+      <p>Escanea con la cámara para guardar mi contacto</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+        ${onSwitch ? '<button class="btn" type="button" data-switch>Cambiar QR</button>' : ''}
+        <button class="btn" type="button" data-close>Cerrar</button></div></div>`;
   document.body.appendChild(el);
-  el.onclick = ev => { if (ev.target === el || ev.target.tagName === 'BUTTON') el.remove(); };
+  // Mantener la pantalla encendida mientras se muestra el QR.
+  let lock = null;
+  try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(l => { lock = l; }).catch(() => {}); } catch (e) { /* no soportado */ }
+  const close = () => { el.remove(); try { if (lock) lock.release(); } catch (e) { /* ya liberado */ } };
+  el.onclick = ev => {
+    if (ev.target.closest('[data-switch]')) { close(); onSwitch(); return; }
+    if (ev.target === el || ev.target.closest('[data-close]')) close();
+  };
 }
 
 /* Tarjeta de contacto digital (lo que el prospecto guarda en su agenda) */
