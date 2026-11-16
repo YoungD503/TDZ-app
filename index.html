@@ -182,7 +182,7 @@
   #toast { position: fixed; bottom: max(20px, env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--bg);
            padding: 10px 16px; border-radius: 10px; opacity: 0; transition: opacity .2s; pointer-events: none; z-index: 60; max-width: calc(100vw - 32px); box-shadow: var(--shadow); }
   #toast.show { opacity: 1; }
-  #toast.bad { background: var(--danger); color: #1a0705; }
+  #toast.bad { background: var(--danger); color: #1a0705 !important; font-weight: 500; }
   .theme-btn { display: inline-flex; align-items: center; gap: 6px; }
 
   /* Captura rápida, QR */
@@ -626,6 +626,19 @@
     #printArea.receipt-print .receipt { width: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
   /* ---------- Finanzas ---------- */
+  .danger-zone { margin-top: 18px; border-color: rgba(248, 113, 113, .35); }
+  .danger-zone h3 { margin-top: 0; color: var(--danger); }
+  .rs-list { max-height: 220px; overflow: auto; margin: 6px 0 0; }
+  .rs-code { font: 600 22px var(--display); letter-spacing: .3em; text-align: center; }
+  .btn.primary.danger, #modalOk.danger { background: var(--danger); border-color: var(--danger); color: #1a0705; }
+  .iva-warn summary { cursor: pointer; }
+  .iva-warn ul { margin: 8px 0 0; padding-left: 18px; font-size: 13px; }
+  .iva-head { margin: 0 0 8px; }
+  .iva-t td, .iva-t th { font-size: 13px; }
+  .iva-act { display: flex; gap: 14px; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-top: 14px; }
+  .iva-act p { margin: 4px 0 0; }
+  .r-doc { text-align: center; font-weight: 600; margin: 4px 0; }
+  .sale-fiscal { display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: center; }
   .form [hidden], .fin-tools [hidden] { display: none !important; }
   .form.fin1 { grid-template-columns: 1fr; }
   .form .two, .form .three { display: grid; gap: 14px 16px; }
@@ -876,7 +889,7 @@ const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory'
   'apiFinOverview', 'apiFinExpenses', 'apiFinPayables', 'apiFinReceivables', 'apiFinMoney']);
 const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
   'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing', 'apiFinSettings', 'apiFinChart', 'apiFinSuppliers', 'apiFinExpense', 'apiFinRecurring',
-  'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial']);
+  'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial', 'apiTaxReport', 'apiTaxAnexo']);
 
 function swrLoad() {
   if (SWR.mem) return SWR.mem;
@@ -966,11 +979,18 @@ function can(perm) {
     p === '*' || p === perm || p === parts[0] + ':*' || p === '*:' + parts[1]);
 }
 
+/* Montos al estilo de EE. UU. y El Salvador: $1,234.56 (coma para miles, punto para decimales). */
+const MONEY_FMT = {};
+function fmtMoney(v, cur) {
+  cur = cur || 'USD';
+  try {
+    const f = MONEY_FMT[cur] || (MONEY_FMT[cur] = new Intl.NumberFormat('en-US', { style: 'currency', currency: cur, currencyDisplay: 'narrowSymbol' }));
+    return f.format(Number(v) || 0);
+  } catch (e) { return (cur === 'USD' ? '$' : cur + ' ') + (Number(v) || 0).toFixed(2); }
+}
 function money(v) {
   if (v === '' || v === null || v === undefined) return '';
-  const cur = (S.boot && S.boot.tenant && S.boot.tenant.currency) || 'USD';
-  try { return new Intl.NumberFormat('es', { style: 'currency', currency: cur }).format(Number(v)); }
-  catch (e) { return Number(v).toFixed(2); }
+  return fmtMoney(v, (S.boot && S.boot.tenant && S.boot.tenant.currency) || 'USD');
 }
 
 function fmtDate(iso) {
@@ -1024,7 +1044,7 @@ function cell(field, value) {
   if (field.type === 'email') return value ? esc(value) + contactIcons(value, '') : '<span class="muted">—</span>';
   if (field.type === 'tel') return value ? esc(value) + contactIcons('', value) : '<span class="muted">—</span>';
   if (field.format === 'datetime') return '<span class="muted">' + fmtDate(value) + '</span>';
-  if (field.format === 'number') return value === '' || value === undefined ? '<span class="muted">—</span>' : esc(Number(value).toLocaleString('es'));
+  if (field.format === 'number') return value === '' || value === undefined ? '<span class="muted">—</span>' : esc(Number(value).toLocaleString('en-US'));
   return esc(value);
 }
 
@@ -1202,9 +1222,12 @@ function labelTables(root) {
     t.classList.add('rt');
     const names = Array.prototype.map.call(ths, th => th.textContent.trim());
     t.querySelectorAll('tbody tr').forEach(tr => {
-      Array.prototype.forEach.call(tr.children, (td, i) => {
+      let col = 0; // las celdas que ocupan varias columnas (totales) no llevan etiqueta
+      Array.prototype.forEach.call(tr.children, td => {
+        const i = col, span = td.colSpan || 1;
+        col += span;
         if (td.hasAttribute('data-label')) return;
-        td.setAttribute('data-label', names[i] || '');
+        td.setAttribute('data-label', span > 1 ? '' : names[i] || '');
         // Agrupa el contenido de la celda (moviendo los nodos, así se conservan sus eventos).
         const cv = document.createElement('span');
         cv.className = 'cv';
@@ -1561,7 +1584,14 @@ function viewSettings() {
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:16px">
         <div class="err" id="tErr" style="margin:0"></div><button class="btn primary" id="tSave">Guardar</button>
       </div>
-    </div>`;
+    </div>
+    ${S.boot.user.role === 'admin' ? `<div class="card pad danger-zone" style="max-width:720px">
+      <h3>Empezar de cero</h3>
+      <p class="muted">Borra las ventas, la caja, el inventario y las finanzas para volver a probar desde cero. Antes de borrar se guarda una copia completa en tu Google Drive.
+        Tus usuarios, integraciones, ajustes y el catálogo de cuentas no se tocan.</p>
+      <button class="btn danger" id="resetOpen">Empezar de cero…</button>
+    </div>` : ''}`;
+  if ($('#resetOpen')) $('#resetOpen').onclick = openReset;
   $('#tSave').onclick = async () => {
     const form = $('#tenantForm');
     if (!form.reportValidity()) return;
@@ -1572,6 +1602,54 @@ function viewSettings() {
       renderShell();
     } catch (e) { $('#tErr').textContent = e.message; $('#tSave').disabled = false; }
   };
+}
+
+
+/** Empezar de cero: contraseña → código por correo → escribir BORRAR. Solo el administrador. */
+function openReset() {
+  openModal('Empezar de cero', `<form class="form fin1" id="rsForm">
+    <p style="margin:0">Elige qué borrar. Siempre se borran juntos <b>ventas, caja, inventario y finanzas</b>, para que los números cuadren.</p>
+    <label class="chk wide"><input type="checkbox" checked disabled> Ventas, caja, inventario y finanzas (gastos, pagos, contabilidad, IVA)</label>
+    <label class="chk wide"><input type="checkbox" name="keep_stock" checked> Conservar mis existencias actuales como inventario inicial</label>
+    <label class="chk wide"><input type="checkbox" name="clientes"> También clientes, prospectos y tareas</label>
+    <label class="chk wide"><input type="checkbox" name="catalogo"> También productos, servicios y proveedores</label>
+    <p class="muted sm" style="margin:0">Nunca se borran: usuarios, integraciones, ajustes de la empresa, catálogo de cuentas ni la auditoría.</p>
+    <div><label class="f">Tu contraseña</label><input class="input" type="password" name="password" autocomplete="current-password"></div>
+  </form>`, async () => {
+    const f = $('#rsForm');
+    const groups = [f.clientes.checked ? 'clientes' : '', f.catalogo.checked ? 'catalogo' : ''].filter(Boolean);
+    const r = await api('apiResetStart', S.token, f.password.value, groups);
+    setTimeout(() => resetStep2(r, f.keep_stock.checked && !f.catalogo.checked), 0);
+  }, 'Enviar código a mi correo');
+  const f = $('#rsForm');
+  f.catalogo.onchange = () => { f.keep_stock.disabled = f.catalogo.checked; if (f.catalogo.checked) f.keep_stock.checked = false; };
+}
+
+function resetStep2(r, keepStock) {
+  const names = { Sales: 'Ventas', Sale_Items: 'Artículos vendidos', Payments: 'Pagos', Cash_Sessions: 'Turnos de caja', Cash_Movements: 'Movimientos de caja', Stock_Movements: 'Movimientos de inventario',
+    Inventory: 'Existencias', Expenses: 'Gastos', Money_Moves: 'Pagos y transferencias', Journal: 'Partidas contables', Journal_Lines: 'Líneas contables', Recurring: 'Gastos recurrentes',
+    Customers: 'Clientes', Leads: 'Prospectos', Tasks: 'Tareas', Appointments: 'Citas', Products: 'Productos y servicios', Suppliers: 'Proveedores' };
+  const pend = OFF.queue().length;
+  openModal('Confirmar: empezar de cero', `<form class="form fin1" id="rs2" autocomplete="off">
+    <div class="note">Te enviamos un código de 6 dígitos a <b>${esc(r.email)}</b>. Vence en 10 minutos.</div>
+    <div><b>Se va a borrar:</b><ul class="fin-list rs-list">${Object.keys(r.counts).filter(k => r.counts[k]).map(k => `<li><span>${esc(names[k] || k)}</span><b>${r.counts[k]}</b></li>`).join('') || '<li><span>No hay registros</span></li>'}</ul></div>
+    ${keepStock ? '<p class="muted sm" style="margin:0">Tus existencias de hoy quedan como inventario inicial.</p>' : ''}
+    ${pend ? `<div class="note">Hay ${pend} venta(s) sin conexión guardadas en este dispositivo: también se descartan.</div>` : ''}
+    <div class="two"><div><label class="f">Código del correo</label><input class="input rs-code" name="code" inputmode="numeric" maxlength="6" autocomplete="one-time-code"></div>
+      <div><label class="f">Escribe BORRAR</label><input class="input" name="word" autocapitalize="characters"></div></div>
+  </form>`, async () => {
+    const f = $('#rs2');
+    const res = await api('apiResetConfirm', S.token, f.code.value, f.word.value, { keep_stock: keepStock });
+    // Lo guardado en este dispositivo ya no corresponde
+    try { ['posq', 'poscat', 'posseq'].forEach(k => localStorage.removeItem(OFF.key(k))); sessionStorage.removeItem('nx_swr'); } catch (e) { /* nada */ }
+    POS.cat = null; POS.last = null; POS.cart = emptyCart(); FIN.cfg = null; FIN.chart = null; swrClear();
+    setTimeout(() => openModal('Listo: empezaste de cero', `<p>Se borraron los datos y quedó una copia de todo en tu Google Drive.</p>
+      <p><a class="btn" href="${esc(res.backup.url)}" target="_blank" rel="noopener">Abrir el respaldo</a></p>
+      ${res.initial_stock ? `<p class="muted">${res.initial_stock} producto(s) quedaron con sus existencias como inventario inicial.</p>` : ''}
+      <p class="muted">Siguiente paso: abre la caja en el punto de venta y registra tus saldos iniciales en Finanzas.</p>`, async () => { S.view = 'home'; renderShell(); }, 'Ir al inicio'), 0);
+  }, 'Borrar y empezar de cero');
+  $('#modalOk').classList.add('danger');
+  setTimeout(() => { const c = $('#rs2') && $('#rs2').code; if (c) c.focus(); }, 60);
 }
 
 /* ============================ Copiar ============================ */
@@ -1640,7 +1718,7 @@ function drawSales() {
 }
 
 function moneyIn(v, cur) {
-  try { return new Intl.NumberFormat('es', { style: 'currency', currency: cur || S.boot.tenant.currency || 'USD' }).format(Number(v || 0)); }
+  try { return fmtMoney(v || 0, cur || (S.boot && S.boot.tenant.currency) || 'USD'); }
   catch (e) { return Number(v || 0).toFixed(2) + ' ' + (cur || ''); }
 }
 
@@ -1652,6 +1730,8 @@ async function showSale(id) {
       <p>${s.is_test === true ? '<span class="tag prueba">PRUEBA</span> ' : ''}<span class="tag ${esc(s.status)}">${esc(SALE_STATUS[s.status] || s.status)}</span>
         <span class="muted">${fmtDate(s.created_at)} · ${esc(SOURCE_NAMES[s.source] || s.source)} · ${esc(s.channel)}</span></p>
       <p><b>Cliente:</b> ${esc(s.customer_name || '—')} ${s.payment_method ? '· <b>Pago:</b> ' + esc(s.payment_method) : ''}</p>
+      <p class="sale-fiscal"><b>${esc(DOC_NAMES[s.doc_type || '01'])}</b>${s.customer_nrc ? ' · NRC ' + esc(s.customer_nrc) : ''} · ${s.doc_number ? '<span class="code">' + esc(s.doc_number) + '</span>' : '<span class="muted">sin datos de DTE</span>'}
+        ${can('sales:write') && s.is_test !== true ? ' <button class="btn sm" id="saleFiscal">Datos fiscales</button>' : ''}</p>
       <div class="card tablewrap"><table><thead><tr><th>Artículo</th><th>SKU</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num">Total</th></tr></thead>
         <tbody>${d.items.map(i => `<tr><td>${esc(i.description)}${i.product_id ? '' : ' <span class="tag">fuera de catálogo</span>'}</td><td>${esc(i.sku || '')}</td>
           <td class="num">${esc(i.qty)}${Number(i.refunded_qty) ? '<br><span class="muted sm">' + esc(i.refunded_qty) + ' reembolsada(s)</span>' : ''}</td><td class="num">${m(i.unit_price)}</td><td class="num">${m(i.total)}</td></tr>`).join('')}</tbody></table></div>
@@ -1667,6 +1747,7 @@ async function showSale(id) {
       ${can('sales:refund') && ['pagada', 'parcial', 'reembolso_parcial'].indexOf(s.status) >= 0 && Number(s.paid) - Number(s.refunded || 0) > 0
         ? '<div style="display:flex;justify-content:flex-end;margin-top:14px"><button class="btn danger" id="refundBtn">Reembolsar</button></div>' : ''}`, null, null, true);
     if ($('#refundBtn')) $('#refundBtn').onclick = () => openRefund(id);
+    if ($('#saleFiscal')) $('#saleFiscal').onclick = () => openSaleFiscal(s, () => showSale(id));
   } catch (e) { toast(e.message, true); }
 }
 
@@ -2460,7 +2541,7 @@ const MOVE_KINDS = {
 const locName = l => l === 'principal' ? 'Principal' : l;
 const qtyFmt = n => {
   const v = Number(n || 0);
-  return (Math.round(v * 100) / 100).toLocaleString('es', { maximumFractionDigits: 2 });
+  return (Math.round(v * 100) / 100).toLocaleString('en-US', { maximumFractionDigits: 2 });
 };
 
 async function loadInventory(opts) {
@@ -3248,7 +3329,7 @@ function drawPosCart(flashId) {
   const c = POS.cart, t = posTotals(), st = POS.cat.settings;
   box.innerHTML = `
     <div class="pc-head">
-      <button class="pc-cust" id="pcCust">${c.customer ? '<b>' + esc(c.customer.name) + '</b>' + (c.customer.phone || c.customer.email ? '<span class="muted sm">' + esc(c.customer.phone || c.customer.email) + '</span>' : '') : '<b>Consumidor final</b><span class="muted sm">Toca para elegir cliente</span>'}</button>
+      <button class="pc-cust" id="pcCust">${c.customer ? '<b>' + esc(c.customer.name) + '</b>' + (c.doc_type === '03' ? '<span class="muted sm">Crédito fiscal · NRC ' + esc(c.customer_nrc) + '</span>' : c.customer.phone || c.customer.email ? '<span class="muted sm">' + esc(c.customer.phone || c.customer.email) + '</span>' : '') : '<b>Consumidor final</b><span class="muted sm">Toca para elegir cliente</span>'}</button>
       <button class="btn sm pc-close" id="pcHide" aria-label="Volver a productos">✕</button>
     </div>
     <div class="pc-lines">${c.items.length ? t.lines.map((l, i) => `<div class="pc-line ${l.p.id === flashId ? 'flash' : ''}" data-i="${i}">
@@ -3265,6 +3346,7 @@ function drawPosCart(flashId) {
     <div class="pc-acts">
       ${POS.cat.can_discount ? '<button class="btn" id="pcDisc">Descuento</button>' : ''}
       <button class="btn" id="pcNote">${c.notes ? 'Nota ✓' : 'Nota'}</button>
+      ${st.prices_include_tax ? `<button class="btn ${c.doc_type && c.doc_type !== '01' ? 'primary' : ''}" id="pcDoc">${esc(DOC_NAMES[c.doc_type || '01'])}</button>` : ''}
       <button class="btn" id="pcClear" ${c.items.length ? '' : 'disabled'}>Vaciar</button>
     </div>
     <button class="btn primary pos-pay" id="pcPay" ${c.items.length ? '' : 'disabled'}>Cobrar ${c.items.length ? esc(pm(t.total)) : ''}</button>`;
@@ -3284,6 +3366,7 @@ function drawPosCart(flashId) {
   });
   box.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editPosLine(t.lines[Number(b.dataset.edit)]));
   $('#pcCust').onclick = pickCustomer;
+  if ($('#pcDoc')) $('#pcDoc').onclick = openPosDoc;
   $('#pcHide').onclick = () => document.body.classList.remove('cart-open');
   if ($('#pcDisc')) $('#pcDisc').onclick = () => {
     openModal('Descuento general', `<form class="form" id="dForm"><div class="wide"><label class="f">Monto a descontar del total</label>
@@ -3337,7 +3420,8 @@ function pickCustomer() {
         <div class="wide"><label class="f">Nombre</label><input class="input" name="name"></div>
         <div><label class="f">Teléfono / WhatsApp</label><input class="input" name="phone" type="tel" inputmode="tel"></div>
         <div><label class="f">Correo</label><input class="input" name="email" type="email" inputmode="email"></div>
-        <div class="wide"><label class="f">NIT / DUI / Tax ID</label><input class="input" name="tax_id"></div>
+        <div><label class="f">NIT / DUI / Tax ID</label><input class="input" name="tax_id"></div>
+        <div><label class="f">NRC (si pide crédito fiscal)</label><input class="input" name="nrc" inputmode="numeric"></div>
       </form><button type="button" class="btn primary" id="cUse" style="margin-top:10px">Usar este cliente</button></details>
     <div style="margin-top:12px"><button type="button" class="btn" id="cNone">Consumidor final</button></div>`, null);
   let timer;
@@ -3358,7 +3442,7 @@ function pickCustomer() {
   };
   $('#cUse').onclick = () => {
     const f = $('#cForm');
-    const c = { name: f.name.value.trim(), phone: f.phone.value.trim(), email: f.email.value.trim(), tax_id: f.tax_id.value.trim() };
+    const c = { name: f.name.value.trim(), phone: f.phone.value.trim(), email: f.email.value.trim(), tax_id: f.tax_id.value.trim(), nrc: f.nrc.value.trim() };
     if (!c.name && !c.phone && !c.email) { toast('Escribe al menos el nombre, teléfono o correo.', true); return; }
     if (c.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) { toast('Revisa el correo.', true); return; }
     choose(c);
@@ -3376,6 +3460,7 @@ function cartPayload() {
     items: c.items.map(i => ({ product_id: i.product_id, qty: i.qty, price: i.price, discount: i.discount })),
     customer_id: c.customer && c.customer.id ? c.customer.id : undefined,
     customer: c.customer && !c.customer.id ? c.customer : undefined,
+    doc_type: c.doc_type || '01', customer_nrc: c.doc_type === '03' ? c.customer_nrc : undefined,
   };
 }
 
@@ -3610,6 +3695,7 @@ function receiptHtml(rc, fmt, link) {
     <div class="r-biz">${esc(rc.business)}</div>
     <div class="r-meta">${esc([rc.legal_name, rc.tax_id ? 'NIT/ID ' + rc.tax_id : '', rc.address, rc.phone].filter(Boolean).join(' · '))}</div>
     ${rc.is_test ? '<div class="r-test">PRUEBA — no es una venta real</div>' : ''}
+    ${rc.doc_type === '03' ? '<div class="r-doc">Crédito fiscal · NRC cliente ' + esc(rc.customer_nrc) + '</div>' : ''}
     ${rc.offline && !rc.synced ? '<div class="r-test">Venta sin conexión · comprobante provisional</div>' : ''}
     <div class="r-row r-head"><span>Recibo ${esc(rc.number)}</span><span>${esc(new Date(rc.date).toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' }))}</span></div>
     <div class="r-row"><span>${esc(rc.register || '')}</span><span>${esc(rc.customer || '')}</span></div>
@@ -3649,15 +3735,23 @@ function printReceipt(rc, fmt, link) {
 /* ============================ Finanzas ============================ */
 
 const FIN = { tab: 'resumen', cfg: null, chart: null, rep: 'resultados', acct: 'diario', range: null, expF: { month: '', status: '', q: '' } };
-const FIN_TABS = [['resumen', 'Resumen'], ['gastos', 'Gastos'], ['pagar', 'Por pagar'], ['cobrar', 'Por cobrar'], ['cuentas', 'Cuentas'], ['reportes', 'Reportes'], ['contabilidad', 'Contabilidad']];
-const SRC_LABEL = { venta: 'Venta', cobro: 'Cobro', reembolso: 'Reembolso', devolucion: 'Devolución', inventario: 'Inventario', gasto: 'Gasto', dinero: 'Dinero', caja: 'Caja', manual: 'Manual', apertura: 'Apertura', reversion: 'Reversión' };
+const FIN_TABS = [['resumen', 'Resumen'], ['gastos', 'Gastos'], ['pagar', 'Por pagar'], ['cobrar', 'Por cobrar'], ['cuentas', 'Cuentas'], ['reportes', 'Reportes'], ['impuestos', 'IVA'], ['contabilidad', 'Contabilidad']];
+const SRC_LABEL = { iva: 'Liquidación IVA', venta: 'Venta', cobro: 'Cobro', reembolso: 'Reembolso', devolucion: 'Devolución', inventario: 'Inventario', gasto: 'Gasto', dinero: 'Dinero', caja: 'Caja', manual: 'Manual', apertura: 'Apertura', reversion: 'Reversión' };
 const STATUS_EXP = { pendiente: ['Por pagar', 'pendiente'], parcial: ['Pago parcial', 'parcial'], pagado: ['Pagado', 'pagada'], anulado: ['Anulado', 'cancelada'] };
 
 const fm = v => money(v);
 const finToday = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const monthName = m => { const d = new Date(m + '-15T12:00:00'); return d.toLocaleDateString('es', { month: 'short', year: '2-digit' }).replace('.', ''); };
 const dayFmt = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('es', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
-const numIn = v => { const n = Number(String(v === undefined || v === null ? '' : v).replace(/[^\d.,-]/g, '').replace(',', '.')); return isFinite(n) ? n : 0; };
+/** Lee un monto escrito como 1,234.56 · 1234.56 · 12,50 (coma decimal también se entiende). */
+function numIn(v) {
+  let x = String(v === undefined || v === null ? '' : v).replace(/[^\d.,-]/g, '');
+  if (x.indexOf('.') >= 0) x = x.replace(/,/g, '');
+  else if (/,\d{1,2}$/.test(x)) x = x.replace(/,(\d{1,2})$/, '.$1').replace(/,/g, '');
+  else x = x.replace(/,/g, '');
+  const n = Number(x);
+  return isFinite(n) ? n : 0;
+}
 
 async function finLoadBase() {
   if (FIN.cfg && FIN.chart) return;
@@ -3690,7 +3784,7 @@ async function viewFinance() {
   if ($('#finExp')) $('#finExp').onclick = () => openExpense();
   if ($('#finMove')) $('#finMove').onclick = () => openMoneyMove();
   try { await finLoadBase(); } catch (e) { $('#finBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
-  const tab = { resumen: finOverview, gastos: finExpenses, pagar: finPayables, cobrar: finReceivables, cuentas: finAccounts, reportes: finReports, contabilidad: finAccounting }[FIN.tab];
+  const tab = { resumen: finOverview, gastos: finExpenses, pagar: finPayables, cobrar: finReceivables, cuentas: finAccounts, reportes: finReports, impuestos: finTaxes, contabilidad: finAccounting }[FIN.tab];
   try { await tab(); } catch (e) { if (S.view === 'finance') $('#finBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; }
 }
 const finActive = tab => S.view === 'finance' && FIN.tab === tab && $('#finBody');
@@ -3833,7 +3927,8 @@ async function openExpense(edit) {
       <div><label class="f">Categoría</label>${accSelect('account', e.account || store2.get('nx_fin_cat', ''), isExpenseAcc, 'Elige una categoría…')}
         <div class="hint" id="exCatHint"></div></div>
       <div class="two"><div><label class="f">Documento</label><select class="input" name="doc_type">${Object.keys(cfg.doc_types).map(k => `<option value="${k}" ${docType === k ? 'selected' : ''}>${esc(cfg.doc_types[k])}</option>`).join('')}</select></div>
-        <div><label class="f">Número del documento</label><input class="input" name="doc_number" value="${esc(e.doc_number || '')}" placeholder="Ej. 2026-001234"></div></div>
+        <div><label class="f">Número del documento</label><input class="input" name="doc_number" value="${esc(e.doc_number || '')}" placeholder="Código de generación del DTE"></div></div>
+      <div id="exCtl"><label class="f">Número de control (DTE)</label><input class="input" name="doc_control" value="${esc(e.doc_control || '')}" placeholder="DTE-03-…"></div>
       <div class="exp-amounts" id="exAmounts"></div>
       <div><label class="f">Concepto</label><input class="input" name="description" value="${esc(e.description || '')}" placeholder="Ej. Alquiler de noviembre"></div>
       <details class="exp-more" ${Number(e.exempt) || Number(e.withholding) ? 'open' : ''}><summary>Más detalles: exento, retención, vencimiento</summary>
@@ -3855,7 +3950,7 @@ async function openExpense(edit) {
     </form>`, async () => {
     const f = $('#exForm');
     const amounts = readAmounts(f);
-    const payload = Object.assign({ id: e.id || undefined, date: f.date.value, account: f.account.value, doc_type: f.doc_type.value, doc_number: f.doc_number.value,
+    const payload = Object.assign({ id: e.id || undefined, date: f.date.value, account: f.account.value, doc_type: f.doc_type.value, doc_number: f.doc_number.value, doc_control: f.doc_control.value,
       description: f.description.value, due_date: f.due_date.value, exempt: numIn(f.exempt.value), withholding: numIn(f.withholding.value) }, amounts);
     const sup = sups.find(s => s.name.toLowerCase() === f.supplier.value.trim().toLowerCase());
     if (sup) payload.supplier_id = sup.id; else payload.supplier_name = f.supplier.value.trim();
@@ -3891,7 +3986,8 @@ async function openExpense(edit) {
       f.total.oninput = () => { box.dataset.total = f.total.value; box.dataset.sub = ''; };
     }
   };
-  f.doc_type.onchange = drawAmounts; drawAmounts();
+  const ctl = () => { $('#exCtl').hidden = ['ccf', 'fse', 'factura'].indexOf(f.doc_type.value) < 0; if (f.doc_type.value === 'fse' && !f.withholding.value) f.closest('form').querySelector('.exp-more').open = true; };
+  f.doc_type.onchange = () => { drawAmounts(); ctl(); }; drawAmounts(); ctl();
   const catHint = () => {
     const a = (FIN.chart || []).find(x => x.code === f.account.value);
     $('#exCatHint').textContent = a && a.system_key === 'grni' ? 'Para la factura de mercadería que ya registraste como entrada en Inventario.' :
@@ -4161,7 +4257,7 @@ function openMoneyMove(type) {
     <div class="two"><div><label class="f">Monto</label><input class="input" name="amount" inputmode="decimal" placeholder="0.00"></div>
       <div><label class="f">Fecha</label><input class="input" type="date" name="date" value="${finToday()}"></div></div>
     <div id="mvFee"><label class="f">Comisión cobrada</label><input class="input" name="fee" inputmode="decimal" placeholder="0.00"><div class="hint">Lo que te cobró el banco o la pasarela por el movimiento.</div></div>
-    <div id="mvCounter"><label class="f">Categoría</label>${accSelect('counter_account', '', a => a.type === 'ingreso' || a.type === 'gasto' || a.type === 'pasivo' && !a.money_kind, 'La de siempre')}</div>
+    <div id="mvCounter"><label class="f">Categoría</label>${accSelect('counter_account', '', a => a.type === 'ingreso' || a.type === 'gasto' || (a.type === 'pasivo' && !a.money_kind) || a.code.indexOf('1104') === 0, 'La de siempre')}</div>
     <div class="two"><div><label class="f">Quién</label><input class="input" name="party_name" placeholder="Socio, banco…"></div><div><label class="f">Referencia</label><input class="input" name="reference"></div></div>
     <div><label class="f">Nota</label><input class="input" name="notes"></div>
   </form>`, async () => {
@@ -4177,7 +4273,7 @@ function openMoneyMove(type) {
   const sync = () => {
     const ty = f.type.value, incoming = ['aporte', 'prestamo', 'otro_ingreso'].indexOf(ty) >= 0;
     $('#mvFrom').hidden = incoming; $('#mvTo').hidden = !incoming && ty !== 'transferencia';
-    $('#mvFee').hidden = incoming; $('#mvCounter').hidden = ty !== 'otro_ingreso' && ty !== 'otro_egreso';
+    $('#mvFee').hidden = incoming; $('#mvCounter').hidden = ['otro_ingreso', 'otro_egreso', 'pago_impuesto'].indexOf(ty) < 0;
   };
   f.type.onchange = sync; sync();
 }
@@ -4230,8 +4326,8 @@ function bindRange(id, fn, single) {
 }
 
 function downloadCsv(name, head, rows) {
-  const cell = v => { const s = v === null || v === undefined ? '' : typeof v === 'number' ? String(v).replace('.', ',') : String(v); return /[";\n,]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
-  const csv = '﻿' + [head].concat(rows).map(r => r.map(cell).join(';')).join('\r\n');
+  const cell = v => { const s = v === null || v === undefined ? '' : typeof v === 'number' ? (Math.round(v * 100) / 100).toFixed(2) : String(v); return /[";\n,]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const csv = '﻿' + [head].concat(rows).map(r => r.map(cell).join(',')).join('\r\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
   a.download = name.replace(/[\\/:*?"<>|]/g, '-') + '.csv';
@@ -4367,7 +4463,7 @@ async function acJournal(from, to, q, src) {
     <div class="toolbar fin-tools"><input class="input" id="jrQ" placeholder="Buscar partida o concepto…" value="${esc(q || '')}" style="flex:1"><select class="input" id="jrSrc" style="max-width:200px"><option value="">Todos los orígenes</option>${Object.keys(SRC_LABEL).map(k => `<option value="${k}" ${src === k ? 'selected' : ''}>${SRC_LABEL[k]}</option>`).join('')}</select></div>
     <div class="fin-sum muted">${d.count} partida(s)${d.count > d.entries.length ? ' · se muestran las últimas ' + d.entries.length : ''}</div>
     <div class="jr-list">${d.entries.map(j => `<div class="card jr ${j.status === 'anulado' ? 'void' : ''}"><div class="jr-h"><span><b>${esc(j.number)}</b> · ${dayFmt(j.date)} · <span class="tag">${esc(SRC_LABEL[j.source_type] || j.source_type)}</span></span>
-        ${can('finance:write') && (j.source_type === 'manual' || j.source_type === 'apertura') && j.status !== 'anulado' ? `<button class="btn sm danger" data-void="${esc(j.id)}">Anular</button>` : ''}</div>
+        ${can('finance:write') && ['manual', 'apertura', 'iva'].indexOf(j.source_type) >= 0 && j.status !== 'anulado' ? `<button class="btn sm danger" data-void="${esc(j.id)}">Anular</button>` : ''}</div>
       <div class="jr-d">${esc(j.description)}${j.notes ? '<div class="muted sm">' + esc(j.notes) + '</div>' : ''}</div>
       <table class="jr-t"><tbody>${j.lines.map(l => `<tr><td class="code">${esc(l.account)}</td><td class="${l.credit ? 'cr' : ''}">${esc(l.name)}${l.memo ? '<span class="muted sm"> · ' + esc(l.memo) + '</span>' : ''}</td><td class="num">${l.debit ? fm(l.debit) : ''}</td><td class="num">${l.credit ? fm(l.credit) : ''}</td></tr>`).join('')}</tbody></table></div>`).join('') || '<div class="card empty">Sin partidas en estas fechas.</div>'}</div>
     <div class="chips" style="margin-top:12px"><button class="btn" id="jrCsv">Descargar (Excel/CSV)</button></div>`;
@@ -4526,6 +4622,192 @@ function acSettings() {
     try { FIN.cfg = Object.assign(FIN.cfg, await api('apiFinSaveSettings', S.token, { method_accounts: map, nrc: f.nrc.value, giro: f.giro.value, fiscal_start: f.fiscal_start.value })); toast('Ajustes guardados'); swrClear(); }
     catch (e) { $('#fsErr').textContent = e.message; }
   };
+}
+
+/* ---------- Impuestos: IVA de El Salvador ---------- */
+
+const DOC_NAMES = { '01': 'Factura', '03': 'Crédito fiscal', '11': 'Exportación' };
+
+async function finTaxes() {
+  if (!FIN.ivaMonth) { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 1); FIN.ivaMonth = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'); }
+  if (!FIN.ivaTab) FIN.ivaTab = 'resumen';
+  const m = FIN.ivaMonth;
+  const r = await api('apiTaxReport', S.token, m);
+  if (!finActive('impuestos')) return;
+  const S2 = r.summary, w = can('finance:write');
+  const tabs = [['resumen', 'Resumen F-07'], ['compras', 'Libro de compras'], ['cf', 'Ventas a consumidor final'], ['ccf', 'Ventas a contribuyentes'], ['ajustes', 'Ajustes de IVA']]
+    .filter(t => w || t[0] !== 'ajustes');
+  const monthLabel = new Date(m + '-15T12:00:00').toLocaleDateString('es', { month: 'long', year: 'numeric' });
+  $('#finBody').innerHTML = `
+    <div class="toolbar fin-tools"><label class="muted sm" for="ivaM">Periodo</label><input class="input" type="month" id="ivaM" value="${esc(m)}" style="max-width:180px">
+      ${r.liquidation ? `<span class="tag pagada">Liquidado · ${esc(r.liquidation.number)}</span>` : ''}</div>
+    <div class="grid kpis fin-kpis">
+      <div class="card pad kpi"><div class="l">Débito fiscal (ventas)</div><div class="v m">${fm(S2.debit)}</div></div>
+      <div class="card pad kpi"><div class="l">Crédito fiscal (compras)</div><div class="v m">${fm(S2.credit)}</div><div class="hint">${S2.remanente_prev ? '+ remanente anterior ' + fm(S2.remanente_prev) : ''}</div></div>
+      <div class="card pad kpi"><div class="l">${S2.to_pay ? 'IVA a pagar' : 'Remanente para el siguiente mes'}</div><div class="v m ${S2.to_pay ? 'warn' : 'good'}">${fm(S2.to_pay || S2.remanente_next)}</div></div>
+      <div class="card pad kpi"><div class="l">Pago a cuenta (F-14)</div><div class="v m">${fm(S2.pago_cuenta)}</div><div class="hint">${S2.pac_rate} % de ${fm(S2.gross_income)}</div></div>
+    </div>
+    ${r.warnings.length ? `<details class="note iva-warn"><summary><b>${r.warnings.length} cosa(s) por revisar antes de declarar</b></summary><ul>${r.warnings.map(x => `<li>${esc(x)}</li>`).join('')}</ul></details>` : '<div class="note ok-note">Todo listo para declarar: los documentos tienen sus datos fiscales.</div>'}
+    <div class="chips fin-sub" role="tablist">${tabs.map(t => `<button class="btn sm ${FIN.ivaTab === t[0] ? 'primary' : ''}" data-iv="${t[0]}">${t[1]}</button>`).join('')}</div>
+    <div id="ivaBody"></div>`;
+  $('#ivaM').onchange = ev => { if (ev.target.value) { FIN.ivaMonth = ev.target.value; finTaxes(); } };
+  $('#finBody').querySelectorAll('[data-iv]').forEach(b => b.onclick = () => { FIN.ivaTab = b.dataset.iv; finTaxes(); });
+  const body = $('#ivaBody');
+  const head = `<p class="muted sm iva-head">${esc(r.tenant.name)}${r.tenant.nrc ? ' · NRC ' + esc(r.tenant.nrc) : ''}${r.tenant.nit ? ' · NIT ' + esc(r.tenant.nit) : ''} · ${esc(monthLabel)}</p>`;
+  const anexoBtn = (n, label) => `<button class="btn" data-anexo="${n}">${label}</button>`;
+  const printBtn = '<button class="btn" id="ivPrint">Imprimir o PDF</button>';
+  let html = '', title = '';
+
+  if (FIN.ivaTab === 'resumen') {
+    title = 'Resumen de IVA (F-07) · ' + monthLabel;
+    const row = (l, v, cls) => `<tr class="${cls || ''}"><td>${l}</td><td class="num">${fm(v)}</td></tr>`;
+    html = `<div class="bs-grid"><div><table class="rp-table"><thead><tr><th>Ventas</th><th></th></tr></thead><tbody>
+        ${row('Ventas gravadas a contribuyentes (CCF)', S2.ccf_taxed)}${row('Débito fiscal por CCF', S2.ccf_debit)}
+        ${row('Ventas gravadas a consumidor final (IVA incluido)', S2.cf_taxed_incl)}${row('Débito fiscal por facturas', S2.cf_debit)}
+        ${row('Ventas exentas', S2.ccf_exempt + S2.cf_exempt)}${row('Exportaciones', S2.exports)}
+        ${row('Total débito fiscal', S2.debit, 'rp-tot')}</tbody></table></div>
+      <div><table class="rp-table"><thead><tr><th>Compras</th><th></th></tr></thead><tbody>
+        ${row('Compras internas gravadas', S2.purchases_taxed)}${row('Importaciones gravadas', S2.imports_taxed)}${row('Compras exentas', S2.purchases_exempt)}
+        ${row('Compras a sujetos excluidos', S2.excluded)}${row('Crédito fiscal del mes', S2.credit, 'rp-tot')}</tbody></table>
+        <table class="rp-table" style="margin-top:14px"><thead><tr><th>Liquidación</th><th></th></tr></thead><tbody>
+        ${row('Débito fiscal', S2.debit)}${row('− Crédito fiscal del mes', S2.credit)}${row('− Remanente del mes anterior', S2.remanente_prev)}
+        ${row('− IVA retenido por clientes (1 %)', S2.retencion)}${row('− IVA percibido (1 %)', S2.percepcion)}${row('− Anticipo a cuenta de IVA (2 % tarjetas)', S2.anticipo)}
+        ${S2.to_pay ? row('Impuesto a pagar', S2.to_pay, 'rp-net') : row('Remanente para el siguiente mes', S2.remanente_next, 'rp-net')}</tbody></table></div></div>`;
+    body.innerHTML = head + `<div class="card pad rp-card">${html}</div>
+      <p class="muted sm">Es un resumen para llenar tu F-07 en el portal de Hacienda; revísalo con tu contador. Los anexos se descargan en el formato de carga de Hacienda (CSV con punto y coma, sin encabezados).</p>
+      <div class="chips">${anexoBtn(1, 'Anexo 1 · ventas a contribuyentes')}${anexoBtn(2, 'Anexo 2 · consumidor final')}${anexoBtn(3, 'Anexo 3 · compras')}${r.excluded.length ? anexoBtn(5, 'Anexo 5 · sujetos excluidos') : ''}${printBtn}</div>
+      ${w ? `<div class="card pad iva-act"><div><b>${r.liquidation ? 'IVA de este mes liquidado' : 'Cerrar el IVA del mes'}</b>
+          <p class="muted sm">${r.liquidation ? 'La partida ' + esc(r.liquidation.number) + ' pasó el débito contra el crédito fiscal' + (S2.to_pay ? ' y dejó ' + fm(S2.to_pay) + ' en IVA por pagar.' : '.') : 'Registra la partida que cancela el débito contra el crédito fiscal y deja en "IVA por pagar" lo que vas a pagar con el F-07.'}</p></div>
+        <div class="chips">${r.liquidation ? '' : '<button class="btn primary" id="ivLiq">Registrar liquidación</button>'}
+          ${S2.to_pay ? '<button class="btn" id="ivPay">Registrar pago del IVA</button>' : ''}${S2.pago_cuenta ? '<button class="btn" id="ivPac">Registrar pago a cuenta</button>' : ''}</div></div>` : ''}`;
+  } else if (FIN.ivaTab === 'compras') {
+    title = 'Libro de compras · ' + monthLabel;
+    const rows = r.purchases.concat(r.excluded);
+    html = rows.length ? `<table class="rp-table iva-t"><thead><tr><th>#</th><th>Fecha</th><th>Documento</th><th>NRC / NIT</th><th>Proveedor</th><th class="num">Exentas</th><th class="num">Gravadas</th><th class="num">Importaciones</th><th class="num">Crédito fiscal</th><th class="num">Sujetos excluidos</th><th class="num">Retención</th><th class="num">Total</th></tr></thead><tbody>
+      ${rows.map((p, i) => `<tr class="click" data-exp="${esc(p.id)}"><td>${i + 1}</td><td>${dayFmt(p.date)}</td><td>${esc({ ccf: 'CCF', importacion: 'Importación', fse: 'FSE' }[p.doc_type])}<div class="muted sm code">${esc(p.doc_number || '—')}</div></td>
+        <td class="code">${esc(p.nrc || p.nit || '—')}</td><td>${esc(p.supplier)}</td><td class="num">${fmZ(p.doc_type === 'fse' ? 0 : p.exempt)}</td><td class="num">${fmZ(p.doc_type === 'ccf' ? p.taxed : 0)}</td>
+        <td class="num">${fmZ(p.doc_type === 'importacion' ? p.taxed : 0)}</td><td class="num">${fmZ(p.tax)}</td><td class="num">${fmZ(p.doc_type === 'fse' ? p.taxed + p.exempt : 0)}</td><td class="num">${fmZ(p.withholding)}</td><td class="num">${fm(p.total)}</td></tr>`).join('')}
+      <tr class="rp-net"><td colspan="5">Totales</td><td class="num">${fm(S2.purchases_exempt)}</td><td class="num">${fm(S2.purchases_taxed)}</td><td class="num">${fm(S2.imports_taxed)}</td><td class="num">${fm(S2.credit)}</td><td class="num">${fm(S2.excluded)}</td><td class="num">${fm(S2.excluded_withholding)}</td><td class="num">${fm(rows.reduce((a, p) => a + p.total, 0))}</td></tr></tbody></table>`
+      : '<div class="empty">No hay compras con crédito fiscal, importaciones ni sujetos excluidos en este mes. Las facturas de consumidor final y tickets no van al libro de compras.</div>';
+    body.innerHTML = head + `<div class="card tablewrap rp-card">${html}</div><div class="chips" style="margin-top:12px">${anexoBtn(3, 'Anexo 3 (CSV Hacienda)')}${r.excluded.length ? anexoBtn(5, 'Anexo 5 (CSV Hacienda)') : ''}${printBtn}</div>`;
+  } else if (FIN.ivaTab === 'cf') {
+    title = 'Libro de ventas a consumidor final · ' + monthLabel;
+    html = r.sales_cf.length ? `<table class="rp-table iva-t"><thead><tr><th>Fecha</th><th>Tipo</th><th>Del N.º</th><th>Al N.º</th><th class="num">Docs.</th><th class="num">Exentas</th><th class="num">Gravadas (IVA incl.)</th><th class="num">Exportaciones</th><th class="num">Total</th><th class="num">Débito fiscal</th></tr></thead><tbody>
+      ${r.sales_cf.map(d => `<tr><td>${dayFmt(d.date)}</td><td>${esc(DOC_NAMES[d.doc_type] || d.doc_type)}${d.dte ? '' : ' <span class="tag cancelada" title="Sin código de generación de DTE">sin DTE</span>'}</td><td class="code">${esc(d.from)}</td><td class="code">${esc(d.to)}</td>
+        <td class="num">${d.count}</td><td class="num">${fmZ(d.exempt)}</td><td class="num">${fmZ(d.taxed_incl)}</td><td class="num">${fmZ(d.exports + d.export_services)}</td><td class="num">${fm(d.total)}</td><td class="num">${fmZ(d.tax)}</td></tr>`).join('')}
+      <tr class="rp-net"><td colspan="5">Totales</td><td class="num">${fm(S2.cf_exempt)}</td><td class="num">${fm(S2.cf_taxed_incl)}</td><td class="num">${fm(S2.exports)}</td><td class="num">${fm(S2.cf_exempt + S2.cf_taxed_incl + S2.exports)}</td><td class="num">${fm(S2.cf_debit)}</td></tr></tbody></table>`
+      : '<div class="empty">Sin ventas a consumidor final en este mes.</div>';
+    body.innerHTML = head + `<div class="card tablewrap rp-card">${html}</div><div class="chips" style="margin-top:12px">${anexoBtn(2, 'Anexo 2 (CSV Hacienda)')}${printBtn}</div>`;
+  } else if (FIN.ivaTab === 'ccf') {
+    title = 'Libro de ventas a contribuyentes · ' + monthLabel;
+    html = r.sales_ccf.length ? `<table class="rp-table iva-t"><thead><tr><th>#</th><th>Fecha</th><th>Documento</th><th>NRC</th><th>Cliente</th><th class="num">Exentas</th><th class="num">Gravadas</th><th class="num">Débito fiscal</th><th class="num">Total</th></tr></thead><tbody>
+      ${r.sales_ccf.map((x, i) => `<tr class="click" data-sale="${esc(x.id)}"><td>${i + 1}</td><td>${dayFmt(x.date)}</td><td>${esc(x.number)}<div class="muted sm code">${esc(x.doc_number || 'sin DTE')}</div></td><td class="code">${esc(x.nrc || '—')}</td><td>${esc(x.customer)}</td>
+        <td class="num">${fmZ(x.exempt)}</td><td class="num">${fmZ(x.taxed)}</td><td class="num">${fmZ(x.tax)}</td><td class="num">${fm(x.total)}</td></tr>`).join('')}
+      <tr class="rp-net"><td colspan="5">Totales</td><td class="num">${fm(S2.ccf_exempt)}</td><td class="num">${fm(S2.ccf_taxed)}</td><td class="num">${fm(S2.ccf_debit)}</td><td class="num">${fm(S2.ccf_exempt + S2.ccf_taxed + S2.ccf_debit)}</td></tr></tbody></table>`
+      : '<div class="empty">Sin créditos fiscales emitidos en este mes. En el punto de venta elige <b>Comprobante → Crédito fiscal</b> cuando el cliente te pida CCF.</div>';
+    body.innerHTML = head + `<div class="card tablewrap rp-card">${html}</div><div class="chips" style="margin-top:12px">${anexoBtn(1, 'Anexo 1 (CSV Hacienda)')}${printBtn}</div>`;
+  } else {
+    const st = r.settings, a = r.adjust;
+    body.innerHTML = `<div class="fin-grid">
+      <form class="form fin1 card pad" id="ivAdj"><h3 style="margin:0">Retenciones de ${esc(monthLabel)}</h3>
+        <p class="muted sm" style="margin:0">Lo que otros ya pagaron a Hacienda por ti este mes: se resta del IVA a pagar.</p>
+        <div class="two"><div><label class="f">IVA retenido por clientes (1 %)</label><input class="input" name="retencion" inputmode="decimal" value="${a.retencion || ''}" placeholder="0.00"></div>
+          <div><label class="f">IVA percibido (1 %)</label><input class="input" name="percepcion" inputmode="decimal" value="${a.percepcion || ''}" placeholder="0.00"></div></div>
+        <div class="two"><div><label class="f">Anticipo 2 % (ventas con tarjeta)</label><input class="input" name="anticipo" inputmode="decimal" value="${a.anticipo || ''}" placeholder="0.00"></div>
+          <div><label class="f">¿Dónde quedó ese dinero?</label>${accSelect('source', a.source || (FIN.cfg.method_accounts || {}).tarjeta || '110107', x => !!x.money_kind || x.code === '110201')}<div class="hint">La cuenta que recibió de menos (tarjetas por liquidar, clientes…).</div></div></div>
+        <div class="chips"><button class="btn primary" type="submit">Guardar</button></div><div class="err" id="ivAdjErr"></div></form>
+      <form class="form fin1 card pad" id="ivCfg"><h3 style="margin:0">Datos para los anexos</h3>
+        <div class="two"><div><label class="f">Sector (compras)</label><select class="input" name="sector">${[['1', 'Industrial'], ['2', 'Comercial'], ['3', 'Agropecuario'], ['4', 'Servicios, profesiones y otros']].map(o => `<option value="${o[0]}" ${st.sector === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+          <div><label class="f">Tipo de ingreso (ventas, renta)</label><select class="input" name="income_type">${[['1', 'Profesiones, artes y oficios'], ['2', 'Servicios'], ['3', 'Comercio'], ['4', 'Industria'], ['5', 'Agropecuario'], ['7', 'Exportación de bienes'], ['9', 'Exportación de servicios']].map(o => `<option value="${o[0]}" ${st.income_type === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div></div>
+        <div><label class="f">Pago a cuenta (% de ingresos brutos)</label><input class="input" name="pac_rate" inputmode="decimal" value="${st.pac_rate}" style="max-width:140px"></div>
+        <h4 style="margin:6px 0 0">Remanente al empezar</h4><p class="muted sm" style="margin:0">Si traías crédito fiscal a favor de tu última declaración antes de usar el sistema.</p>
+        <div class="two"><div><label class="f">Mes desde el que llevas el IVA aquí</label><input class="input" type="month" name="start_month" value="${esc(st.start_month)}"></div>
+          <div><label class="f">Remanente con el que entraste</label><input class="input" name="start_remanente" inputmode="decimal" value="${st.start_remanente || ''}" placeholder="0.00"></div></div>
+        <div class="chips"><button class="btn primary" type="submit">Guardar</button></div><div class="err" id="ivCfgErr"></div></form></div>`;
+    $('#ivAdj').onsubmit = async ev => {
+      ev.preventDefault(); const f = ev.target;
+      try { await api('apiTaxSaveMonth', S.token, m, { retencion: numIn(f.retencion.value), percepcion: numIn(f.percepcion.value), anticipo: numIn(f.anticipo.value), source: f.source.value }); toast('Retenciones guardadas'); FIN.ivaTab = 'resumen'; finTaxes(); }
+      catch (e) { $('#ivAdjErr').textContent = e.message; }
+    };
+    $('#ivCfg').onsubmit = async ev => {
+      ev.preventDefault(); const f = ev.target;
+      try { await api('apiTaxSaveSettings', S.token, { sector: f.sector.value, income_type: f.income_type.value, pac_rate: numIn(f.pac_rate.value), start_month: f.start_month.value, start_remanente: numIn(f.start_remanente.value) }); toast('Guardado'); finTaxes(); }
+      catch (e) { $('#ivCfgErr').textContent = e.message; }
+    };
+    return;
+  }
+  body.querySelectorAll('[data-anexo]').forEach(b => b.onclick = async () => {
+    b.disabled = true;
+    try {
+      const x = await api('apiTaxAnexo', S.token, m, b.dataset.anexo);
+      if (!x.rows) { toast('Ese anexo no tiene filas este mes.'); b.disabled = false; return; }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([x.csv], { type: 'text/csv;charset=utf-8' }));
+      a.download = x.name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      toast(x.name + ': ' + x.rows + ' fila(s)');
+    } catch (e) { toast(e.message, true); }
+    b.disabled = false;
+  });
+  if ($('#ivPrint')) $('#ivPrint').onclick = () => printReport(title, `<p>${esc(r.tenant.name)}${r.tenant.nrc ? ' · NRC ' + esc(r.tenant.nrc) : ''}${r.tenant.nit ? ' · NIT ' + esc(r.tenant.nit) : ''}${r.tenant.giro ? ' · ' + esc(r.tenant.giro) : ''}</p>` + html);
+  body.querySelectorAll('[data-exp]').forEach(tr => tr.onclick = () => openExpenseDetail(tr.dataset.exp));
+  body.querySelectorAll('[data-sale]').forEach(tr => tr.onclick = () => showSale(tr.dataset.sale));
+  if ($('#ivLiq')) $('#ivLiq').onclick = async ev => {
+    if (!confirm('¿Registrar la liquidación del IVA de ' + monthLabel + '? Debe ser cuando ya revisaste el mes.')) return;
+    ev.target.disabled = true;
+    try { const x = await api('apiTaxLiquidate', S.token, m); toast('Partida ' + x.number + ' registrada' + (x.to_pay ? ' · a pagar ' + fm(x.to_pay) : '')); finTaxes(); }
+    catch (e) { toast(e.message, true); ev.target.disabled = false; }
+  };
+  const payTax = (amount, counter, label) => {
+    openMoneyMove('pago_impuesto');
+    const f = $('#mvForm');
+    f.amount.value = amount.toFixed(2);
+    if (counter) f.counter_account.value = counter;
+    f.notes.value = label;
+    f.party_name.value = 'Ministerio de Hacienda';
+    $('#mvCounter').hidden = false;
+  };
+  if ($('#ivPay')) $('#ivPay').onclick = () => payTax(S2.to_pay, '210305', 'IVA de ' + monthLabel + ' (F-07)');
+  if ($('#ivPac')) $('#ivPac').onclick = () => payTax(S2.pago_cuenta, '110402', 'Pago a cuenta de ' + monthLabel + ' (F-14)');
+}
+
+/** Datos fiscales de una venta (código de generación del DTE, NRC del cliente). */
+function openSaleFiscal(s, after) {
+  openModal('Datos fiscales de ' + s.number, `<form class="form fin1" id="sfForm">
+    <div><label class="f">Comprobante</label><select class="input" name="doc_type">${Object.keys(DOC_NAMES).map(k => `<option value="${k}" ${(s.doc_type || '01') === k ? 'selected' : ''}>${DOC_NAMES[k]}</option>`).join('')}</select></div>
+    <div id="sfNrc"><label class="f">NRC del cliente</label><input class="input" name="customer_nrc" value="${esc(s.customer_nrc || '')}"></div>
+    <div><label class="f">Código de generación</label><input class="input code" name="doc_number" value="${esc(s.doc_number || '')}" placeholder="1A2B3C4D-1234-1234-1234-1234567890AB"></div>
+    <div class="two"><div><label class="f">Número de control</label><input class="input" name="doc_control" value="${esc(s.doc_control || '')}" placeholder="DTE-01-…"></div>
+      <div><label class="f">Sello de recepción</label><input class="input" name="doc_seal" value="${esc(s.doc_seal || '')}"></div></div>
+    <p class="muted sm">Son los datos del DTE que emitió tu sistema de facturación electrónica. Cuando conectemos la facturación electrónica se llenarán solos.</p></form>`, async () => {
+    const f = $('#sfForm');
+    await api('apiSaleFiscal', S.token, s.id, { doc_type: f.doc_type.value, customer_nrc: f.customer_nrc.value, doc_number: f.doc_number.value, doc_control: f.doc_control.value, doc_seal: f.doc_seal.value });
+    toast('Datos fiscales guardados'); swrClear(); if (after) after();
+  }, 'Guardar');
+  const f = $('#sfForm');
+  const sync = () => { $('#sfNrc').hidden = f.doc_type.value !== '03'; };
+  f.doc_type.onchange = sync; sync();
+}
+
+/** Comprobante en el POS: factura, crédito fiscal (con NRC) o exportación. */
+function openPosDoc() {
+  const c = POS.cart;
+  openModal('Comprobante', `<form class="form fin1" id="pdForm">
+    <div class="chips" role="group">${Object.keys(DOC_NAMES).map(k => `<button type="button" class="btn ${(c.doc_type || '01') === k ? 'primary' : ''}" data-doc="${k}">${DOC_NAMES[k]}</button>`).join('')}</div>
+    <div id="pdNrc"><label class="f">NRC del cliente</label><input class="input" name="nrc" inputmode="numeric" value="${esc(c.customer_nrc || (c.customer && c.customer.nrc) || '')}" placeholder="123456-7">
+      <div class="hint">${c.customer ? 'Se guarda en la ficha de ' + esc(c.customer.name) + '.' : 'Primero elige o registra al cliente (con su NIT).'}</div></div></form>`, async () => {
+    const f = $('#pdForm'), type = f.dataset.doc || c.doc_type || '01';
+    if (type === '03') {
+      if (!c.customer) throw new Error('Elige o registra al cliente antes de emitir crédito fiscal.');
+      if (!f.nrc.value.replace(/\D/g, '')) throw new Error('Escribe el NRC del cliente.');
+      c.customer_nrc = f.nrc.value;
+    } else c.customer_nrc = '';
+    c.doc_type = type; drawPosCart();
+  }, 'Listo');
+  const f = $('#pdForm');
+  f.dataset.doc = c.doc_type || '01';
+  const sync = () => { $('#pdNrc').hidden = f.dataset.doc !== '03'; document.querySelectorAll('[data-doc]').forEach(b => b.classList.toggle('primary', b.dataset.doc === f.dataset.doc)); };
+  document.querySelectorAll('[data-doc]').forEach(b => b.onclick = () => { f.dataset.doc = b.dataset.doc; sync(); });
+  sync();
 }
 
 /* ---------- Ventas sin conexión: se guardan en el dispositivo y se envían solas ---------- */
@@ -4817,6 +5099,7 @@ function receiptDoc(rc, link) {
   d.push({ t: 'title', v: rc.business });
   [rc.legal_name, rc.tax_id ? 'NIT/ID ' + rc.tax_id : '', rc.address, rc.phone].filter(Boolean).forEach(x => d.push({ t: 'center', v: x }));
   if (rc.is_test) d.push({ t: 'center', v: '*** PRUEBA - no es una venta real ***' });
+  if (rc.doc_type === '03') d.push({ t: 'center', v: 'Crédito fiscal - NRC cliente ' + rc.customer_nrc });
   if (rc.offline && !rc.synced) { d.push({ t: 'center', v: 'COMPROBANTE PROVISIONAL' }); d.push({ t: 'center', v: '(venta sin conexión)' }); }
   d.push({ t: 'sep' });
   d.push({ t: 'lr', l: 'Recibo ' + rc.number, r: new Date(rc.date).toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' }) });
@@ -5516,251 +5799,4 @@ function showGuide(i, key) {
   const d = S.int;
   const base = d.webAppUrl || 'https:\/\/script.google.com/macros/s/TU_ID/exec';
   const k = key || i.public_key || '';
-  const K = k || 'TU_CLAVE_SECRETA';
-  const relay = (d.relayUrl || 'https:\/\/TU-RELEVO.workers.dev') + '/in/' + K;
-  if (i.is_pull) { openModal('Cómo funciona: ' + i.name, (i.is_d1 ? GUIDES.cloudflare_d1 : GUIDES.google_sheet)({ base, i }), null, null, true); return; }
-  let html = '';
-  if (key) html += `<div class="note ok-note"><b>Tu clave${i.is_public ? '' : ' secreta'}:</b><div class="secret" style="margin-top:8px">${esc(key)}</div>
-    ${i.is_public ? 'Es pública: puede ir en tu página web, solo sirve para ' + (i.platform === 'catalog' ? 'leer el catálogo' : 'enviar prospectos') + '.' : '<b>Cópiala ahora:</b> por seguridad no se volverá a mostrar. Ya va incluida en las instrucciones de abajo.'}</div>`;
-  else if (!k) html += `<div class="note">La clave secreta solo se muestra al crearla. Donde diga <code>TU_CLAVE_SECRETA</code> usa la que guardaste, o genera una con "Nueva clave".</div>`;
-  if (i.needs_relay && !d.relayUrl) html += `<div class="note">Antes, instala el <b>relevo</b> (sección "Relevo" en esta pantalla) y guarda su URL.</div>`;
-  html += (GUIDES[i.platform] || (() => ''))({ base, key: K, relay, i });
-  openModal('Conectar: ' + i.name, html, null, null, true);
-}
-
-const fieldsHint = '<p class="muted">El sistema reconoce automáticamente campos como <code>name / nombre</code>, <code>email / correo</code>, <code>phone / telefono / whatsapp</code>, <code>company / empresa</code>, <code>message / mensaje</code> y los parámetros <code>utm_*</code>. Cualquier otro campo se guarda en el mensaje del prospecto.</p>';
-
-const GUIDES = {
-  web_form: ({ base, key }) => `
-    <h3>Opción A — Formulario listo (lo más fácil)</h3>
-    <p>Pega esto en tu página (WordPress: bloque "HTML personalizado"; Wix: "Insertar código"; Shopify: sección "HTML personalizado"; Webflow/Squarespace: "Embed"):</p>
-    ${codeBlock(`<iframe src="${base}?action=form&key=${key}&title=Cont%C3%A1ctanos&utm_source=web"
-  style="width:100%;max-width:520px;height:560px;border:0" loading="lazy"></iframe>`)}
-    <p class="muted">Parámetros opcionales en la URL: <code>fields=name,email,phone,company,message</code> · <code>button=Quiero%20info</code> · <code>thanks=…</code> · <code>color=0f766e</code> · <code>utm_campaign=promo-noviembre</code>.</p>
-    <h3>Opción B — Tu propio formulario con tu diseño</h3>
-    <p>Mantén tu HTML y agrega este script. Captura también los <code>utm_</code> de la URL:</p>
-    ${codeBlock(`<form id="nexo-form">
-  <input name="name" placeholder="Nombre" required>
-  <input name="email" type="email" placeholder="Correo">
-  <input name="phone" placeholder="Teléfono">
-  <textarea name="message" placeholder="¿En qué te ayudamos?"></textarea>
-  <input name="_hp" style="display:none" tabindex="-1" autocomplete="off">
-  <button>Enviar</button>
-</form>
-<script>
-document.getElementById('nexo-form').addEventListener('submit', async function (e) {
-  e.preventDefault();
-  var data = Object.fromEntries(new FormData(this));
-  new URLSearchParams(location.search).forEach(function (v, k) { if (k.indexOf('utm_') === 0) data[k] = v; });
-  data.page_url = location.href;
-  this.querySelector('button').disabled = true;
-  await fetch('${base}?key=${key}', { method: 'POST', body: JSON.stringify(data) });
-  this.innerHTML = '<p>¡Gracias! Te contactaremos pronto.</p>';
-});
-<\/script>`)}
-    <h3>Opción C — Formulario HTML sin JavaScript</h3>
-    ${codeBlock(`<form method="post" action="${base}?key=${key}&redirect=https:\/\/tusitio.com">`)}
-    <p class="muted">Muestra una página de "Gracias" con un enlace para volver a tu sitio.</p>${fieldsHint}`,
-
-  wordpress: ({ base, key }) => `
-    <p>URL del webhook para tu plugin de formularios:</p>${codeBlock(`${base}?key=${key}&format=json`)}
-    <ul class="steps">
-      <li><b>Contact Form 7:</b> instala el plugin gratuito <i>CF7 to Webhook</i>, abre tu formulario → pestaña <i>Webhook</i> → pega la URL.</li>
-      <li><b>Elementor Pro:</b> en el formulario → <i>Acciones después de enviar</i> → agrega <i>Webhook</i> → pega la URL. Activa "Datos avanzados".</li>
-      <li><b>WPForms:</b> complemento <i>Webhooks</i> (licencia Elite) → Método POST, formato JSON → pega la URL.</li>
-      <li><b>Gravity Forms / Fluent Forms / Forminator:</b> usa su complemento de Webhooks con método POST.</li>
-    </ul>${fieldsHint}`,
-
-  google_forms: ({ base, key }) => `
-    <ol class="steps">
-      <li>Abre tu Google Form → menú ⋮ → <b>Editor de secuencias de comandos</b>.</li>
-      <li>Pega este código y guarda:</li></ol>
-    ${codeBlock(`function enviarANexo(e) {
-  var data = { form_name: FormApp.getActiveForm().getTitle() };
-  e.response.getItemResponses().forEach(function (r) {
-    var v = r.getResponse();
-    data[r.getItem().getTitle()] = Array.isArray(v) ? v.join(', ') : v;
-  });
-  if (e.response.getRespondentEmail()) data.email = data.email || e.response.getRespondentEmail();
-  UrlFetchApp.fetch('${base}?key=${key}&format=json', {
-    method: 'post', contentType: 'application/json',
-    payload: JSON.stringify(data), followRedirects: true, muteHttpExceptions: true
-  });
-}`)}
-    <ol class="steps" start="3"><li>Ve a <b>Activadores</b> (reloj) → <b>Agregar activador</b> → función <code>enviarANexo</code> → evento <b>Al enviar el formulario</b> → guarda y autoriza.</li>
-      <li>Nombra tus preguntas como "Nombre", "Correo", "Teléfono", "Mensaje" para que se reconozcan solas.</li></ol>`,
-
-  shopify: ({ relay }) => `
-    <ol class="steps">
-      <li>En Shopify: <b>Configuración → Notificaciones → Webhooks</b> → <b>Crear webhook</b>.</li>
-      <li>Formato <b>JSON</b>, versión de la API la más reciente, y esta URL:</li></ol>
-    ${codeBlock(relay)}
-    <ol class="steps" start="3">
-      <li>Crea un webhook con esa misma URL para cada evento: <b>Creación de pedido</b>, <b>Pago de pedido</b>, <b>Cancelación de pedido</b>, <b>Actualización de pedido</b> y (opcional) <b>Creación de cliente</b>.</li>
-      <li>Abajo de la lista Shopify muestra <i>"Tus webhooks se firmarán con…"</i>. Copia ese valor y pégalo en <b>Editar → Secreto de firma</b> de esta integración.</li>
-      <li>Usa los <b>mismos SKU</b> en Shopify y en "Productos y servicios" para que se descuente el inventario.</li>
-      <li>Prueba con "Enviar notificación de prueba" y revisa la <b>Actividad reciente</b>.</li></ol>`,
-
-  woocommerce: ({ relay }) => `
-    <ol class="steps">
-      <li>En WordPress: <b>WooCommerce → Ajustes → Avanzado → Webhooks → Añadir webhook</b>.</li>
-      <li>Estado <b>Activo</b>, tema <b>Pedido creado</b>, versión de la API <b>WP REST API v3</b>, y URL de entrega:</li></ol>
-    ${codeBlock(relay)}
-    <ol class="steps" start="3">
-      <li>En <b>Secreto</b> escribe una frase larga e inventada. Pega <b>la misma</b> en <b>Editar → Secreto de firma</b> de esta integración.</li>
-      <li>Repite con el tema <b>Pedido actualizado</b> (para pagos, cancelaciones y reembolsos), con la misma URL y secreto.</li>
-      <li>Usa los <b>mismos SKU</b> en WooCommerce y en "Productos y servicios".</li></ol>`,
-
-  stripe: ({ relay }) => `
-    <ol class="steps">
-      <li>En Stripe: <b>Desarrolladores → Webhooks → Agregar destino</b> (endpoint) con esta URL:</li></ol>
-    ${codeBlock(relay)}
-    <ol class="steps" start="2">
-      <li>Eventos: <code>checkout.session.completed</code>, <code>checkout.session.async_payment_succeeded</code>, <code>checkout.session.async_payment_failed</code> y <code>charge.refunded</code>.</li>
-      <li>Copia el <b>Secreto de firma</b> (<code>whsec_…</code>) y pégalo en <b>Editar → Secreto de firma</b>.</li>
-      <li>Funciona con <b>Payment Links</b> y <b>Checkout</b>.</li></ol>
-    <h3>Ver qué productos se compraron</h3>
-    <p class="muted">El aviso de Stripe no trae los productos; el CRM se los pregunta a Stripe con una clave de <b>solo lectura</b>.</p>
-    <ol class="steps">
-      <li>En Stripe: <b>Developers → API keys → Create restricted key</b> (hazlo en el modo que estés usando: prueba o real).</li>
-      <li>Nombre: <code>CRM</code>. Permisos en <b>Read</b>: <b>Checkout Sessions</b>, <b>Products</b> y <b>Prices</b>. Todo lo demás en <b>None</b>.</li>
-      <li>Crea la clave, cópiala (<code>rk_test_…</code> o <code>rk_live_…</code>) y pégala en <b>Editar → Clave de lectura de Stripe</b> del modo correspondiente.</li>
-      <li><b>Para ligar con tu catálogo e inventario:</b> en cada producto de Stripe agrega en <b>Metadata</b> la clave <code>sku</code> con el SKU de ese producto en tu CRM.</li></ol>`,
-
-  wompi: ({ relay }) => `
-    <ol class="steps">
-      <li>Entra a <b>panel.wompi.sv</b> → <b>Aplicativos</b> → edita el aplicativo con el que cobras.</li>
-      <li>En <b>"Notifica vía Webhook"</b> pega esta URL y guarda:</li></ol>
-    ${codeBlock(relay)}
-    <ol class="steps" start="3">
-      <li>En el mismo aplicativo copia el <b>API Secret</b> y pégalo en <b>Editar → Secreto de firma</b> de esta integración. Con él se verifica el encabezado <code>wompi_hash</code> de cada aviso.</li>
-      <li><b>Liga el pago a tu catálogo:</b> al crear un enlace de pago, usa como <b>Identificador del comercio</b> el <b>SKU</b> del producto o servicio. Así la venta descuenta inventario y aparece con su producto.</li>
-      <li>Haz un pago de prueba. Las transacciones de <b>prueba</b> aparecen en la actividad como "conexión funciona" y <b>no</b> se registran como venta. Los pagos reales se registran como venta <b>pagada</b>.</li></ol>
-    <p class="muted">Si creas enlaces por API, también puedes poner esta URL en <code>configuracion.urlWebhook</code> de cada enlace.</p>`,
-
-  n1co: ({ relay }) => `
-    <ol class="steps">
-      <li>Entra al portal <b>n1co Business</b> → <b>Configuración</b> (menú arriba a la derecha) → <b>Opciones para desarrolladores</b> → <b>Webhook</b>.</li>
-      <li>Pega esta URL:</li></ol>
-    ${codeBlock(relay)}
-    <ol class="steps" start="3">
-      <li>Pulsa <b>generar clave secreta</b>, guarda, y pega esa clave en <b>Editar → Secreto de firma</b> de esta integración. Con ella se verifica el encabezado <code>X-H4B-Hmac-Sha256</code>.</li>
-      <li>Usa los <b>mismos SKU</b> en n1co y en "Productos y servicios" para que se descuente inventario.</li></ol>
-    <p class="muted">Qué se registra: <b>pago exitoso</b> → venta pagada con sus productos y cliente · <b>cancelación</b> → venta cancelada (devuelve inventario) · <b>reversión</b> → venta reembolsada. Funciona con n1co Links, tienda, API y QR.</p>`,
-
-  webhook: ({ base, key }) => `
-    <p>URL para Zapier, Make, n8n, Wix Automations o tu propio sistema (método <b>POST</b>, cuerpo <b>JSON</b>):</p>${codeBlock(`${base}?key=${key}&format=json`)}
-    <p class="muted">Zapier: "Webhooks by Zapier → POST", tipo de carga JSON. Make: módulo HTTP "Make a request" con "Follow redirect" activado. n8n: nodo "HTTP Request". Wix: Automatizaciones → "Enviar solicitud HTTP".</p>
-    <h3>Prospecto</h3>${codeBlock(`{ "type": "lead", "name": "Ana Torres", "email": "ana@correo.com", "phone": "+52 555 123 4567",
-  "message": "Quiero una cotización", "utm_campaign": "facebook-noviembre" }`)}
-    <h3>Cliente</h3>${codeBlock(`{ "type": "customer", "name": "Carlos Rivera", "email": "carlos@empresa.com", "company": "Rivera SA" }`)}
-    <h3>Suscriptor de newsletter</h3>${codeBlock(`{ "type": "subscriber", "email": "lector@correo.com", "language": "es", "status": "active" }`)}
-    <h3>Venta / pedido</h3>${codeBlock(`{
-  "type": "order", "id": "A-1029", "number": "1029", "status": "paid",
-  "currency": "USD", "total": 448.0, "tax": 48.0, "payment_method": "Square",
-  "customer": { "name": "Laura Méndez", "email": "laura@correo.com", "phone": "555 101 2020" },
-  "items": [
-    { "sku": "0001", "name": "Camiseta básica", "qty": 2, "price": 100 },
-    { "sku": "S-001", "name": "Personalización", "qty": 1, "price": 200 }
-  ]
-}`)}
-    <p class="muted"><code>status</code>: paid · pending · partial · cancelled · refunded. Si envías el mismo <code>id</code> otra vez, la venta se <b>actualiza</b> (no se duplica): úsalo para avisar pagos o cancelaciones.</p>`,
-
-  google_sheet: ({ base, i }) => `
-    <p>El sistema lee tu hoja <b>cada 10 minutos</b> (y cuando pulsas <b>Sincronizar ahora</b>). No tienes que tocar la hoja ni tu sitio.</p>
-    ${i.source_url ? '<p>Hoja conectada: <a href="' + esc(i.source_url) + '" target="_blank" rel="noopener">abrir</a>' + (i.source_sheet ? ' · pestaña <b>' + esc(i.source_sheet) + '</b>' : '') + '</p>' : ''}
-    <ul class="steps">
-      <li><b>Columnas que reconoce:</b> Email / Correo (obligatoria), ID, Idioma (es, en, both/ambos), Estado (active, pending, unsubscribed, activo, pendiente, baja…), Registrado, Confirmado y Baja.</li>
-      <li><b>No duplica:</b> cada correo es un solo suscriptor. Si cambia de pendiente a activo, o se da de baja, se actualiza.</li>
-      <li><b>No borra:</b> si alguien desaparece de la hoja, se conserva en el CRM con su último estado.</li>
-      <li>Cada suscriptor se liga solo con su ficha si ya es <b>cliente</b> o <b>prospecto</b> (mismo correo).</li>
-    </ul>
-    <h3>¿Quieres tiempo real?</h3>
-    <p class="muted">La hoja solo se actualiza cuando tu sitio la exporta. Si tu sitio puede avisar en el momento de cada alta, confirmación o baja, crea una integración <b>Zapier / Make / otros</b> y envía:</p>
-    ${codeBlock(`POST ${base}?key=TU_CLAVE_sk&format=json
-{ "type": "subscriber", "id": 4, "email": "lector@correo.com", "language": "es", "status": "pending" }`)}`,
-
-  cloudflare_d1: ({ i }) => `
-    <p>El CRM está conectado <b>directamente a la base de datos de tu newsletter</b>: la lee cada 10 minutos y actúa sobre la lista real.</p>
-    <ul class="steps">
-      <li><b>Dar de baja o eliminar</b> a alguien en <b>Suscriptores</b> lo da de baja en el newsletter al instante (deja de recibir el correo).</li>
-      <li><b>Agregar</b> a alguien le envía el <b>correo de confirmación</b> de tu newsletter. Aparece como activo cuando lo confirma.</li>
-      <li>El <b>consentimiento se registra solo</b> con la fecha en que la persona confirmó por correo.</li>
-      <li>Cambiar el <b>idioma</b> en el CRM también lo cambia en el newsletter.</li>
-      <li>El CRM nunca activa a nadie sin su confirmación.</li>
-    </ul>
-    ${i.site_url ? '<p class="muted">Invitaciones desde: ' + esc(i.site_url) + '</p>' : '<div class="note">Para poder invitar desde el CRM, edita la integración y escribe la página de suscripción de tu newsletter.</div>'}
-    <h3>Crear el token de Cloudflare</h3>
-    <ol class="steps">
-      <li>En <b>dash.cloudflare.com</b> → tu perfil (arriba a la derecha) → <b>API Tokens</b> → <b>Create Token</b> → <b>Create Custom Token</b>.</li>
-      <li>Nombre: <code>CRM newsletter</code>. Permisos: <b>Account · D1 · Edit</b>. Recursos: tu cuenta.</li>
-      <li><b>Continue to summary → Create Token</b>, copia el token y pégalo en <b>Editar → Token de API de Cloudflare</b>.</li>
-    </ol>
-    <p class="muted">El token solo puede leer y editar bases D1. Se guarda en las propiedades privadas del script, no en la hoja de cálculo.</p>`,
-
-  catalog: ({ base, key }) => `
-    <p>Tu catálogo (productos y servicios activos, con precio y disponibilidad) en JSON:</p>${codeBlock(`${base}?action=catalog&key=${key}`)}
-    <p>Ejemplo para mostrarlo en tu sitio:</p>${codeBlock(`<div id="catalogo"></div>
-<script>
-fetch('${base}?action=catalog&key=${key}')
-  .then(function (r) { return r.json(); })
-  .then(function (d) {
-    var fmt = new Intl.NumberFormat('es', { style: 'currency', currency: d.currency });
-    document.getElementById('catalogo').innerHTML = d.products.map(function (p) {
-      return '<div><b>' + p.name + '</b> — ' + fmt.format(p.price) + (p.available ? '' : ' (agotado)') + '</div>';
-    }).join('');
-  });
-<\/script>`)}
-    <p class="muted">Se actualiza solo: cambia un precio en el sistema y en menos de un minuto cambia en tu web.</p>`,
-};
-
-function relayGuideHtml() {
-  const base = S.int.webAppUrl || 'https:\/\/script.google.com/macros/s/TU_ID/exec';
-  return `<p>El relevo es un programa pequeño que corre gratis en Cloudflare (hasta 100,000 avisos al día). No guarda datos ni secretos.</p>
-    <ol class="steps">
-      <li>Crea una cuenta gratuita en <b>dash.cloudflare.com</b>.</li>
-      <li>Ve a <b>Workers y Pages → Crear → Worker</b>, nómbralo <code>nexo-relay</code> y pulsa <b>Implementar</b>.</li>
-      <li>Pulsa <b>Editar código</b>, borra todo y pega el contenido del archivo <code>relay/worker.js</code> que viene con el sistema. Pulsa <b>Implementar</b>.</li>
-      <li>En <b>Configuración → Variables y secretos</b> agrega la variable <code>APPS_SCRIPT_URL</code> con este valor:</li></ol>
-    ${codeBlock(base)}
-    <ol class="steps" start="5"><li>Copia la URL del Worker (algo como <code>https:\/\/nexo-relay.tu-cuenta.workers.dev</code>) y guárdala en la sección <b>Relevo</b> de esta pantalla.</li>
-      <li>Ábrela en el navegador: debe decir <i>Nexo relay OK</i>.</li></ol>`;
-}
-
-function hookGuideHtml() {
-  return `<p>Cada aviso es un <b>POST JSON</b> con esta forma:</p>
-    ${codeBlock(`{
-  "id": "OBX-…", "event": "sale.created", "created_at": "2026-11-03T16:40:00Z",
-  "data": { "number": "V-000123", "external_number": "#1029", "status": "pagada",
-            "total": 448, "currency": "USD", "customer": { "name": "…", "email": "…" }, "items": [ … ] }
-}`)}
-    <p>Eventos: <code>lead.created</code>, <code>customer.created</code>, <code>sale.created</code>, <code>sale.updated</code>. Se envían en menos de un minuto, con hasta 6 reintentos si el destino falla.</p>
-    <p>Para verificar que el aviso viene de tu sistema, compara el encabezado <code>X-Nexo-Signature</code> (Node.js):</p>
-    ${codeBlock(`const crypto = require('crypto');
-const expected = crypto.createHmac('sha256', process.env.NEXO_SECRET).update(rawBody).digest('hex');
-const valido = crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(req.headers['x-nexo-signature']));`)}`;
-}
-
-/* ============================ Próximamente ============================ */
-
-function viewSoon(m) {
-  const notes = {
-    pos: 'Venta en mostrador con escaneo QR, carrito, impuestos, descuentos, facturas con folio y pagos parciales. Las ventas en línea ya llegan solas a "Ventas".',
-    inventory: 'Entradas de mercancía, ajustes, alertas de stock mínimo y etiquetas QR. Las ventas en línea ya descuentan existencias automáticamente.',
-    finance: 'Ingresos y gastos, cuentas por cobrar y por pagar, flujo de caja y ganancia bruta y neta.',
-    marketing: 'Campañas, cupones, embudo de prospectos, conversiones y retorno de inversión.',
-  };
-  $('#main').innerHTML = pageHeader(m.label) + `<div class="card pad" style="max-width:640px">
-    <span class="tag">Fase ${m.phase}</span><p>${esc(notes[m.id] || '')}</p>
-    <p class="muted">Las tablas de este módulo ya existen en la base de datos, así que se conectará sin migraciones.</p></div>`;
-}
-
-// Desde GitHub la app queda guardada en el dispositivo: abre aunque no haya señal (para vender en eventos).
-if (!ON_GOOGLE && 'serviceWorker' in navigator && location.protocol === 'https:') {
-  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => { /* sin modo sin conexión */ }));
-}
-
-start();
-</script>
-</body>
-</html>
+  const 
