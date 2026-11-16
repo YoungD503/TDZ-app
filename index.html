@@ -199,6 +199,105 @@
   table.no-cards th { padding: 8px; }
   table.no-cards td { padding: 8px 10px; }
 
+
+  /* ============ Punto de venta ============ */
+  body[data-view="pos"] .fab { display: none !important; }
+  .pos-open { max-width: 560px; }
+  .pos-big { width: 100%; min-height: 52px; font-size: 16px; margin-top: 12px; }
+  .pos-money { font: 600 22px var(--display); font-variant-numeric: tabular-nums; }
+  .pos { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 380px); gap: 16px; align-items: start; }
+  .pos-left { min-width: 0; }
+  .pos-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .pos-sess { display: flex; flex-direction: column; }
+  .pos-sess b { font: 600 20px var(--display); }
+  .pos-tools { display: flex; gap: 6px; flex-wrap: wrap; }
+  .pos-search { max-width: none; margin-bottom: 10px; }
+  .pos-cats { margin-bottom: 12px; flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+  .pos-cats .btn { flex: none; }
+  .pos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .pos-tile { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; min-height: 132px; padding: 12px; text-align: left;
+              border-radius: var(--radius); border: 1px solid var(--line); background: var(--panel); color: var(--ink); font: inherit; cursor: pointer; }
+  .pos-tile:hover { border-color: var(--brand-line); }
+  .pos-tile:active { transform: scale(.98); background: var(--brand-soft); }
+  .pos-tile.out { opacity: .6; }
+  .pt-ini { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font: 700 15px var(--display);
+            background: hsl(var(--h) 45% 22%); color: hsl(var(--h) 70% 78%); }
+  :root[data-theme="light"] .pt-ini { background: hsl(var(--h) 60% 90%); color: hsl(var(--h) 55% 30%); }
+  .pt-n { position: absolute; top: 10px; right: 10px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 13px; background: var(--brand); color: var(--brand-ink);
+          font: 700 13px var(--font); display: grid; place-items: center; }
+  .pt-name { font-weight: 600; line-height: 1.25; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .pt-foot { margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; gap: 6px; width: 100%; }
+  .pt-foot b { font-variant-numeric: tabular-nums; }
+  .pt-stock { font-size: 12px; color: var(--muted); }
+  .pos-cart { position: sticky; top: 16px; display: flex; flex-direction: column; max-height: calc(100vh - 32px); border: 1px solid var(--line-strong);
+              border-radius: var(--radius); background: var(--panel); overflow: hidden; }
+  .pc-head { display: flex; gap: 8px; align-items: stretch; padding: 10px; border-bottom: 1px solid var(--line); }
+  .pc-cust { flex: 1; display: flex; flex-direction: column; align-items: flex-start; text-align: left; padding: 8px 10px; border-radius: var(--radius-sm);
+             border: 1px dashed var(--line-strong); background: transparent; color: var(--ink); font: inherit; cursor: pointer; }
+  .pc-close { display: none; }
+  .pc-lines { flex: 1; overflow: auto; min-height: 120px; }
+  .pc-empty { padding: 32px 16px; }
+  .pc-line { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "name name" "step total"; gap: 6px 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .pc-line.flash { animation: mflash .9s ease-out; }
+  .pc-name { grid-area: name; display: flex; flex-direction: column; text-align: left; background: none; border: 0; padding: 0; color: var(--ink); font: inherit; cursor: pointer; }
+  .pc-line .stepper { grid-area: step; justify-self: start; }
+  .pc-total { grid-area: total; align-self: center; font-variant-numeric: tabular-nums; }
+  .pc-sum { padding: 10px 14px; border-top: 1px solid var(--line); }
+  .pc-sum > div { display: flex; justify-content: space-between; padding: 2px 0; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .pc-grand { color: var(--ink) !important; font: 700 22px var(--display); padding-top: 6px !important; }
+  .pc-acts { display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 6px; padding: 0 12px 10px; }
+  .pos-pay { margin: 0 12px 12px; min-height: 56px; font: 700 18px var(--display); }
+  .pos-bar { display: none; }
+  .c-list { display: flex; flex-direction: column; gap: 6px; margin: 10px 0; }
+  .c-row { display: flex; flex-direction: column; align-items: flex-start; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--bg); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+  .c-row:hover { border-color: var(--brand); }
+  .c-new summary { cursor: pointer; color: var(--brand); font-weight: 600; margin-top: 6px; }
+  .pay-total { display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; }
+  #payLeft b { font: inherit; }
+  .pay-total > b { font: 700 40px/1.1 var(--display); letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+  .pay-methods { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 14px; }
+  .pay-methods .btn { min-height: 46px; }
+  .cash-row { display: flex; gap: 8px; }
+  .cash-row .input { flex: 1; min-width: 0; }
+  .cash-quick { margin-top: 10px; }
+  .cash-quick .btn { min-height: 44px; min-width: 76px; }
+  .change { margin-top: 10px; font-size: 18px; min-height: 26px; }
+  .pay-list { margin-top: 14px; }
+  .qr-pay { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
+  .qr-box { background: #fff; padding: 12px; border-radius: 14px; line-height: 0; }
+  .qr-wait { display: flex; align-items: center; gap: 8px; }
+  .dot-pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--brand); animation: pulse 1.2s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { opacity: .3; transform: scale(.8); } 50% { opacity: 1; transform: scale(1); } }
+  .done-head { display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .change-big { display: flex; flex-direction: column; align-items: center; }
+  .change-big b { font: 700 44px/1.05 var(--display); color: var(--sand); font-variant-numeric: tabular-nums; }
+  .change-big.ok b { color: var(--brand); }
+  .done-grid { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: start; }
+  .rc-preview { background: repeating-conic-gradient(var(--raised) 0 25%, var(--bg) 0 50%) 0 0 / 14px 14px; padding: 12px; border-radius: var(--radius-sm); overflow: auto; max-height: 60vh; }
+  .close-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+  .close-grid .big { font: 700 26px var(--display); font-variant-numeric: tabular-nums; }
+  .diff { min-height: 48px; display: flex; align-items: center; font-size: 18px; }
+  @media (prefers-reduced-motion: reduce) { .dot-pulse { animation: none; opacity: 1; } }
+
+  /* Recibo (pantalla e impresión) */
+  .receipt { background: #fff; color: #000; font: 12px/1.35 "Instrument Sans", Arial, sans-serif; padding: 10px 12px; box-sizing: border-box; }
+  .receipt.r-58 { width: 58mm; font-size: 10.5px; padding: 8px 6px; }
+  .receipt.r-80 { width: 80mm; }
+  .receipt.r-carta { width: 100%; max-width: 640px; font-size: 13px; padding: 0; }
+  .r-biz { font: 700 1.5em/1.15 "Bricolage Grotesque", Arial, sans-serif; text-align: center; }
+  .r-meta { text-align: center; color: #333; font-size: .9em; margin: 2px 0 6px; }
+  .r-test { text-align: center; font-weight: 700; border: 1px dashed #000; padding: 2px; margin: 4px 0; }
+  .r-row { display: flex; justify-content: space-between; gap: 8px; }
+  .r-row > span:last-child { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .r-head { border-top: 1px dashed #000; padding-top: 5px; margin-top: 4px; font-weight: 600; }
+  .r-items { border-top: 1px dashed #000; border-bottom: 1px dashed #000; margin: 5px 0; padding: 4px 0; }
+  .r-item { padding: 2px 0; }
+  .r-sub { color: #333; font-size: .9em; }
+  .r-total { font: 700 1.35em "Bricolage Grotesque", Arial, sans-serif; border-top: 1px solid #000; margin-top: 4px; padding-top: 4px; }
+  .r-qr { display: flex; flex-direction: column; align-items: center; gap: 2px; margin-top: 8px; font-size: .85em; }
+  .r-qr svg { display: block; }
+  .r-foot { text-align: center; margin-top: 8px; font-size: .92em; }
+
   /* Barra fina mientras se actualizan datos en segundo plano */
   #busy { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 95; pointer-events: none; opacity: 0; transition: opacity .2s .15s;
           background: linear-gradient(90deg, transparent, var(--brand), transparent) 0 0 / 40% 100% no-repeat; }
@@ -403,6 +502,16 @@
     table.rt td.actions .btn { margin: 0; }
     table.rt td:empty { display: none; }
     .inv-acts { grid-template-columns: 1fr 1fr; }
+    .pos { grid-template-columns: 1fr; padding-bottom: 76px; }
+    .pos-cart { position: fixed; inset: 0; top: auto; z-index: 48; max-height: 88vh; border-radius: 18px 18px 0 0; transform: translateY(105%);
+                transition: transform .22s ease; box-shadow: 0 -12px 40px rgba(0, 0, 0, .45); }
+    body.cart-open .pos-cart { transform: none; }
+    .pc-close { display: inline-flex; align-items: center; }
+    .pos-bar { display: flex; position: fixed; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 40; justify-content: space-between; align-items: center;
+               min-height: 58px; padding: 0 18px; border-radius: 16px; border: 0; background: var(--brand); color: var(--brand-ink); font: 600 15px var(--font); box-shadow: 0 10px 28px rgba(0, 0, 0, .35); }
+    .pos-bar b { font: 700 17px var(--display); }
+    .pos-bar:disabled { background: var(--raised); color: var(--muted); box-shadow: none; }
+    body:not([data-view="pos"]) .pos-bar { display: none; }
     .mline { grid-template-columns: 1fr auto; }
     .mline .ml-name { grid-column: 1 / -1; padding-right: 30px; }
     .mline { position: relative; }
@@ -443,6 +552,14 @@
     .lb-list { max-height: 34vh; }
     .lb-foot > div:last-child { width: 100%; justify-content: space-between; }
     .kbtn .l { min-height: 2.6em; }
+    .pay-total > b { font-size: 34px; }
+    #toast { bottom: calc(92px + env(safe-area-inset-bottom)); }
+    .qr-pay { grid-template-columns: 1fr; justify-items: center; text-align: center; }
+    .done-grid { grid-template-columns: 1fr; }
+    .rc-preview { max-height: 40vh; display: flex; justify-content: center; }
+    .pos-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .pos-tile { min-height: 118px; padding: 10px; }
+    .pos-tools .btn { flex: 1; }
     .inv-kpis .kpi .v.m { font-size: clamp(18px, 5.6vw, 26px); }
     .mv-head { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
     .mv-modal .body > p.muted { font-size: 14px; margin-bottom: 10px; }
@@ -466,6 +583,7 @@
     #printArea.small .label .lb-name { font-size: 7.5pt; }
     #printArea.small .label .lb-meta { font-size: 6.5pt; }
     #printArea.small .label .lb-meta b { font-size: 9pt; }
+    #printArea.receipt-print .receipt { width: 100%; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 </style>
 
@@ -891,6 +1009,7 @@ function go(view) {
   if (view === 'users') return viewUsers();
   if (view === 'sales') return viewSales();
   if (view === 'inventory') return viewInventory();
+  if (view === 'pos') return viewPos();
   if (view === 'subscribers') return viewSubscribers();
   if (view === 'integrations') return viewIntegrations();
   if (view === 'audit') return viewAudit();
@@ -918,7 +1037,7 @@ function drawHome(d) {
   const kpi = (l, v) => `<div class="card pad kpi"><div class="l">${l}</div><div class="v">${v}</div></div>`;
   const phases = [
     ['Base de datos, usuarios y permisos', true], ['CRM, prospectos e integraciones', true],
-    ['Inventario por movimientos', true], ['POS, facturas y cobro con QR', false],
+    ['Inventario por movimientos', true], ['Punto de venta, caja y recibos', true],
     ['Finanzas: ingresos, gastos, flujo de caja', false], ['Marketing y automatizaciones', false],
   ];
   main.innerHTML = pageHeader('Hola, ' + S.boot.user.name.split(' ')[0]) + `
@@ -948,9 +1067,10 @@ function drawHome(d) {
 
 const ACTIONS = { create: 'Alta', update: 'Edición', delete: 'Baja', invite: 'Invitación', login: 'Inicio de sesión', password_change: 'Cambio de contraseña',
   password_reset: 'Restablecer contraseña', convert: 'Conversión a cliente', key_rotate: 'Nueva clave', reprocess: 'Reprocesar',
-  import: 'Importación', stock_entrada: 'Entrada de inventario', stock_ajuste: 'Ajuste de inventario', stock_conteo: 'Conteo de inventario', stock_traslado: 'Traslado de inventario', stock_sync: 'Inventario → Stripe', refund: 'Reembolso' };
+  import: 'Importación', stock_entrada: 'Entrada de inventario', stock_ajuste: 'Ajuste de inventario', stock_conteo: 'Conteo de inventario', stock_traslado: 'Traslado de inventario', stock_sync: 'Inventario → Stripe', refund: 'Reembolso',
+  cash_open: 'Apertura de caja', cash_close: 'Cierre de caja', cash_entrada: 'Entrada de efectivo', cash_salida: 'Salida de efectivo', receipt_email: 'Recibo por correo' };
 const ENTITY_NAMES = { Customers: 'Cliente', Products: 'Producto/servicio', Users: 'Usuario', Tenants: 'Empresa', Leads: 'Prospecto',
-  Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor', Stock_Movements: 'Inventario' };
+  Sales: 'Venta', Integrations: 'Integración', Webhooks: 'Webhook', Inbound_Events: 'Evento recibido', Subscribers: 'Suscriptor', Stock_Movements: 'Inventario', Cash_Sessions: 'Caja' };
 const actionLabel = a => ACTIONS[a] || a;
 const entityLabel = e => ENTITY_NAMES[e] || e;
 
@@ -1207,7 +1327,7 @@ function viewSettings() {
   const fields = S.boot.tenantFields;
   $('#main').innerHTML = pageHeader('Ajustes de empresa') + `
     <div class="card pad" style="max-width:720px">
-      <form class="form" id="tenantForm">${fields.map(f => fieldHtml(f, S.boot.tenant[f.name], false)).join('')}</form>
+      <form class="form" id="tenantForm">${fields.map(f => fieldHtml(f, (S.boot.tenant[f.name] === '' || S.boot.tenant[f.name] === undefined) && f.default !== undefined ? f.default : S.boot.tenant[f.name], false)).join('')}</form>
       <div style="display:flex;justify-content:flex-end;align-items:center;gap:10px;margin-top:16px">
         <div class="err" id="tErr" style="margin:0"></div><button class="btn primary" id="tSave">Guardar</button>
       </div>
@@ -1246,7 +1366,7 @@ function bindCopy(root) {
 /* ============================ Ventas ============================ */
 
 const SALE_STATUS = { pagada: 'Pagada', pendiente: 'Pendiente', parcial: 'Pago parcial', cancelada: 'Cancelada', reembolsada: 'Reembolsada', reembolso_parcial: 'Reembolso parcial' };
-const SOURCE_NAMES = { shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: 'Stripe', wompi: 'Wompi', n1co: 'N1co', webhook: 'Automatización' };
+const SOURCE_NAMES = { pos: 'Punto de venta', shopify: 'Shopify', woocommerce: 'WooCommerce', stripe: 'Stripe', wompi: 'Wompi', n1co: 'N1co', webhook: 'Automatización' };
 
 async function viewSales() {
   const main = $('#main');
@@ -1342,13 +1462,16 @@ async function openRefund(id) {
       <div><label class="f">Monto a reembolsar</label><input class="input" name="amount" inputmode="decimal" placeholder="0.00"><div class="hint">Máximo ${esc(m(r.amount))}. Puedes escribir otro monto (por ejemplo, una compensación).</div></div>
       <div class="wide"><label class="f">Nota</label><input class="input" name="notes" placeholder="Opcional"></div>
       ${stripe ? '<div class="wide check"><input type="checkbox" id="rfManual" name="manual"><label for="rfManual">Ya lo reembolsé en Stripe: solo registrarlo aquí</label></div>' : ''}
+      ${!stripe && s.source === 'pos' ? `<div class="wide check"><input type="checkbox" id="rfCash" name="cash_out" ${/Efectivo/.test(s.payment_method || '') ? 'checked' : ''}><label for="rfCash">Devolver en efectivo de mi caja abierta</label></div>` : ''}
     </form>`, async () => {
     const f = $('#rfForm');
     if (!f.reason.value) throw new Error('Elige el motivo del reembolso.');
     const items = r.items.filter(i => st.qty[i.id] > 0).map(i => ({ id: i.id, qty: st.qty[i.id], restock: st.restock[i.id] }));
     const amount = f.amount.value.trim() === '' ? '' : Number(f.amount.value.replace(',', '.'));
     if (!items.length && !(amount > 0)) throw new Error('Elige qué artículos se devuelven o escribe un monto.');
-    const res = await api('apiSaleRefund', S.token, id, { items: items, amount: amount, reason: f.reason.value, notes: f.notes.value, manual: !!(f.manual && f.manual.checked) });
+    const payload = { items: items, amount: amount, reason: f.reason.value, notes: f.notes.value, manual: !!(f.manual && f.manual.checked) };
+    const res = f.cash_out ? await api('apiPosRefund', S.token, id, Object.assign(payload, { cash_out: f.cash_out.checked }))
+                           : await api('apiSaleRefund', S.token, id, payload);
     toast(res.message + (res.restocked ? ' ' + res.restocked + ' pieza(s) regresaron al inventario.' : ''));
     if (S.view === 'sales') viewSales();
     S.inv = null;
@@ -2577,6 +2700,661 @@ function printLabels(all, st) {
   const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
   window.addEventListener('afterprint', done);
   setTimeout(() => window.print(), 60);
+}
+
+/* ============================ Punto de venta (POS) ============================ */
+
+const POS = { cat: null, cart: null, filter: { q: '', category: '' }, last: null };
+const r2 = n => Math.round((Number(n) || 0) * 100) / 100;
+const newRef = () => (window.crypto && crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2));
+const store2 = { get: (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
+                 set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { /* privado */ } } };
+
+function emptyCart() { return { items: [], discount: 0, customer: null, notes: '', ref: newRef() }; }
+
+/** Mismo cálculo que el servidor (Pos.price): el servidor vuelve a calcular y manda. */
+function posTotals() {
+  const st = POS.cat.settings, c = POS.cart;
+  const lines = c.items.map(it => {
+    const p = POS.byId[it.product_id];
+    const rate = (p.tax_rate === null ? st.tax_rate : p.tax_rate) / 100;
+    const unit = it.price === undefined || it.price === '' ? p.price : Number(it.price);
+    return { it: it, p: p, unit: unit, qty: Number(it.qty), disc: r2(it.discount || 0), rate: rate };
+  });
+  const orderDisc = r2(c.discount || 0);
+  const gross = r2(lines.reduce((a, l) => a + l.unit * l.qty - l.disc, 0));
+  let left = orderDisc;
+  lines.forEach((l, i) => {
+    const base = l.unit * l.qty - l.disc;
+    const share = i === lines.length - 1 ? left : r2(gross ? orderDisc * base / gross : 0);
+    l.disc = r2(l.disc + share); left = r2(left - share);
+  });
+  lines.forEach(l => {
+    const net = r2(l.unit * l.qty - l.disc);
+    if (st.prices_include_tax) { l.tax = r2(net - net / (1 + l.rate)); l.total = net; }
+    else { l.tax = r2(net * l.rate); l.total = r2(net + l.tax); }
+  });
+  const total = r2(lines.reduce((a, l) => a + l.total, 0)), tax = r2(lines.reduce((a, l) => a + l.tax, 0));
+  return { lines: lines, total: total, tax: tax, subtotal: r2(total - tax), discount: r2(lines.reduce((a, l) => a + l.disc, 0)),
+           units: lines.reduce((a, l) => a + l.qty, 0) };
+}
+
+const pm = v => moneyIn(v, POS.cat ? POS.cat.settings.currency : undefined);
+
+async function viewPos() {
+  const main = $('#main');
+  main.innerHTML = '<div id="posBody"><div class="empty">Cargando punto de venta…</div></div>';
+  try { POS.cat = await api('apiPosCatalog', S.token); }
+  catch (e) { $('#posBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  POS.byId = {};
+  POS.cat.products.forEach(p => { POS.byId[p.id] = p; });
+  if (!POS.cart) POS.cart = emptyCart();
+  POS.cart.items = POS.cart.items.filter(i => POS.byId[i.product_id]);
+  if (S.view !== 'pos') return;
+  if (!POS.cat.session) return drawPosOpen();
+  drawPos();
+  S.onScan = code => { if (S.view === 'pos' && !$('#modal') && !document.querySelector('.scanner')) posAddByCode(code); };
+}
+
+/* ---------- Abrir caja ---------- */
+
+function drawPosOpen() {
+  const c = POS.cat;
+  $('#main').innerHTML = pageHeader('Punto de venta') + `
+    <div class="card pad pos-open">
+      <h3 style="margin-top:0">Abrir caja</h3>
+      <p class="muted" style="margin-top:0">Cuenta el efectivo con el que empiezas (el "fondo" para dar cambio). Al cerrar, el sistema te dirá cuánto debería haber.</p>
+      <form class="form" id="openForm">
+        <div><label class="f">Nombre de la caja</label><input class="input" name="register" value="${esc(store2.get('nx_pos_register', 'Caja 1'))}" maxlength="40" required></div>
+        <div><label class="f">Ubicación (de dónde sale el inventario)</label><select class="input" name="location">${c.locations.map(l => `<option value="${esc(l)}" ${l === store2.get('nx_pos_location', 'principal') ? 'selected' : ''}>${esc(locName(l))}</option>`).join('')}</select></div>
+        <div class="wide"><label class="f">Efectivo inicial</label><input class="input pos-money" name="opening_cash" inputmode="decimal" value="0.00" required></div>
+      </form>
+      <div class="err" id="openErr"></div>
+      <button class="btn primary pos-big" id="openGo">Abrir caja</button>
+    </div>
+    <div class="section"><button class="btn" id="posHistory">Turnos anteriores</button></div>`;
+  $('#openGo').onclick = async () => {
+    const f = $('#openForm');
+    const b = $('#openGo'); b.disabled = true; $('#openErr').textContent = '';
+    try {
+      await api('apiPosOpen', S.token, { register: f.register.value, location: f.location.value, opening_cash: Number(f.opening_cash.value.replace(',', '.')) });
+      store2.set('nx_pos_register', f.register.value); store2.set('nx_pos_location', f.location.value);
+      toast('Caja abierta');
+      viewPos();
+    } catch (e) { $('#openErr').textContent = e.message; b.disabled = false; }
+  };
+  $('#posHistory').onclick = openPosSessions;
+}
+
+/* ---------- Pantalla de venta ---------- */
+
+function drawPos() {
+  const c = POS.cat, s = c.session;
+  const cats = [...new Set(c.products.map(p => p.category).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
+  $('#main').innerHTML = `
+    <div class="pos">
+      <section class="pos-left">
+        <div class="pos-top">
+          <div class="pos-sess"><b>${esc(s.register)}</b><span class="muted sm">${esc(locName(s.location))} · ${esc(s.number)}</span></div>
+          <div class="pos-tools">
+            ${POS.last ? '<button class="btn sm" id="posLast">Último recibo</button>' : ''}
+            <button class="btn sm" id="posCash">Efectivo ±</button>
+            <button class="btn sm" id="posClose">Cerrar caja</button>
+          </div>
+        </div>
+        <div class="scanbox pos-search"><input class="input" id="posQ" placeholder="Buscar o escanear…" autocomplete="off" data-scan value="${esc(POS.filter.q)}">
+          <button class="btn primary" id="posCam" aria-label="Escanear con la cámara">${ICONS.scan}<span>Escanear</span></button></div>
+        ${cats.length ? `<div class="pos-cats chips" role="group" aria-label="Categorías"><button class="btn sm ${!POS.filter.category ? 'primary' : ''}" data-cat="">Todo</button>${cats.map(k => `<button class="btn sm ${POS.filter.category === k ? 'primary' : ''}" data-cat="${esc(k)}">${esc(k)}</button>`).join('')}</div>` : ''}
+        <div class="pos-grid" id="posGrid"></div>
+      </section>
+      <aside class="pos-cart" id="posCart"></aside>
+      <button class="pos-bar" id="posBar"></button>
+    </div>`;
+  const q = $('#posQ');
+  q.oninput = () => { POS.filter.q = q.value; drawPosGrid(); };
+  q.onkeydown = ev => {
+    if (ev.key !== 'Enter') return;
+    ev.preventDefault();
+    const v = q.value.trim();
+    if (!v) return;
+    if (posAddByCode(v, true)) { q.value = ''; POS.filter.q = ''; drawPosGrid(); }
+    else {
+      const hits = posVisible();
+      if (hits.length === 1) { posAdd(hits[0]); q.value = ''; POS.filter.q = ''; drawPosGrid(); }
+    }
+  };
+  $('#posCam').onclick = () => scanCamera({ title: 'Agregar al carrito', continuous: true, onCode: code => {
+    const p = findLocal(POS.cat.products, code);
+    if (!p) return { ok: false, label: 'Código no registrado: ' + code };
+    posAdd(p);
+    const n = POS.cart.items.find(i => i.product_id === p.id).qty;
+    return { ok: true, label: p.name + ' — ' + n + ' en el carrito', short: p.name + ' ×' + n };
+  } });
+  document.querySelectorAll('[data-cat]').forEach(b => b.onclick = () => { POS.filter.category = b.dataset.cat; drawPos(); });
+  $('#posCash').onclick = openCashMove;
+  $('#posClose').onclick = openPosClose;
+  if ($('#posLast')) $('#posLast').onclick = () => showPosDone(POS.last);
+  $('#posBar').onclick = () => document.body.classList.add('cart-open');
+  drawPosGrid();
+  drawPosCart();
+}
+
+function posVisible() {
+  const t = POS.filter.q.trim().toLowerCase(), cat = POS.filter.category;
+  return POS.cat.products.filter(p => (!cat || p.category === cat) &&
+    (!t || (p.name + ' ' + p.sku + ' ' + p.barcode + ' ' + p.category).toLowerCase().indexOf(t) >= 0));
+}
+
+function initials(name) {
+  return String(name || '?').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+}
+function hue(s) { let h = 0; for (const ch of String(s || '')) h = (h * 31 + ch.charCodeAt(0)) % 360; return h; }
+
+function drawPosGrid() {
+  const list = posVisible();
+  const box = $('#posGrid');
+  if (!box) return;
+  if (!POS.cat.products.length) { box.innerHTML = '<div class="empty">No hay productos activos. Créalos en <b>Productos y servicios</b>.</div>'; return; }
+  if (!list.length) { box.innerHTML = '<div class="empty">Ningún producto coincide.</div>'; return; }
+  box.innerHTML = list.map(p => {
+    const inCart = POS.cart.items.find(i => i.product_id === p.id);
+    const out = p.tracked && p.stock <= 0;
+    return `<button class="pos-tile ${out ? 'out' : ''}" data-id="${esc(p.id)}" style="--h:${hue(p.category || p.name)}">
+      <span class="pt-ini" aria-hidden="true">${esc(initials(p.name))}</span>
+      ${inCart ? `<span class="pt-n" aria-label="${inCart.qty} en el carrito">${qtyFmt(inCart.qty)}</span>` : ''}
+      <span class="pt-name">${esc(p.name)}</span>
+      <span class="pt-foot"><b>${esc(pm(p.price))}</b>${p.tracked ? `<span class="pt-stock ${out ? 'neg' : p.stock <= 3 ? 'warn' : ''}">${out ? 'Agotado' : qtyFmt(p.stock) + ' disp.'}</span>` : ''}</span>
+    </button>`;
+  }).join('');
+  box.querySelectorAll('.pos-tile').forEach(b => b.onclick = () => posAdd(POS.byId[b.dataset.id]));
+}
+
+function posAdd(p, qty) {
+  if (!p) return;
+  const it = POS.cart.items.find(i => i.product_id === p.id);
+  if (it) it.qty = r2(Number(it.qty) + (qty || 1));
+  else POS.cart.items.push({ product_id: p.id, qty: qty || 1 });
+  if (p.tracked) {
+    const n = POS.cart.items.find(i => i.product_id === p.id).qty;
+    if (n > p.stock) toast(p.name + ': solo hay ' + qtyFmt(p.stock) + ' en ' + locName(POS.cat.session.location) + '. Puedes venderlo igual; el inventario quedará en negativo.', true);
+  }
+  drawPosGrid(); drawPosCart(p.id);
+}
+
+function posAddByCode(code, quiet) {
+  const p = findLocal(POS.cat.products, code);
+  if (!p) { if (!quiet) { beep(false); toast('Código no registrado: ' + code, true); } return false; }
+  beep(true); posAdd(p); return true;
+}
+
+function drawPosCart(flashId) {
+  const box = $('#posCart');
+  if (!box) return;
+  const c = POS.cart, t = posTotals(), st = POS.cat.settings;
+  box.innerHTML = `
+    <div class="pc-head">
+      <button class="pc-cust" id="pcCust">${c.customer ? '<b>' + esc(c.customer.name) + '</b>' + (c.customer.phone || c.customer.email ? '<span class="muted sm">' + esc(c.customer.phone || c.customer.email) + '</span>' : '') : '<b>Consumidor final</b><span class="muted sm">Toca para elegir cliente</span>'}</button>
+      <button class="btn sm pc-close" id="pcHide" aria-label="Volver a productos">✕</button>
+    </div>
+    <div class="pc-lines">${c.items.length ? t.lines.map((l, i) => `<div class="pc-line ${l.p.id === flashId ? 'flash' : ''}" data-i="${i}">
+        <button class="pc-name" data-edit="${i}"><b>${esc(l.p.name)}</b><span class="muted sm">${esc(pm(l.unit))}${l.it.discount ? ' · desc. ' + esc(pm(l.it.discount)) : ''}${l.it.price !== undefined && l.it.price !== '' ? ' · precio cambiado' : ''}</span></button>
+        <div class="stepper sm"><button type="button" data-d="-1" aria-label="Menos">−</button><input class="input" inputmode="decimal" value="${esc(qtyFmt(l.qty))}" aria-label="Cantidad"><button type="button" data-d="1" aria-label="Más">+</button></div>
+        <b class="pc-total">${esc(pm(l.total))}</b>
+      </div>`).join('') : '<div class="empty pc-empty">Toca un producto o escanea su código.</div>'}</div>
+    <div class="pc-sum">
+      ${t.discount ? `<div><span>Descuento</span><span>−${esc(pm(t.discount))}</span></div>` : ''}
+      <div><span>${st.prices_include_tax ? 'IVA incluido' : 'Subtotal'}</span><span>${esc(pm(st.prices_include_tax ? t.tax : t.subtotal))}</span></div>
+      ${st.prices_include_tax ? '' : `<div><span>Impuesto</span><span>${esc(pm(t.tax))}</span></div>`}
+      <div class="pc-grand"><span>Total</span><span>${esc(pm(t.total))}</span></div>
+    </div>
+    <div class="pc-acts">
+      ${POS.cat.can_discount ? '<button class="btn" id="pcDisc">Descuento</button>' : ''}
+      <button class="btn" id="pcNote">${c.notes ? 'Nota ✓' : 'Nota'}</button>
+      <button class="btn" id="pcClear" ${c.items.length ? '' : 'disabled'}>Vaciar</button>
+    </div>
+    <button class="btn primary pos-pay" id="pcPay" ${c.items.length ? '' : 'disabled'}>Cobrar ${c.items.length ? esc(pm(t.total)) : ''}</button>`;
+  const bar = $('#posBar');
+  if (bar) { bar.innerHTML = c.items.length ? `<span>${qtyFmt(t.units)} artículo(s)</span><b>Cobrar ${esc(pm(t.total))}</b>` : '<span>Carrito vacío</span>'; bar.disabled = !c.items.length; }
+  box.querySelectorAll('.pc-line').forEach(row => {
+    const l = t.lines[Number(row.dataset.i)];
+    const inp = row.querySelector('input');
+    const set = v => {
+      v = r2(v);
+      if (!(v > 0)) { c.items.splice(c.items.indexOf(l.it), 1); }
+      else l.it.qty = l.p.kind === 'producto' ? Math.max(1, Math.round(v)) : v;
+      drawPosCart(); drawPosGrid();
+    };
+    row.querySelectorAll('[data-d]').forEach(b => b.onclick = () => set(Number(l.it.qty) + Number(b.dataset.d)));
+    inp.onchange = () => set(Number(inp.value.replace(',', '.')));
+  });
+  box.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => editPosLine(t.lines[Number(b.dataset.edit)]));
+  $('#pcCust').onclick = pickCustomer;
+  $('#pcHide').onclick = () => document.body.classList.remove('cart-open');
+  if ($('#pcDisc')) $('#pcDisc').onclick = () => {
+    openModal('Descuento general', `<form class="form" id="dForm"><div class="wide"><label class="f">Monto a descontar del total</label>
+      <input class="input pos-money" name="amount" inputmode="decimal" value="${c.discount ? esc(c.discount) : ''}" placeholder="0.00"></div>
+      <div class="wide chips">${[5, 10, 15, 20].map(p => `<button type="button" class="btn sm" data-pct="${p}">${p} %</button>`).join('')}</div></form>`, async () => {
+      const v = r2(Number($('#dForm').amount.value.replace(',', '.')) || 0);
+      const gross = r2(c.items.reduce((a, it) => { const p = POS.byId[it.product_id]; return a + (it.price === undefined || it.price === '' ? p.price : Number(it.price)) * it.qty - r2(it.discount || 0); }, 0));
+      if (v < 0 || v > gross) throw new Error('El descuento no puede ser mayor que ' + pm(gross) + '.');
+      c.discount = v; drawPosCart();
+    }, 'Aplicar');
+    document.querySelectorAll('[data-pct]').forEach(b => b.onclick = () => {
+      const gross = c.items.reduce((a, it) => { const p = POS.byId[it.product_id]; return a + (it.price === undefined || it.price === '' ? p.price : Number(it.price)) * it.qty - r2(it.discount || 0); }, 0);
+      $('#dForm').amount.value = r2(gross * Number(b.dataset.pct) / 100).toFixed(2);
+    });
+  };
+  $('#pcNote').onclick = () => openModal('Nota de la venta', `<textarea class="input" id="nText" rows="3" maxlength="400">${esc(c.notes)}</textarea>`, async () => { c.notes = $('#nText').value.trim(); drawPosCart(); }, 'Guardar');
+  $('#pcClear').onclick = () => { if (confirm('¿Vaciar el carrito?')) { POS.cart = emptyCart(); drawPosCart(); drawPosGrid(); } };
+  $('#pcPay').onclick = openPayment;
+}
+
+function editPosLine(l) {
+  const can = POS.cat.can_discount;
+  openModal(l.p.name, `<form class="form" id="lForm">
+      <div><label class="f">Cantidad</label><input class="input" name="qty" inputmode="decimal" value="${esc(qtyFmt(l.qty))}"></div>
+      ${can ? `<div><label class="f">Precio unitario</label><input class="input" name="price" inputmode="decimal" value="${esc(l.unit)}"><div class="hint">Catálogo: ${esc(pm(l.p.price))}</div></div>
+      <div class="wide"><label class="f">Descuento en esta línea (monto)</label><input class="input" name="discount" inputmode="decimal" value="${l.it.discount ? esc(l.it.discount) : ''}" placeholder="0.00"></div>` : '<p class="muted wide">Para cambiar precios o dar descuentos pide a un gerente.</p>'}
+    </form><button type="button" class="btn danger" id="lDel" style="margin-top:12px">Quitar del carrito</button>`, async () => {
+    const f = $('#lForm');
+    const qty = Number(f.qty.value.replace(',', '.'));
+    if (!(qty > 0)) throw new Error('La cantidad debe ser mayor que 0.');
+    l.it.qty = l.p.kind === 'producto' ? Math.round(qty) : qty;
+    if (can) {
+      const price = Number(f.price.value.replace(',', '.'));
+      if (!(price >= 0)) throw new Error('Precio no válido.');
+      l.it.price = r2(price) === r2(l.p.price) ? undefined : r2(price);
+      const d = r2(Number((f.discount.value || '0').replace(',', '.')) || 0);
+      if (d < 0 || d > r2(price * l.it.qty)) throw new Error('Descuento no válido.');
+      l.it.discount = d || undefined;
+    }
+    drawPosCart(); drawPosGrid();
+  }, 'Guardar');
+  $('#lDel').onclick = () => { POS.cart.items.splice(POS.cart.items.indexOf(l.it), 1); closeModal(true); drawPosCart(); drawPosGrid(); };
+}
+
+function pickCustomer() {
+  openModal('Cliente', `
+    <input class="input" id="cQ" placeholder="Buscar por nombre, teléfono, correo o NIT…" autocomplete="off">
+    <div id="cList" class="c-list"></div>
+    <details class="c-new"><summary>Cliente nuevo</summary>
+      <form class="form" id="cForm" style="margin-top:10px">
+        <div class="wide"><label class="f">Nombre</label><input class="input" name="name"></div>
+        <div><label class="f">Teléfono / WhatsApp</label><input class="input" name="phone" type="tel" inputmode="tel"></div>
+        <div><label class="f">Correo</label><input class="input" name="email" type="email" inputmode="email"></div>
+        <div class="wide"><label class="f">NIT / DUI / Tax ID</label><input class="input" name="tax_id"></div>
+      </form><button type="button" class="btn primary" id="cUse" style="margin-top:10px">Usar este cliente</button></details>
+    <div style="margin-top:12px"><button type="button" class="btn" id="cNone">Consumidor final</button></div>`, null);
+  let timer;
+  const choose = c => { POS.cart.customer = c; closeModal(true); drawPosCart(); };
+  $('#cQ').oninput = () => {
+    clearTimeout(timer);
+    const v = $('#cQ').value.trim();
+    if (v.length < 2) { $('#cList').innerHTML = ''; return; }
+    timer = setTimeout(async () => {
+      try {
+        const rows = await api('apiPosCustomers', S.token, v);
+        if (!$('#cList')) return;
+        $('#cList').innerHTML = rows.length ? rows.map((c, i) => `<button class="c-row" data-i="${i}"><b>${esc(c.name)}</b><span class="muted sm">${esc([c.phone, c.email, c.tax_id].filter(Boolean).join(' · '))}</span></button>`).join('')
+          : '<p class="muted">Sin resultados. Usa "Cliente nuevo".</p>';
+        $('#cList').querySelectorAll('[data-i]').forEach(b => b.onclick = () => choose(rows[Number(b.dataset.i)]));
+      } catch (e) { toast(e.message, true); }
+    }, 300);
+  };
+  $('#cUse').onclick = () => {
+    const f = $('#cForm');
+    const c = { name: f.name.value.trim(), phone: f.phone.value.trim(), email: f.email.value.trim(), tax_id: f.tax_id.value.trim() };
+    if (!c.name && !c.phone && !c.email) { toast('Escribe al menos el nombre, teléfono o correo.', true); return; }
+    if (c.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c.email)) { toast('Revisa el correo.', true); return; }
+    choose(c);
+  };
+  $('#cNone').onclick = () => choose(null);
+  setTimeout(() => $('#cQ') && $('#cQ').focus(), 50);
+}
+
+/* ---------- Cobro ---------- */
+
+function cartPayload() {
+  const c = POS.cart;
+  return {
+    client_ref: c.ref, notes: c.notes, discount: c.discount || 0,
+    items: c.items.map(i => ({ product_id: i.product_id, qty: i.qty, price: i.price, discount: i.discount })),
+    customer_id: c.customer && c.customer.id ? c.customer.id : undefined,
+    customer: c.customer && !c.customer.id ? c.customer : undefined,
+  };
+}
+
+function receiptBase() {
+  if (ON_GOOGLE) return '';
+  return new URL('recibo.html', location.href).href.split('?')[0] + '?t=';
+}
+function receiptUrl(token) {
+  return ON_GOOGLE ? (POS.cat.web_app_url || '') + '?action=receipt&t=' + token : receiptBase() + token;
+}
+
+function openPayment() {
+  const t = posTotals();
+  const M = POS.cat.methods;
+  const pays = [];
+  const remaining = () => r2(t.total - pays.reduce((a, p) => a + p.amount, 0));
+  const methods = ['efectivo', 'tarjeta', 'transferencia', 'wompi', 'n1co', 'otro'];
+  openModal('Cobrar', `
+    <div class="pay-total"><span class="muted">Total</span><b>${esc(pm(t.total))}</b><span class="muted" id="payLeft"></span></div>
+    <div class="pay-methods" role="tablist">${methods.map(m => `<button type="button" class="btn ${m === 'efectivo' ? 'primary' : ''}" data-m="${m}">${esc(M[m])}</button>`).join('')}
+      ${POS.cat.stripe_qr ? `<button type="button" class="btn" data-m="stripe_qr">QR Stripe${POS.cat.stripe_qr.mode === 'test' ? ' (prueba)' : ''}</button>` : ''}</div>
+    <div id="payPanel"></div>
+    <div id="payList"></div>`, async () => {
+    if (remaining() > 0.009) throw new Error('Falta cobrar ' + pm(remaining()) + '.');
+    const r = await api('apiPosCheckout', S.token, Object.assign(cartPayload(), { payments: pays.map(p => ({ method: p.method, amount: p.amount, tendered: p.tendered, reference: p.reference })) }));
+    posFinished(r);
+  }, 'Finalizar venta', true);
+  const ok = $('#modalOk');
+  let method = 'efectivo';
+  const drawList = () => {
+    const left = remaining();
+    $('#payLeft').innerHTML = pays.length ? (left > 0 ? 'Falta <b>' + esc(pm(left)) + '</b>' : '<b class="pos">Completo</b>') : '';
+    $('#payList').innerHTML = pays.length ? `<ul class="list pay-list">${pays.map((p, i) => `<li><span>${esc(M[p.method])}${p.reference ? ' <span class="muted sm">' + esc(p.reference) + '</span>' : ''}${p.method === 'efectivo' && p.tendered > p.amount ? '<br><span class="muted sm">Recibido ' + esc(pm(p.tendered)) + ' · cambio ' + esc(pm(p.tendered - p.amount)) + '</span>' : ''}</span>
+      <span><b>${esc(pm(p.amount))}</b> <button type="button" class="ml-x" data-x="${i}" aria-label="Quitar pago">✕</button></span></li>`).join('')}</ul>` : '';
+    $('#payList').querySelectorAll('[data-x]').forEach(b => b.onclick = () => { pays.splice(Number(b.dataset.x), 1); drawList(); drawPanel(); });
+    ok.disabled = left > 0.009;
+    ok.textContent = left > 0.009 ? 'Falta ' + pm(left) : 'Finalizar venta';
+  };
+  const add = p => { pays.push(p); drawList(); drawPanel(); };
+  const drawPanel = () => {
+    const left = remaining();
+    document.querySelectorAll('[data-m]').forEach(b => { b.classList.toggle('primary', b.dataset.m === method); b.disabled = left <= 0.009 && b.dataset.m !== method; });
+    const qr = document.querySelector('[data-m=stripe_qr]');
+    if (qr) qr.disabled = pays.length > 0;
+    const panel = $('#payPanel');
+    if (left <= 0.009) { panel.innerHTML = ''; return; }
+    if (method === 'efectivo') {
+      const opts = [left].concat([1, 5, 10, 20, 50, 100].map(b => Math.ceil(left / b) * b)).filter((v, i, a) => a.indexOf(v) === i && v >= left).slice(0, 5);
+      panel.innerHTML = `<label class="f">Efectivo recibido</label>
+        <div class="cash-row"><input class="input pos-money" id="cashIn" inputmode="decimal" value="${left.toFixed(2)}"><button type="button" class="btn primary" id="cashAdd">Aplicar</button></div>
+        <div class="chips cash-quick">${opts.map((v, i) => `<button type="button" class="btn" data-q="${v}">${i === 0 ? 'Exacto' : esc(pm(v))}</button>`).join('')}</div>
+        <div class="change" id="chg"></div>`;
+      const inp = $('#cashIn');
+      const showChange = () => { const v = Number(inp.value.replace(',', '.')) || 0; $('#chg').innerHTML = v >= left ? 'Cambio: <b>' + esc(pm(r2(v - left))) + '</b>' : v > 0 ? 'Abono parcial en efectivo: ' + esc(pm(v)) : ''; };
+      inp.oninput = showChange; showChange();
+      const apply = v => {
+        v = r2(v);
+        if (!(v > 0)) { toast('Escribe cuánto recibiste.', true); return; }
+        add({ method: 'efectivo', amount: Math.min(v, left), tendered: v });
+      };
+      $('#cashAdd').onclick = () => apply(Number(inp.value.replace(',', '.')));
+      inp.onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); apply(Number(inp.value.replace(',', '.'))); } };
+      panel.querySelectorAll('[data-q]').forEach(b => b.onclick = () => apply(Number(b.dataset.q)));
+      setTimeout(() => inp.select(), 30);
+    } else if (method === 'stripe_qr') {
+      panel.innerHTML = `<p class="muted">Se crea un cobro de Stripe por <b>${esc(pm(t.total))}</b> y se muestra un QR. El cliente lo escanea con su teléfono y paga; la venta se confirma sola.</p>
+        <button type="button" class="btn primary pos-big" id="qrGo">Mostrar QR de pago</button>`;
+      $('#qrGo').onclick = () => startStripeQr(t);
+    } else {
+      const refLabel = { tarjeta: 'Número de aprobación (opcional)', transferencia: 'Referencia de la transferencia', wompi: 'ID de la transacción de Wompi', n1co: 'ID de la transacción de N1co', otro: 'Detalle' }[method];
+      panel.innerHTML = `<div class="form">
+          <div><label class="f">Monto</label><input class="input pos-money" id="pAmt" inputmode="decimal" value="${left.toFixed(2)}"></div>
+          <div><label class="f">${esc(refLabel)}</label><input class="input" id="pRef" maxlength="80"></div></div>
+        ${method === 'wompi' || method === 'n1co' ? '<p class="muted sm">Cobra con el enlace o QR de ' + esc(M[method]) + ' y confirma aquí cuando veas el pago aprobado.</p>' : ''}
+        ${method === 'tarjeta' ? '<p class="muted sm">Pasa la tarjeta en tu terminal; cuando salga aprobada, confirma aquí.</p>' : ''}
+        <button type="button" class="btn primary" id="pAdd" style="margin-top:10px">Confirmar ${esc(M[method])}</button>`;
+      $('#pAdd').onclick = () => {
+        const v = r2(Number($('#pAmt').value.replace(',', '.')));
+        if (!(v > 0)) { toast('Escribe el monto.', true); return; }
+        if (v > left + 0.009) { toast('El monto es mayor que lo que falta (' + pm(left) + ').', true); return; }
+        if (method === 'transferencia' && !$('#pRef').value.trim()) { toast('Escribe la referencia de la transferencia.', true); return; }
+        add({ method: method, amount: v, reference: $('#pRef').value.trim() });
+      };
+    }
+  };
+  document.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { method = b.dataset.m; drawPanel(); });
+  drawPanel(); drawList();
+}
+
+async function startStripeQr(t) {
+  let pend;
+  try { pend = await api('apiPosStripeQr', S.token, Object.assign(cartPayload(), { receipt_base: receiptBase() })); }
+  catch (e) { toast(e.message, true); return; }
+  if (pend.status === 'pagada') return posFinished(pend);
+  let alive = true, timer = null;
+  openModal('Paga con tu teléfono', `
+    <div class="qr-pay">
+      <div class="qr-box">${qrSvg(pend.url, 'min(72vw, 300px)')}</div>
+      <div><div class="pay-total"><span class="muted">Total</span><b>${esc(pm(pend.total))}</b></div>
+        ${pend.is_test ? '<p><span class="tag prueba">PRUEBA</span> Usa la tarjeta 4242 4242 4242 4242.</p>' : ''}
+        <p class="muted">El cliente escanea el código con la cámara, paga en la página segura de Stripe y esta pantalla se actualiza sola.</p>
+        <p class="qr-wait" aria-live="polite"><span class="dot-pulse" aria-hidden="true"></span> Esperando el pago… <span class="muted sm">${esc(pend.number)}</span></p>
+        <button type="button" class="btn danger" id="qrCancel">Cancelar cobro</button></div>
+    </div>`, null, null, true);
+  const modal = $('#modal');
+  modal._guard = () => !alive || confirm('Si cierras, el cobro sigue abierto en Stripe hasta que lo canceles o expire (30 min). ¿Cerrar de todos modos?');
+  modal._onClose = () => { alive = false; clearTimeout(timer); };
+  const poll = async () => {
+    if (!alive) return;
+    try {
+      const st = await api('apiPosSaleStatus', S.token, pend.id);
+      if (!alive) return;
+      if (st.status === 'pagada') { alive = false; beep(true); closeModal(true); posFinished(st); return; }
+      if (st.status === 'cancelada') { alive = false; closeModal(true); toast('El cobro con QR se canceló.', true); return; }
+    } catch (e) { /* reintenta */ }
+    timer = setTimeout(poll, 3000);
+  };
+  timer = setTimeout(poll, 3000);
+  $('#qrCancel').onclick = async () => {
+    const b = $('#qrCancel'); b.disabled = true;
+    try {
+      const r = await api('apiPosCancelPending', S.token, pend.id);
+      alive = false; closeModal(true);
+      if (r.status === 'pagada') { posFinished(r); return; }
+      toast('Cobro cancelado. El carrito sigue listo.');
+      POS.cart.ref = newRef();
+    } catch (e) { toast(e.message, true); b.disabled = false; }
+  };
+}
+
+function posFinished(r) {
+  POS.last = r;
+  POS.cart = emptyCart();
+  document.body.classList.remove('cart-open');
+  swrClear();
+  viewPos().then(() => showPosDone(r));
+}
+
+/* ---------- Venta terminada: recibo ---------- */
+
+function showPosDone(r) {
+  const rc = r.receipt;
+  const link = receiptUrl(r.token);
+  const phone = r.customer && r.customer.phone ? r.customer.phone : '';
+  const email = r.customer && r.customer.email ? r.customer.email : '';
+  const fmt = store2.get('nx_receipt_fmt', '80');
+  openModal('Venta ' + r.number, `
+    <div class="done-head">
+      ${r.change > 0 ? `<div class="change-big"><span class="muted">Cambio</span><b>${esc(pm(r.change))}</b></div>` : `<div class="change-big ok"><span class="muted">Pagado</span><b>${esc(pm(rc.total))}</b></div>`}
+      ${rc.is_test ? '<span class="tag prueba">PRUEBA</span>' : ''}
+    </div>
+    <div class="done-grid">
+      <div class="rc-preview" aria-label="Vista previa del recibo">${receiptHtml(rc, '80', link)}</div>
+      <div class="done-acts">
+        <label class="f">Imprimir</label>
+        <div class="cash-row"><select class="input" id="rcFmt"><option value="58" ${fmt === '58' ? 'selected' : ''}>Ticket 58 mm</option><option value="80" ${fmt === '80' ? 'selected' : ''}>Ticket 80 mm</option><option value="carta" ${fmt === 'carta' ? 'selected' : ''}>Hoja carta</option></select>
+          <button type="button" class="btn primary" id="rcPrint">Imprimir</button></div>
+        <label class="f" style="margin-top:12px">WhatsApp</label>
+        <div class="cash-row"><input class="input" id="rcPhone" type="tel" inputmode="tel" placeholder="7123 4567" value="${esc(phone)}"><button type="button" class="btn" id="rcWa">Enviar</button></div>
+        <label class="f" style="margin-top:12px">Correo</label>
+        <div class="cash-row"><input class="input" id="rcMail" type="email" inputmode="email" placeholder="cliente@correo.com" value="${esc(email)}"><button type="button" class="btn" id="rcMailGo">Enviar</button></div>
+        <div class="chips" style="margin-top:12px"><button type="button" class="btn" id="rcQr">Mostrar QR del recibo</button><button type="button" class="btn" id="rcCopy">Copiar enlace</button></div>
+      </div>
+    </div>`, async () => {}, 'Nueva venta', true);
+  const cancel = document.querySelector('#modal footer .btn:not(#modalOk)');
+  if (cancel) cancel.style.display = 'none'; // la venta ya está hecha: solo "Nueva venta"
+  $('#rcFmt').onchange = ev => store2.set('nx_receipt_fmt', ev.target.value);
+  $('#rcPrint').onclick = () => printReceipt(rc, $('#rcFmt').value, link);
+  $('#rcWa').onclick = () => {
+    let d = $('#rcPhone').value.replace(/\D/g, '');
+    if (d.length === 8) d = '503' + d; else if (d.length === 10) d = '1' + d;
+    if (d.length < 10) { toast('Escribe el WhatsApp del cliente.', true); return; }
+    const text = '¡Gracias por tu compra en ' + rc.business + '! Recibo ' + rc.number + ' por ' + pm(rc.total) + '.' + (link ? '\nMíralo aquí: ' + link : '');
+    window.open('https:\/\/wa.me/' + d + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  };
+  $('#rcMailGo').onclick = async ev => {
+    ev.target.disabled = true;
+    try { await api('apiPosEmailReceipt', S.token, r.id, $('#rcMail').value, link); toast('Recibo enviado a ' + $('#rcMail').value); }
+    catch (e) { toast(e.message, true); }
+    ev.target.disabled = false;
+  };
+  $('#rcQr').onclick = () => {
+    const el = document.createElement('div');
+    el.className = 'qr-full';
+    el.innerHTML = `<div class="qr-full-inner"><div class="qr-biz">${esc(rc.business)}</div>${qrSvg(link, 'min(78vw, 62vh)')}
+      <div class="qr-event">Recibo ${esc(rc.number)}</div><p>Escanea para guardar tu recibo</p><button class="btn" type="button">Cerrar</button></div>`;
+    document.body.appendChild(el);
+    el.onclick = ev => { if (ev.target === el || ev.target.tagName === 'BUTTON') el.remove(); };
+  };
+  $('#rcCopy').onclick = () => (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(() => toast('Enlace copiado'), () => prompt('Copia el enlace:', link));
+}
+
+/** Recibo en HTML (pantalla e impresión). fmt: '58' | '80' | 'carta'. */
+function receiptHtml(rc, fmt, link) {
+  const m = v => esc(moneyIn(v, rc.currency));
+  return `<div class="receipt r-${fmt}">
+    <div class="r-biz">${esc(rc.business)}</div>
+    <div class="r-meta">${esc([rc.legal_name, rc.tax_id ? 'NIT/ID ' + rc.tax_id : '', rc.address, rc.phone].filter(Boolean).join(' · '))}</div>
+    ${rc.is_test ? '<div class="r-test">PRUEBA — no es una venta real</div>' : ''}
+    <div class="r-row r-head"><span>Recibo ${esc(rc.number)}</span><span>${esc(new Date(rc.date).toLocaleString('es', { dateStyle: 'short', timeStyle: 'short' }))}</span></div>
+    <div class="r-row"><span>${esc(rc.register || '')}</span><span>${esc(rc.customer || '')}</span></div>
+    <div class="r-items">${rc.items.map(i => `<div class="r-item"><div class="r-row"><span>${esc(i.name)}</span><span>${m(i.total)}</span></div>
+      <div class="r-sub">${esc(qtyFmt(i.qty))} × ${m(i.unit_price)}${i.discount ? ' · desc. ' + m(i.discount) : ''}${i.refunded_qty ? ' · ' + i.refunded_qty + ' devuelta(s)' : ''}</div></div>`).join('')}</div>
+    ${rc.discount ? `<div class="r-row"><span>Descuento</span><span>−${m(rc.discount)}</span></div>` : ''}
+    ${rc.prices_include_tax ? `<div class="r-row"><span>IVA incluido</span><span>${m(rc.tax)}</span></div>` : `<div class="r-row"><span>Subtotal</span><span>${m(rc.subtotal)}</span></div><div class="r-row"><span>Impuesto</span><span>${m(rc.tax)}</span></div>`}
+    <div class="r-row r-total"><span>TOTAL</span><span>${m(rc.total)}</span></div>
+    ${rc.payments.map(p => `<div class="r-row"><span>${esc(p.method)}${p.reference ? ' ' + esc(p.reference) : ''}</span><span>${m(p.amount)}</span></div>${p.tendered && p.change ? `<div class="r-row r-sub"><span>Recibido ${m(p.tendered)}</span><span>Cambio ${m(p.change)}</span></div>` : ''}`).join('')}
+    ${rc.refunded ? `<div class="r-row"><span>Reembolsado</span><span>−${m(rc.refunded)}</span></div>` : ''}
+    ${link ? `<div class="r-qr">${qrSvg(link, fmt === '58' ? 92 : 112)}<span>Tu recibo en línea</span></div>` : ''}
+    ${rc.footer ? `<div class="r-foot">${esc(rc.footer)}</div>` : ''}
+  </div>`;
+}
+
+function printReceipt(rc, fmt, link) {
+  let area = $('#printArea');
+  if (!area) { area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+  area.className = 'receipt-print';
+  area.innerHTML = receiptHtml(rc, fmt, link);
+  let ps = $('#printPage');
+  if (!ps) { ps = document.createElement('style'); ps.id = 'printPage'; document.head.appendChild(ps); }
+  if (fmt === 'carta') ps.textContent = '@page { size: letter; margin: 14mm; }';
+  else {
+    // Rollo: el alto de la página es el del recibo, para no gastar papel.
+    area.style.display = 'block'; area.style.position = 'absolute'; area.style.left = '-9999px'; area.style.width = fmt + 'mm';
+    const mm = Math.ceil(area.firstElementChild.getBoundingClientRect().height * 25.4 / 96) + 8;
+    area.removeAttribute('style');
+    ps.textContent = '@page { size: ' + fmt + 'mm ' + Math.max(mm, 60) + 'mm; margin: 0; }';
+  }
+  document.body.classList.add('printing');
+  const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+  window.addEventListener('afterprint', done);
+  setTimeout(() => window.print(), 60);
+}
+
+/* ---------- Caja: entradas/salidas, cierre, historial ---------- */
+
+function openCashMove() {
+  const s = POS.cat.session;
+  openModal('Efectivo de la caja', `
+    <p class="muted" style="margin-top:0">En caja ahora: <b>${esc(pm(s.expected_cash))}</b> (según el sistema)</p>
+    <div class="chips" style="margin-bottom:12px"><button type="button" class="btn primary" data-t="salida">Sacar efectivo</button><button type="button" class="btn" data-t="entrada">Meter efectivo</button></div>
+    <form class="form" id="cmForm">
+      <div><label class="f">Monto</label><input class="input pos-money" name="amount" inputmode="decimal" placeholder="0.00"></div>
+      <div><label class="f">Motivo</label><input class="input" name="reason" list="cmReasons" placeholder="Ej. pago a proveedor"><datalist id="cmReasons"><option value="Pago a proveedor"><option value="Más cambio"><option value="Retiro a caja fuerte"><option value="Gastos del evento"></datalist></div>
+    </form>`, async () => {
+    const f = $('#cmForm');
+    const type = document.querySelector('[data-t].primary').dataset.t;
+    POS.cat.session = await api('apiPosCashMove', S.token, s.id, { type: type, amount: Number(f.amount.value.replace(',', '.')), reason: f.reason.value });
+    toast(type === 'salida' ? 'Salida registrada' : 'Entrada registrada');
+  }, 'Registrar');
+  document.querySelectorAll('[data-t]').forEach(b => b.onclick = () => document.querySelectorAll('[data-t]').forEach(x => x.classList.toggle('primary', x === b)));
+}
+
+async function openPosClose() {
+  let s;
+  try { s = (await api('apiPosCatalog', S.token)).session; } catch (e) { toast(e.message, true); return; }
+  if (!s) { viewPos(); return; }
+  openModal('Cerrar caja · ' + s.register, `
+    <div class="close-grid">
+      <div class="card pad"><div class="muted sm">Ventas</div><div class="big">${s.sales_count}</div><div class="muted sm">${esc(pm(s.sales_total))}</div></div>
+      <div class="card pad"><div class="muted sm">Efectivo esperado</div><div class="big">${esc(pm(s.expected_cash))}</div><div class="muted sm">fondo ${esc(pm(s.opening_cash))}</div></div>
+    </div>
+    ${s.by_method.length ? `<ul class="list">${s.by_method.map(m => `<li><span>${esc(m.label)}</span><b>${esc(pm(m.amount))}</b></li>`).join('')}</ul>` : ''}
+    ${s.refunded_total ? `<p class="muted">Devoluciones: −${esc(pm(s.refunded_total))}</p>` : ''}
+    <form class="form" id="clForm" style="margin-top:12px">
+      <div><label class="f">Efectivo contado</label><input class="input pos-money" name="counted" inputmode="decimal" placeholder="0.00" required></div>
+      <div><label class="f">Diferencia</label><div class="diff" id="clDiff">—</div></div>
+      <div class="wide"><label class="f">Nota</label><input class="input" name="notes" placeholder="Opcional"></div>
+    </form>`, async () => {
+    const f = $('#clForm');
+    if (f.counted.value.trim() === '') throw new Error('Escribe cuánto efectivo contaste.');
+    const closed = await api('apiPosClose', S.token, s.id, { counted_cash: Number(f.counted.value.replace(',', '.')), notes: f.notes.value });
+    POS.cart = emptyCart();
+    toast('Caja cerrada. Diferencia: ' + pm(closed.difference));
+    setTimeout(() => { viewPos(); showSessionReport(closed); }, 0);
+  }, 'Cerrar caja', true);
+  const f = $('#clForm');
+  f.counted.oninput = () => {
+    const v = Number(f.counted.value.replace(',', '.'));
+    if (f.counted.value.trim() === '' || !isFinite(v)) { $('#clDiff').textContent = '—'; return; }
+    const d = r2(v - s.expected_cash);
+    $('#clDiff').innerHTML = d === 0 ? '<b class="pos">Cuadra</b>' : '<b class="' + (d < 0 ? 'neg' : 'warn') + '">' + (d < 0 ? 'Falta ' : 'Sobra ') + esc(pm(Math.abs(d))) + '</b>';
+  };
+}
+
+function sessionReportHtml(s) {
+  return `<div class="receipt r-80">
+    <div class="r-biz">Cierre de caja</div><div class="r-meta">${esc(POS.cat ? POS.cat.settings.business : '')} · ${esc(s.register)} · ${esc(locName(s.location))}</div>
+    <div class="r-row r-head"><span>${esc(s.number)}</span><span>${esc(s.opened_by_name || '')}</span></div>
+    <div class="r-row"><span>Abrió</span><span>${esc(fmtDate(s.opened_at))}</span></div>
+    <div class="r-row"><span>Cerró</span><span>${esc(fmtDate(s.closed_at))}</span></div>
+    <div class="r-row"><span>Ventas (${s.sales_count})</span><span>${esc(pm(s.sales_total))}</span></div>
+    ${s.by_method.map(m => `<div class="r-row r-sub"><span>${esc(m.label)}</span><span>${esc(pm(m.amount))}</span></div>`).join('')}
+    ${s.refunded_total ? `<div class="r-row"><span>Devoluciones</span><span>−${esc(pm(s.refunded_total))}</span></div>` : ''}
+    <div class="r-row"><span>Fondo inicial</span><span>${esc(pm(s.opening_cash))}</span></div>
+    <div class="r-row"><span>Efectivo esperado</span><span>${esc(pm(s.expected_cash))}</span></div>
+    <div class="r-row"><span>Efectivo contado</span><span>${esc(pm(s.counted_cash))}</span></div>
+    <div class="r-row r-total"><span>Diferencia</span><span>${esc(pm(s.difference))}</span></div>
+    ${s.moves.filter(m => m.type === 'entrada' || m.type === 'salida' || m.type === 'devolucion').map(m => `<div class="r-row r-sub"><span>${esc({ entrada: 'Entrada', salida: 'Salida', devolucion: 'Devolución' }[m.type])}: ${esc(m.reason)}</span><span>${esc(pm(m.amount))}</span></div>`).join('')}
+    ${s.notes ? `<div class="r-foot">${esc(s.notes)}</div>` : ''}
+  </div>`;
+}
+
+function showSessionReport(s) {
+  openModal('Cierre ' + s.number, `<div class="rc-preview">${sessionReportHtml(s)}</div>
+    <div style="margin-top:12px"><button type="button" class="btn primary" id="zPrint">Imprimir cierre</button></div>`, null, null, true);
+  $('#zPrint').onclick = () => {
+    let area = $('#printArea');
+    if (!area) { area = document.createElement('div'); area.id = 'printArea'; document.body.appendChild(area); }
+    area.className = 'receipt-print';
+    area.innerHTML = sessionReportHtml(s);
+    let ps = $('#printPage');
+    if (!ps) { ps = document.createElement('style'); ps.id = 'printPage'; document.head.appendChild(ps); }
+    ps.textContent = '@page { size: 80mm 200mm; margin: 0; }';
+    document.body.classList.add('printing');
+    const done = () => { document.body.classList.remove('printing'); window.removeEventListener('afterprint', done); };
+    window.addEventListener('afterprint', done);
+    setTimeout(() => window.print(), 60);
+  };
+}
+
+async function openPosSessions() {
+  openModal('Turnos de caja', '<div class="empty">Cargando…</div>', null, null, true);
+  try {
+    const rows = await api('apiPosSessions', S.token, 60);
+    $('#modal .body').innerHTML = rows.length ? `<div class="card tablewrap"><table><thead><tr><th>Turno</th><th>Caja</th><th>Abrió</th><th class="num">Ventas</th><th class="num">Diferencia</th><th></th></tr></thead><tbody>
+      ${rows.map((s, i) => `<tr><td>${esc(s.number)}<br><span class="tag ${s.status === 'abierta' ? 'activo' : 'inactivo'}">${s.status === 'abierta' ? 'Abierta' : 'Cerrada'}</span></td>
+        <td>${esc(s.register)}<div class="muted sm">${esc(locName(s.location))}</div></td><td>${esc(fmtDate(s.opened_at))}<div class="muted sm">${esc(s.opened_by_name)}</div></td>
+        <td class="num">${s.sales_count}<div class="muted sm">${esc(pm(s.sales_total))}</div></td>
+        <td class="num">${s.difference === null ? '—' : '<b class="' + (s.difference < 0 ? 'neg' : s.difference > 0 ? 'warn' : 'pos') + '">' + esc(pm(s.difference)) + '</b>'}</td>
+        <td class="actions">${s.status === 'cerrada' ? `<button class="btn sm" data-z="${i}">Ver cierre</button>` : ''}</td></tr>`).join('')}</tbody></table></div>`
+      : '<div class="empty">Todavía no hay turnos.</div>';
+    document.querySelectorAll('[data-z]').forEach(b => b.onclick = () => showSessionReport(rows[Number(b.dataset.z)]));
+  } catch (e) { $('#modal .body').innerHTML = '<p class="err">' + esc(e.message) + '</p>'; }
 }
 
 /* ============================ Suscriptores ============================ */
