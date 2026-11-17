@@ -54,10 +54,11 @@
   var fail = function (m) { app.innerHTML = '<p class="msg-c">' + esc(m) + '</p>'; };
   if (!/^[a-f0-9]{32,48}$/.test(t) || window.NEXO_API_URL.indexOf('http') !== 0) return fail('Este enlace de seguimiento no es válido.');
   var when = function (v) { if (!v) return ''; var d = new Date(v); return isNaN(d) ? '' : d.toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' }); };
+  var load = function (quiet) {
   fetch(window.NEXO_API_URL + '?rpc=1', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: 'apiPublicTrack', args: [t] }) })
     .then(function (r) { return r.json(); })
     .then(function (res) {
-      if (!res.ok) return fail(res.error || 'No encontramos este envío.');
+      if (!res.ok) return quiet ? null : fail(res.error || 'No encontramos este envío.');
       var r = res.data;
       document.title = r.status_label + ' · ' + r.business;
       var idx = -1;
@@ -71,7 +72,7 @@
         '<h1 class="status' + (done ? ' done' : bad ? ' bad' : '') + '">' + esc(r.status_label) + '</h1>' +
         '<p class="msg">' + esc(r.message) + '</p>' +
         (bad ? '' : '<div class="bar' + (done ? ' done' : '') + '" style="--n:' + r.steps.length + '" aria-hidden="true">' + r.steps.map(function (s, i) { return '<span class="' + (i <= idx ? 'on' : '') + '"></span>'; }).join('') + '</div>' +
-          '<div class="steps"><span>' + esc(r.steps[0].label) + '</span><b>' + esc(idx >= 0 ? r.steps[idx].label : '') + '</b><span>' + esc(r.steps[r.steps.length - 1].label) + '</span></div>') +
+          '<div class="steps"><span>' + esc(r.steps[0].label) + '</span>' + (idx > 0 && idx < r.steps.length - 1 ? '<b>' + esc(r.steps[idx].label) + '</b>' : '') + '<span>' + esc(r.steps[r.steps.length - 1].label) + '</span></div>') +
         ((r.tracking_number || r.eta || r.city) ? '<div class="card">' +
           (r.carrier ? '<div class="row"><span>Transportista</span><span>' + esc(r.carrier) + '</span></div>' : '') +
           (r.tracking_number ? '<div class="row"><span>Número de guía</span><span>' + esc(r.tracking_number) + '</span></div>' : '') +
@@ -82,9 +83,15 @@
         (r.cod ? '<div class="card cod"><div class="row"><span>Pagas al recibir</span><span><b>' + esc(money(r.cod)) + '</b></span></div></div>' : '') +
         (r.events.length ? '<h2>Movimientos</h2><ol class="ev">' + r.events.map(function (e) {
           return '<li>' + esc(e.text) + (e.where ? ' · ' + esc(e.where) : '') + '<span class="when">' + esc(when(e.at)) + '</span></li>'; }).join('') + '</ol>' : '') +
-        '<p class="foot">' + (r.phone ? '¿Dudas? Escríbenos al ' + esc(r.phone) + '. ' : '') + 'Esta página se actualiza sola cuando hay novedades.</p>';
+        '<p class="foot">' + (r.phone ? '¿Dudas? Escríbenos al ' + esc(r.phone) + '. ' : '') + 'Esta página se actualiza sola cada pocos minutos mientras la tengas abierta.</p>';
     })
-    .catch(function () { fail('No hay conexión. Revisa tu internet e inténtalo de nuevo.'); });
+    .catch(function () { if (!quiet) fail('No hay conexión. Revisa tu internet e inténtalo de nuevo.'); });
+  };
+  load(false);
+  // Vuelve a consultar cada 3 minutos (y al regresar a la pestaña) mientras el envío no termine.
+  var last = 0;
+  setInterval(function () { if (!document.hidden && !/Entregado|Devuelto|Cancelado/.test(document.title)) load(true); }, 180000);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - last > 60000) { last = Date.now(); load(true); } });
 })();
 </script>
 </body>
