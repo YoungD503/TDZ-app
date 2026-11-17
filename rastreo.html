@@ -41,6 +41,8 @@
   ol.ev li:first-child::before { background: var(--brand); }
   .when { color: var(--muted); font-size: 12px; display: block; }
   .msg-c { text-align: center; color: var(--muted); padding-top: 30vh; }
+  .proof { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; min-height: 60px; display: grid; place-items: center; color: var(--muted); font-size: 13px; }
+  .proof img { width: 100%; display: block; }
   .foot { color: var(--muted); font-size: 12px; margin-top: 28px; text-align: center; }
 </style>
 </head>
@@ -54,6 +56,15 @@
   var fail = function (m) { app.innerHTML = '<p class="msg-c">' + esc(m) + '</p>'; };
   if (!/^[a-f0-9]{32,48}$/.test(t) || window.NEXO_API_URL.indexOf('http') !== 0) return fail('Este enlace de seguimiento no es válido.');
   var when = function (v) { if (!v) return ''; var d = new Date(v); return isNaN(d) ? '' : d.toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' }); };
+  var photo = null;
+  var showProof = function () { var box = document.getElementById('proof'); if (box && photo) box.innerHTML = '<img src="data:' + photo.mime + ';base64,' + photo.data + '" alt="Foto de la entrega de tu paquete">'; };
+  var loadProof = function () {
+    if (photo) return showProof();
+    fetch(window.NEXO_API_URL + '?rpc=1', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: 'apiPublicTrackPhoto', args: [t] }) })
+      .then(function (r) { return r.json(); })
+      .then(function (res) { var box = document.getElementById('proof'); if (!res.ok) { if (box) box.remove(); return; } if (!/^image\/(jpeg|png|webp)$/.test(res.data.mime)) return; photo = res.data; showProof(); })
+      .catch(function () { var box = document.getElementById('proof'); if (box) box.textContent = 'No se pudo cargar la foto.'; });
+  };
   var load = function (quiet) {
   fetch(window.NEXO_API_URL + '?rpc=1', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: 'apiPublicTrack', args: [t] }) })
     .then(function (r) { return r.json(); })
@@ -81,9 +92,11 @@
           (r.delivered_at ? '<div class="row"><span>Entregado</span><span>' + esc(when(r.delivered_at)) + '</span></div>' : '') +
           (r.tracking_url ? '<a class="btn" href="' + esc(r.tracking_url) + '" target="_blank" rel="noopener">Ver en ' + esc(r.carrier || 'el transportista') + '</a>' : '') + '</div>' : '') +
         (r.cod ? '<div class="card cod"><div class="row"><span>Pagas al recibir</span><span><b>' + esc(money(r.cod)) + '</b></span></div></div>' : '') +
+        (r.proof ? '<h2>Foto de entrega</h2><div class="proof" id="proof"><span>Cargando la foto…</span></div>' : '') +
         (r.events.length ? '<h2>Movimientos</h2><ol class="ev">' + r.events.map(function (e) {
           return '<li>' + esc(e.text) + (e.where ? ' · ' + esc(e.where) : '') + '<span class="when">' + esc(when(e.at)) + '</span></li>'; }).join('') + '</ol>' : '') +
-        '<p class="foot">' + (r.phone ? '¿Dudas? Escríbenos al ' + esc(r.phone) + '. ' : '') + 'Esta página se actualiza sola cada pocos minutos mientras la tengas abierta.</p>';
+        '<p class="foot">' + (r.phone ? '¿Dudas? Escríbenos al ' + esc(r.phone) + '. ' : '') + (done ? '' : 'Esta página se actualiza sola cada pocos minutos mientras la tengas abierta.') + '</p>';
+      if (r.proof) loadProof();
     })
     .catch(function () { if (!quiet) fail('No hay conexión. Revisa tu internet e inténtalo de nuevo.'); });
   };
