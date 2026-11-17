@@ -5471,7 +5471,7 @@ async function shipDrawList() {
     return;
   }
   $('#shList').innerHTML = `<table class="wrap"><thead><tr><th>Envío</th><th>Para</th><th>Transportista</th><th>Estado</th><th class="num">Cobrar</th><th></th></tr></thead>
-    <tbody>${d.rows.map(r => `<tr><td style="white-space:nowrap"><b>${esc(r.number)}</b>${r.sale_number ? '<br><span class="muted sm">' + esc(r.sale_number) + '</span>' : ''}<br><span class="muted sm">${fmtDate(r.created_at)}</span></td>
+    <tbody>${d.rows.map(r => `<tr><td style="white-space:nowrap"><b>${esc(r.number)}</b>${r.is_test ? ' <span class="tag prueba">PRUEBA</span>' : ''}${r.sale_number ? '<br><span class="muted sm">' + esc(r.sale_number) + '</span>' : ''}<br><span class="muted sm">${fmtDate(r.created_at)}</span></td>
       <td>${esc(r.recipient_name)}<br><span class="muted sm">${esc([r.city, r.country].filter(Boolean).join(', '))}</span></td>
       <td>${esc(r.carrier_name || '—')}${r.tracking_number ? '<br><span class="code sm">' + esc(r.tracking_number) + '</span>' : ''}${r.auto ? ' <span class="tag" title="Se actualiza solo">auto</span>' : ''}</td>
       <td><span class="tag ${SHIP_TAG[r.status] || ''}">${esc(r.status_label)}</span><br><span class="muted sm">${esc(String(r.last_event || '').slice(0, 70))}</span></td>
@@ -5493,6 +5493,7 @@ async function openShipment(id, after) {
   $('#modal h3').textContent = 'Envío ' + sh.number + (sh.sale_number ? ' · ' + sh.sale_number : '');
   $('#modal .body').innerHTML = `
     <div class="ship-steps" aria-label="Avance del envío">${c.order.filter(x => x !== 'guia' || sh.status === 'guia').map(x => `<span class="${c.order.indexOf(x) <= idx ? 'on' : ''}">${esc(c.status[x])}</span>`).join('')}</div>
+    ${sh.is_test ? '<div class="note">Envío de una venta de prueba (Stripe en modo prueba). No se compran guías reales para él y se borra con "Borrar ventas de prueba".</div>' : ''}
     <p><span class="tag ${SHIP_TAG[sh.status] || ''}">${esc(sh.status_label)}</span> ${sh.auto ? '<span class="muted sm">Se actualiza solo con ' + esc(sh.auto_provider) + '</span>' : ''}</p>
     <div class="exp-detail">
       <div>
