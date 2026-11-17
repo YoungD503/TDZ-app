@@ -1763,7 +1763,7 @@ async function viewNotify() {
     '<div id="ntBody"><div class="empty">Cargando…</div></div>';
   $('#ntBack').onclick = () => go('settings');
   main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { NTF.tab = b.dataset.tab; viewNotify(); });
-  try { NTF.d = await api('apiNotifyGet', S.token); } catch (e) { $('#ntBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  try { NTF.d = await api('apiNotifyGet', S.token, receiptBase()); } catch (e) { $('#ntBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
   if (S.view !== 'notify') return;
   ({ avisos: ntRules, whatsapp: ntWhatsapp, correo: ntMail, historial: ntHistory })[NTF.tab]();
 }
@@ -1812,6 +1812,15 @@ function ntRules() {
       </form>
     </div>
     <div class="card pad dte-data">
+      <h3>Correos a tus clientes</h3>
+      <form class="form" id="ntCust">
+        <label class="chk wide"><input type="checkbox" name="order" ${s.customer_email.order ? 'checked' : ''}><span>Confirmación de pedido en compras en línea<br><span class="muted sm">Sale al momento con lo que compró, el total, el pago, la dirección de envío y los botones para ver su recibo y seguir su pedido. Necesita que el cliente tenga correo.</span></span></label>
+        <label class="chk wide"><input type="checkbox" name="pos" ${s.customer_email.pos ? 'checked' : ''}><span>También en ventas del punto de venta<br><span class="muted sm">Solo si eliges un cliente con correo al cobrar.</span></span></label>
+        <p class="muted sm wide" style="margin:0">Los correos de cada paso del envío (enviado, sale a entrega, entregado) se ajustan en <b>Envíos → Ajustes y conexiones</b>. Si el pedido tiene envío, su primer aviso va incluido en esta confirmación.</p>
+        <div class="wide" style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap"><button class="btn" type="button" id="ntSample">Mandarme un ejemplo</button><button class="btn primary" type="submit">Guardar</button></div>
+      </form>
+    </div>
+    <div class="card pad dte-data">
       <h3>Telegram <span class="muted sm" style="font-weight:400">· gratis, llega al momento al celular</span></h3>
       ${!d.telegram_connected ? `<ol class="nt-steps">
           <li>En Telegram abre <a href="https:\/\/t.me/BotFather" target="_blank" rel="noopener">@BotFather</a> y escribe <code>/newbot</code>. Ponle un nombre, como "Avisos de ${esc(S.boot.tenant.name || 'mi negocio')}".</li>
@@ -1842,6 +1851,12 @@ function ntRules() {
   $('#ntRules').onsubmit = ev => { ev.preventDefault(); const f = ev.target;
     ntCall('apiNotifySave', [{ rules: { sale: f.sale.value, sale_min: numIn(f.sale_min.value), stock: f.stock.checked, lead: f.lead.checked, ship_problem: f.ship_problem.checked,
       ship_delivered: f.ship_delivered.checked, summary: f.summary.checked, summary_hour: Number(f.summary_hour.value) } }], 'Guardado').catch(() => {}); };
+  $('#ntCust').onsubmit = ev => { ev.preventDefault(); const f = ev.target; ntCall('apiNotifySave', [{ customer_email: { order: f.order.checked, pos: f.pos.checked } }], 'Guardado').catch(() => {}); };
+  $('#ntSample').onclick = async ev => {
+    ev.target.disabled = true;
+    try { const r = await api('apiNotifyOrderSample', S.token); toast('Ejemplo del pedido ' + r.sale + ' enviado a ' + r.to); } catch (e) { toast(e.message, true); }
+    ev.target.disabled = false;
+  };
   $('#ntSum').onclick = ev => ntCall('apiNotifySummary', [], 'Resumen enviado', ev.target).catch(() => {});
   $('#ntMail').onsubmit = ev => { ev.preventDefault(); const f = ev.target; ntCall('apiNotifySave', [{ email: { on: f.on.checked, to: f.to.value } }], 'Guardado').catch(() => {}); };
   document.querySelectorAll('[data-test]').forEach(b => b.onclick = async () => {
@@ -2003,7 +2018,7 @@ function ntDrawHistory(rows) {
   if (!rows.length) { $('#ntHist').innerHTML = `<div class="empty">${NTF.hf ? 'Nada por aquí.' : 'Aquí verás cada aviso que sale: a quién, por dónde y si llegó.'}</div>`; return; }
   $('#ntHist').innerHTML = `<table class="wrap"><thead><tr><th>Cuándo</th><th>Aviso</th><th>Por</th><th>Estado</th><th></th></tr></thead><tbody>${rows.map(n => `<tr>
     <td style="white-space:nowrap">${esc(fmtDate(n.at))}</td>
-    <td>${esc(n.subject || NTF_KINDS[n.kind] || n.kind)}<br><span class="muted sm">${esc(NTF_KINDS[n.kind] || n.kind)}${n.audience === 'customer' ? ' · al cliente' : ''}</span>${n.error ? '<br><span class="sm" style="color:var(--danger)">' + esc(n.error) + '</span>' : ''}</td>
+    <td>${esc(n.subject || NTF_KINDS[n.kind] || n.kind)}<br><span class="muted sm">${esc(NTF_KINDS[n.kind] || n.kind)}${n.audience === 'cliente' ? ' · al cliente' : ''}</span>${n.error ? '<br><span class="sm" style="color:var(--danger)">' + esc(n.error) + '</span>' : ''}</td>
     <td>${esc(n.channel_label || n.channel)}<br><span class="muted sm">${esc(n.to)}</span></td>
     <td><span class="tag ${n.status}">${esc(SL[n.status] || n.status)}</span></td>
     <td class="actions">${n.status === 'fallido' ? `<button class="btn sm" data-retry="${esc(n.id)}">Reintentar</button>` : ''}</td></tr>`).join('')}</tbody></table>`;
