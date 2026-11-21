@@ -755,6 +755,35 @@
   .dte-qr svg { border-radius: 8px; }
   .dte-json { margin-top: 12px; }
   .dte-json pre { max-height: 320px; overflow: auto; }
+  .mk-period { display: flex; gap: 6px; flex-wrap: wrap; }
+  .mk-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .mk-kpi .mk-sub { margin-top: 6px; font-size: 13px; min-height: 18px; }
+  .mk-d { font-weight: 600; font-variant-numeric: tabular-nums; }
+  .mk-d.up { color: var(--brand-text); }
+  .mk-d.down { color: var(--danger); }
+  .mk-vs { margin: 8px 0 14px; }
+  .mk-cta { display: flex; gap: 16px; align-items: center; justify-content: space-between; flex-wrap: wrap; border-color: var(--brand-line); }
+  .mk-cta > div { flex: 1 1 320px; }
+  .mk-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 12px; align-items: start; }
+  .mk-grid .mk-wide { grid-column: span 1; }
+  .mk-grid h3 { margin-top: 0; }
+  .mk-bars { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .mk-bl { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+  .mk-bl span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mk-bl b { font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 600; }
+  .mk-track { height: 6px; border-radius: 4px; background: var(--line); margin-top: 4px; overflow: hidden; }
+  .mk-track span { display: block; height: 100%; border-radius: 4px; background: var(--brand); }
+  .mk-chart-h { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+  .mk-bar:hover .b1, .mk-bar:focus .b1 { fill: var(--brand-hover); }
+  .mk-bar:focus { outline: none; }
+  .mk-bar:focus-visible rect:first-child { stroke: var(--brand-line); stroke-width: 2; }
+  .mk-h2 { font-size: 17px; margin: 22px 0 10px; }
+  .mk-funnel { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .mk-pc { margin-top: 3px; }
+  .mk-h2 { font-size: 17px; margin: 22px 0 10px; }
+  .mk-funnel { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+  .mk-test { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+  @media (max-width: 860px) { .mk-grid { grid-template-columns: minmax(0, 1fr); } }
   .nt-steps { margin: 0 0 12px; padding-left: 20px; display: grid; gap: 8px; line-height: 1.45; }
   .nt-chats { display: flex; gap: 8px; flex-wrap: wrap; }
   .nt-chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 99px; padding: 3px 4px 3px 12px; }
@@ -972,7 +1001,7 @@ const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory'
 const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
   'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing', 'apiFinSettings', 'apiFinChart', 'apiFinSuppliers', 'apiFinExpense', 'apiFinRecurring',
   'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial', 'apiTaxReport', 'apiTaxAnexo',
-  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory']);
+  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory', 'apiPanorama', 'apiMktGet']);
 
 function swrLoad() {
   if (SWR.mem) return SWR.mem;
@@ -1353,6 +1382,7 @@ function go(view) {
   if (view === 'dte') return viewDte();
   if (view === 'shipping') return viewShipping();
   if (view === 'notify') return viewNotify();
+  if (view === 'marketing') return viewMarketing();
   if (S.boot.entities[view]) return viewEntity(view);
   viewHome();
 }
@@ -1377,7 +1407,7 @@ function drawHome(d) {
   const phases = [
     ['Base de datos, usuarios y permisos', true], ['CRM, prospectos e integraciones', true],
     ['Inventario por movimientos', true], ['Punto de venta, caja y recibos', true],
-    ['Finanzas: ingresos, gastos, flujo de caja', false], ['Marketing y automatizaciones', false],
+    ['Finanzas, facturación electrónica y envíos', true], ['Avisos y prospectos automáticos', true], ['Marketing: panorama, campañas, cupones y citas', false],
   ];
   main.innerHTML = pageHeader('Hola, ' + S.boot.user.name.split(' ')[0]) + `
     <div class="grid kpis">
@@ -1748,6 +1778,217 @@ function resetStep2(r, keepStock) {
   }, 'Borrar y empezar de cero');
   $('#modalOk').classList.add('danger');
   setTimeout(() => { const c = $('#rs2') && $('#rs2').code; if (c) c.focus(); }, 60);
+}
+
+/* ============================ Marketing: Panorama y Google Analytics ============================ */
+
+const MKT = { tab: 'panorama', days: 30, data: null, cfg: null };
+const GA_CHANNELS = { 'AI Assistant': 'Inteligencia artificial', 'Organic Social': 'Redes sociales', 'Paid Social': 'Anuncios en redes', 'Direct': 'Directo', 'Organic Search': 'Google y buscadores',
+  'Paid Search': 'Anuncios en Google', 'Referral': 'Otros sitios', 'Email': 'Correo', 'Organic Video': 'Video', 'Paid Video': 'Anuncios en video', 'Unassigned': 'Sin identificar',
+  'Cross-network': 'Campañas en varias redes', 'Display': 'Anuncios gráficos', 'Organic Shopping': 'Shopping', 'Paid Shopping': 'Shopping pagado', 'Affiliates': 'Afiliados',
+  'SMS': 'SMS', 'Mobile Push Notifications': 'Notificaciones', 'Paid Other': 'Otros anuncios', 'Audio': 'Audio' };
+const GA_DEVICES = { mobile: 'Celular', desktop: 'Computadora', tablet: 'Tableta', smarttv: 'Televisor' };
+
+async function viewMarketing() {
+  const main = $('#main');
+  const period = MKT.tab === 'panorama' ? `<div class="mk-period" role="group" aria-label="Periodo">${[7, 30, 90].map(d => `<button type="button" class="btn sm ${MKT.days === d ? 'primary' : ''}" data-days="${d}" aria-pressed="${MKT.days === d}">${d} días</button>`).join('')}
+    <button type="button" class="btn sm" id="mkFresh" title="Volver a leer Google Analytics">Actualizar</button></div>` : '';
+  main.innerHTML = pageHeader('Marketing', period) +
+    `<nav class="fin-tabs" role="tablist" aria-label="Secciones de marketing">${[['panorama', 'Panorama'], ['analytics', 'Google Analytics']]
+      .map(t => `<button role="tab" class="fin-tab ${MKT.tab === t[0] ? 'on' : ''}" aria-selected="${MKT.tab === t[0]}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</nav>
+    <div id="mkBody"><div class="empty">Cargando…</div></div>`;
+  main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { MKT.tab = b.dataset.tab; viewMarketing(); });
+  main.querySelectorAll('[data-days]').forEach(b => b.onclick = () => { MKT.days = Number(b.dataset.days); viewMarketing(); });
+  if ($('#mkFresh')) $('#mkFresh').onclick = () => mkPanorama(true);
+  if (MKT.tab === 'panorama') return mkPanorama(false);
+  return mkAnalytics();
+}
+
+async function mkPanorama(fresh) {
+  if (fresh) $('#mkBody').innerHTML = '<div class="empty">Leyendo Google Analytics…</div>';
+  let d;
+  try { d = await api('apiPanorama', S.token, { days: MKT.days, fresh: !!fresh }); }
+  catch (e) { $('#mkBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'marketing' || MKT.tab !== 'panorama') return;
+  MKT.data = d;
+  const n = d.nexo, k = n.kpi, ga = d.ga, cur = d.currency;
+  const fm = v => fmtMoney(v, cur);
+  const intf = v => Number(v || 0).toLocaleString('en-US');
+  const delta = (a, b, inverse) => {
+    if (!b) return a ? '<span class="mk-d muted">sin datos antes</span>' : '<span class="mk-d muted">sin cambio</span>';
+    const p = Math.round((a - b) / b * 100);
+    if (!p) return '<span class="mk-d muted">igual</span>';
+    const good = inverse ? p < 0 : p > 0;
+    return `<span class="mk-d ${good ? 'up' : 'down'}" aria-label="${p > 0 ? 'subió' : 'bajó'} ${Math.abs(p)}%">${p > 0 ? '▲' : '▼'} ${Math.abs(p)}%</span>`;
+  };
+  const tile = (label, value, d2, hint) => `<div class="card pad kpi mk-kpi"><div class="l">${label}</div><div class="v m">${value}</div><div class="mk-sub">${d2 || ''}${hint ? ' <span class="muted">' + hint + '</span>' : ''}</div></div>`;
+  const vs = `vs. ${d.days} días anteriores`;
+  const tiles = [
+    n.can.sales ? tile('Ventas', fm(k.revenue), delta(k.revenue, d.nexo.prev.revenue)) : '',
+    n.can.sales ? tile('Pedidos', intf(k.orders), delta(k.orders, d.nexo.prev.orders)) : '',
+    n.can.sales ? tile('Ticket promedio', fm(k.avg), delta(k.avg, d.nexo.prev.avg)) : '',
+    ga ? tile('Visitas al sitio', intf(ga.totals.sessions), delta(ga.totals.sessions, ga.prev.sessions), intf(ga.totals.users) + ' personas') : '',
+    ga && d.combined && d.combined.conversion !== null ? tile('Conversión en línea', d.combined.conversion + '%', '', intf(k.online_orders) + ' pedidos de ' + intf(ga.totals.sessions) + ' visitas') : '',
+    n.can.sales ? tile('Clientes nuevos', intf(n.first_buyers), delta(n.first_buyers, n.first_buyers_prev), 'compraron por primera vez') : tile('Clientes nuevos', intf(n.customers_new), delta(n.customers_new, n.customers_new_prev)),
+    tile('Prospectos', intf(n.leads), delta(n.leads, n.leads_prev), n.leads_won ? n.leads_won + ' ya compraron' : ''),
+  ].filter(Boolean).join('');
+  const bars = (rows, val, fmt, label) => {
+    if (!rows || !rows.length) return '<p class="muted" style="margin:0">Sin datos en este periodo.</p>';
+    const max = Math.max.apply(null, rows.map(val)) || 1;
+    return `<ul class="mk-bars" aria-label="${esc(label)}">${rows.map(r => `<li><div class="mk-bl"><span>${esc(r.name)}</span><b>${fmt(val(r), r)}</b></div>
+      <div class="mk-track"><span style="width:${Math.max(2, Math.round(val(r) / max * 100))}%"></span></div></li>`).join('')}</ul>`;
+  };
+  const card = (title, body, cls) => `<div class="card pad ${cls || ''}"><h3>${title}</h3>${body}</div>`;
+  let gaBlock = '';
+  if (!d.ga_connected) {
+    gaBlock = `<div class="card pad mk-cta"><div><h3 style="margin-top:0">Agrega tus visitas al panorama</h3>
+      <p class="muted" style="margin:0">Conecta Google Analytics para ver cuánta gente entra a tu sitio, si llega de Instagram, Facebook, TikTok o Google, y cuántas visitas se convierten en ventas.</p></div>
+      ${can('marketing:write') ? '<button class="btn primary" id="mkGoGa">Conectar Google Analytics</button>' : ''}</div>`;
+  } else if (d.ga_error) {
+    gaBlock = `<div class="note dte-data" style="margin:0"><b>No pude leer Google Analytics.</b> ${esc(d.ga_error)}</div>`;
+  }
+  const ef = d.efficiency;
+  let effBlock = '';
+  if (ef) {
+    if (!ef.spend && !ef.spend_prev) {
+      effBlock = `<div class="card pad mk-cta"><div><h3 style="margin-top:0">¿Cuánto te cuesta cada cliente?</h3>
+        <p class="muted" style="margin:0">Registra lo que inviertes en anuncios, influencers, volantes o eventos como un gasto en Finanzas y elige su <b>canal de marketing</b>. Con eso calculo cuánto vendes por cada dólar invertido, cuánto te cuesta un cliente nuevo y un prospecto.</p></div>
+        ${can('finance:write') ? '<button class="btn" id="mkGoFin">Registrar inversión</button>' : ''}</div>`;
+    } else {
+      const ltv = n.ltv, lc = ef.ltv_cac;
+      const health = lc === null ? '' : lc >= 3 ? '<span class="tag pagada">Sano</span>' : lc >= 1 ? '<span class="tag pendiente">Ajustado</span>' : '<span class="tag fallido">Pierdes por cliente</span>';
+      effBlock = `<h2 class="mk-h2">Inversión en marketing</h2><div class="mk-kpis">
+        ${tile('Inversión', fm(ef.spend), delta(ef.spend, ef.spend_prev), 'sin IVA')}
+        ${tile('Ventas por cada $1', ef.mer === null ? '—' : fm(ef.mer), ef.mer !== null && ef.mer_prev !== null ? delta(ef.mer, ef.mer_prev) : '', 'MER')}
+        ${tile('Costo por cliente nuevo', ef.cac === null ? '—' : fm(ef.cac), ef.cac !== null && ef.cac_prev !== null ? delta(ef.cac, ef.cac_prev, true) : '', 'CAC · ' + intf(n.first_buyers) + ' nuevos')}
+        ${tile('Costo por prospecto', ef.cpl === null ? '—' : fm(ef.cpl), ef.cpl !== null && ef.cpl_prev !== null ? delta(ef.cpl, ef.cpl_prev, true) : '', intf(n.leads) + ' prospectos')}
+        ${ltv ? tile('Valor de un cliente', fm(ltv.value), lc !== null ? health + ' <span class="muted">vale ' + lc + ' veces lo que cuesta</span>' : '', lc === null ? 'LTV · ' + ltv.orders + ' compras en promedio' : '') : ''}
+      </div>`;
+    }
+  }
+  const funnel = (d.funnel || []).length > 1 ? (() => {
+    const max = Math.max.apply(null, d.funnel.map(f => f.value)) || 1;
+    return `<ol class="mk-funnel">${d.funnel.map((f, i) => { const prev = i ? d.funnel[i - 1].value : 0; const pc = i && prev && f.value <= prev ? Math.round(f.value / prev * 1000) / 10 : null;
+      return `<li><div class="mk-bl"><span>${esc(f.label)}</span><b>${intf(f.value)}</b></div>
+        <div class="mk-track"><span style="width:${Math.max(2, Math.round(f.value / max * 100))}%"></span></div>${pc !== null ? '<div class="muted sm mk-pc">' + pc + '% del paso anterior</div>' : ''}</li>`; }).join('')}</ol>
+      <p class="muted sm" style="margin:10px 0 0">Cada paso cuenta personas distintas en el periodo: no todos los prospectos vienen de las visitas, ni todos los compradores fueron prospectos antes.</p>`;
+  })() : '';
+  const ch = ga ? ga.channels.map(c => ({ name: GA_CHANNELS[c.name] || c.name, sessions: c.sessions, key_events: c.key_events })) : [];
+  $('#mkBody').innerHTML = `
+    <div class="mk-kpis">${tiles}</div>
+    <p class="muted sm mk-vs">${esc(n.start)} a ${esc(n.end)} · los cambios son ${vs}. Las ventas no incluyen pruebas ni canceladas y descuentan reembolsos.</p>
+    ${effBlock}
+    ${gaBlock}
+    <div class="mk-grid">
+      ${funnel ? card('Embudo', funnel) : ''}
+      ${ef && n.spend && n.spend.by_channel.length ? card('Inversión por canal', bars(n.spend.by_channel, r => r.amount, v => fm(v), 'Inversión por canal')) : ''}
+      ${n.can.sales ? card('Ventas por día', dayChart(n.daily, 'revenue', fm, 'Ventas por día'), 'mk-wide') : ''}
+      ${ga ? card('Visitas por día', dayChart(ga.daily, 'sessions', intf, 'Visitas por día'), 'mk-wide') : ''}
+      ${ga ? card('De dónde llegan las visitas', bars(ch, r => r.sessions, v => intf(v), 'Visitas por canal')) : ''}
+      ${ga ? card('Redes sociales', ga.social.length ? bars(ga.social, r => r.sessions, v => intf(v) + ' visitas', 'Visitas desde redes sociales')
+          : '<p class="muted" style="margin:0">Todavía no llegan visitas desde redes sociales en este periodo.</p>') : ''}
+      ${ga ? card('Desde inteligencia artificial', ga.ai.length ? bars(ga.ai, r => r.sessions, v => intf(v) + ' visitas', 'Visitas desde asistentes de IA') +
+          '<p class="muted sm" style="margin:10px 0 0">Gente que llegó desde ChatGPT, Gemini, Perplexity o Claude. Las que vienen de sus apps en el celular suelen contarse como "Directo".</p>'
+          : '<p class="muted" style="margin:0">Aún no llegan visitas desde ChatGPT, Gemini, Perplexity o Claude. Las que vienen de sus apps en el celular se cuentan como "Directo".</p>') : ''}
+      ${n.can.sales ? card('Por dónde vendes', bars(n.by_source, r => r.revenue, (v, r) => fm(v) + ' <span class="muted">· ' + r.orders + '</span>', 'Ventas por canal')) : ''}
+      ${n.can.sales ? card('Lo que más se vende', bars(n.top, r => r.revenue, (v, r) => fm(v) + ' <span class="muted">· ' + qtyFmt(r.qty) + ' u.</span>', 'Productos más vendidos')) : ''}
+      ${card('Prospectos por origen', bars(n.lead_sources, r => r.count, v => intf(v), 'Prospectos por origen'))}
+      ${ga && ga.campaigns.length ? card('Campañas', bars(ga.campaigns, r => r.sessions, (v, r) => intf(v) + ' visitas' + (r.key_events ? ' <span class="muted">· ' + intf(r.key_events) + ' conversiones</span>' : ''), 'Visitas por campaña')) : ''}
+      ${ga ? card('Páginas por donde entran', bars(ga.pages, r => r.sessions, v => intf(v), 'Páginas de entrada')) : ''}
+      ${ga ? card('Dispositivos y países', bars(ga.devices.map(x => ({ name: GA_DEVICES[x.name] || x.name, sessions: x.sessions })), r => r.sessions, v => intf(v), 'Visitas por dispositivo') +
+          '<div style="height:14px"></div>' + bars(ga.countries, r => r.sessions, v => intf(v), 'Visitas por país')) : ''}
+      ${n.finance ? card('Dinero', `<ul class="list"><li><span>Gastos del periodo</span><b>${fm(n.finance.expenses)}</b></li>
+          <li><span>Ventas menos gastos</span><b class="${k.revenue - n.finance.expenses < 0 ? 'neg' : ''}">${fm(k.revenue - n.finance.expenses)}</b></li>
+          <li><span>Te deben (por cobrar)</span><b>${fm(n.finance.receivable)}</b></li></ul>`) : ''}
+    </div>
+    ${ga ? `<p class="muted sm" style="margin-top:12px">Google Analytics: datos leídos ${esc(fmtDate(ga.at))}. Se guardan 30 minutos; usa "Actualizar" para leerlos de nuevo.</p>` : ''}`;
+  if ($('#mkGoFin')) $('#mkGoFin').onclick = () => go('finance');
+  if ($('#mkGoGa')) $('#mkGoGa').onclick = () => { MKT.tab = 'analytics'; viewMarketing(); };
+}
+
+/** Barras por día, una sola serie. Cada barra tiene su valor al pasar el cursor o con el teclado. */
+function dayChart(rows, key, fmt, label) {
+  if (!rows || !rows.length) return '<p class="muted" style="margin:0">Sin datos.</p>';
+  const W = 640, H = 170, top = 14, bottom = 24, n = rows.length;
+  const max = Math.max.apply(null, rows.map(r => Number(r[key]) || 0));
+  if (!max) return '<p class="muted" style="margin:0">Sin movimiento en este periodo.</p>';
+  const gap = n > 60 ? 1 : 2, bw = (W - gap * (n - 1)) / n, ch = H - top - bottom;
+  const dlabel = s => { const p = String(s).split('-'); return Number(p[2]) + '/' + Number(p[1]); };
+  const total = rows.reduce((a, r) => a + (Number(r[key]) || 0), 0);
+  const ticks = [0, Math.floor((n - 1) / 2), n - 1];
+  return `<div class="mk-chart"><div class="mk-chart-h"><span class="muted sm">Máximo en un día: <b>${fmt(max)}</b></span><span class="muted sm">Total: <b>${fmt(total)}</b></span></div>
+    <svg class="fin-chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}: total ${esc(String(fmt(total)))}">
+    <line class="axis" x1="0" x2="${W}" y1="${H - bottom}" y2="${H - bottom}"></line>
+    ${rows.map((r, i) => { const v = Number(r[key]) || 0; const h = v ? Math.max(2, v / max * ch) : 0; const x = i * (bw + gap);
+      return `<g class="mk-bar" tabindex="0"><title>${esc(dlabel(r.date) + ': ' + fmt(v))}</title><rect x="${x}" y="${top}" width="${bw}" height="${ch}" fill="transparent"></rect>${h ? `<rect class="b1" x="${x.toFixed(1)}" y="${(H - bottom - h).toFixed(1)}" width="${Math.max(1, bw).toFixed(1)}" height="${h.toFixed(1)}" rx="${bw > 6 ? 2 : 0}"></rect>` : ''}</g>`; }).join('')}
+    ${ticks.map(i => `<text x="${Math.min(W - 2, Math.max(2, i * (bw + gap) + bw / 2))}" y="${H - 6}" text-anchor="${i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle'}">${esc(dlabel(rows[i].date))}</text>`).join('')}
+    </svg></div>`;
+}
+
+async function mkAnalytics() {
+  let v;
+  try { v = await api('apiMktGet', S.token); } catch (e) { $('#mkBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'marketing' || MKT.tab !== 'analytics') return;
+  MKT.cfg = v;
+  const g = v.ga, w = v.can_edit;
+  const SL = { enviado: ['pagada', 'Enviado'], pendiente: ['pendiente', 'Reintentando'], fallido: ['fallido', 'Error'] };
+  $('#mkBody').innerHTML = `<div class="dte-cfg">
+    <div class="card pad">
+      <h3>Conexión</h3>
+      <p style="margin-top:0">${g.sending ? '<span class="tag pagada">Enviando ventas</span>' : '<span class="tag">Sin enviar ventas</span>'} ${g.reading ? '<span class="tag pagada">Leyendo visitas</span>' : '<span class="tag">Sin leer visitas</span>'}</p>
+      <form class="form fin1" id="mkGa" autocomplete="off">
+        <div><label class="f" for="mkMid">ID de medición</label><input class="input" id="mkMid" name="measurement_id" value="${esc(g.measurement_id)}" placeholder="G-AB12CD34EF" ${w ? '' : 'disabled'}></div>
+        <div><label class="f" for="mkSec">Secreto de API del Measurement Protocol</label><input class="input" id="mkSec" type="password" name="api_secret" placeholder="${g.has_secret ? 'Guardado. Escribe uno nuevo solo para cambiarlo.' : 'Pégalo aquí'}" ${w ? '' : 'disabled'}>
+          <div class="hint">Se guarda en tu servidor de Google y no se vuelve a mostrar.</div></div>
+        <div><label class="f" for="mkProp">ID de la propiedad</label><input class="input" id="mkProp" name="property_id" inputmode="numeric" value="${esc(g.property_id)}" placeholder="412345678" ${w ? '' : 'disabled'}>
+          <div class="hint">Solo números. Sirve para traer tus visitas al Panorama.</div></div>
+        <div><label class="f" for="mkSend">Qué ventas mandar a Analytics</label><select class="input" id="mkSend" name="send" ${w ? '' : 'disabled'}>
+          ${[['all', 'Todas (en línea y punto de venta)'], ['pos', 'Solo punto de venta'], ['none', 'Ninguna']].map(o => `<option value="${o[0]}" ${g.send === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>
+          <div class="hint">Si tu tienda en línea (por ejemplo Shopify) ya manda sus compras a Analytics, elige "Solo punto de venta" para no contarlas dos veces.</div></div>
+        <label class="chk"><input type="checkbox" name="leads" ${g.leads ? 'checked' : ''} ${w ? '' : 'disabled'}> Mandar también los prospectos nuevos</label>
+        ${w ? `<div style="display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap">${g.measurement_id || g.property_id ? '<button class="btn danger" type="button" id="mkOff">Desconectar</button><button class="btn" type="button" id="mkTest">Probar conexión</button>' : ''}<button class="btn primary" type="submit">Guardar</button></div>` : ''}
+      </form>
+      <div id="mkTestOut"></div>
+    </div>
+    <div class="card pad">
+      <h3>Dónde encuentro esos datos</h3>
+      <ol class="nt-steps">
+        <li>Entra a <a href="https:\/\/analytics.google.com" target="_blank" rel="noopener">analytics.google.com</a>. Si no tienes cuenta, toca <b>Empezar a medir</b>, crea la propiedad con tu negocio y elige <b>Web</b> con la dirección de tu tienda. Google te da un código para tu sitio; en Shopify o WordPress basta con pegar el ID de medición en su ajuste de Google Analytics.</li>
+        <li><b>ID de medición:</b> Administrar → Flujos de datos → tu sitio. Empieza con G-.</li>
+        <li><b>Secreto de API:</b> en esa misma pantalla, <b>Secretos de API de Measurement Protocol</b> → Crear. Ponle de nombre "Nexo".</li>
+        <li><b>ID de la propiedad:</b> Administrar → Detalles de la propiedad. Es solo un número.</li>
+        <li><b>Dale acceso de lectura a Nexo:</b> Administrar → Acceso a la propiedad → <b>+</b> → agrega este correo con el rol <b>Lector</b>:${codeBlock(v.script_email || 'el correo de la cuenta que instaló el sistema')}</li>
+      </ol>
+      <p class="muted sm" style="margin-bottom:0">Nexo manda cada venta con sus productos, el total, impuestos y envío, pero nunca el nombre, correo o teléfono de tus clientes. Las ventas de prueba no se mandan.</p>
+    </div>
+    <div class="card pad dte-data">
+      <h3>Últimos envíos a Analytics</h3>
+      ${v.recent.length ? `<ul class="list">${v.recent.map(r => `<li><span>${esc(r.subject)}<br><span class="muted sm">${esc(fmtDate(r.at))}${r.error ? ' · ' + esc(r.error) : ''}</span></span><span class="tag ${(SL[r.status] || [''])[0]}">${esc((SL[r.status] || ['', r.status])[1])}</span></li>`).join('')}</ul>`
+        : '<p class="muted" style="margin:0">Aquí verás cada venta, reembolso y prospecto que se manda a Analytics.</p>'}
+    </div>
+  </div>`;
+  bindCopy($('#mkBody'));
+  if (!w) return;
+  $('#mkGa').onsubmit = async ev => {
+    ev.preventDefault(); const f = ev.target; const btn = f.querySelector('button[type=submit]'); btn.disabled = true;
+    const data = { measurement_id: f.measurement_id.value.trim(), property_id: f.property_id.value.trim(), send: f.send.value, leads: f.leads.checked };
+    if (f.api_secret.value.trim()) data.api_secret = f.api_secret.value.trim();
+    try { await api('apiMktSave', S.token, data); toast('Guardado'); await mkAnalytics(); if ((data.measurement_id && (data.api_secret || g.has_secret)) || data.property_id) mkRunTest(); }
+    catch (e) { toast(e.message, true); btn.disabled = false; }
+  };
+  if ($('#mkTest')) $('#mkTest').onclick = () => mkRunTest();
+  if ($('#mkOff')) $('#mkOff').onclick = () => openModal('Desconectar Google Analytics', '<p>Se borra el secreto de API y Nexo deja de mandar ventas y de leer visitas. Lo que ya está en Analytics se queda allá.</p>',
+    async () => { await api('apiMktOff', S.token); toast('Google Analytics desconectado'); mkAnalytics(); }, 'Desconectar');
+}
+
+async function mkRunTest() {
+  const out = $('#mkTestOut'); if (!out) return;
+  out.innerHTML = '<p class="muted">Probando la conexión…</p>';
+  let r;
+  try { r = await api('apiMktTest', S.token); } catch (e) { out.innerHTML = '<div class="note">' + esc(e.message) + '</div>'; return; }
+  const line = (ok, okText, err) => `<li><span class="tag ${ok ? 'pagada' : 'fallido'}">${ok ? 'Listo' : 'Revisar'}</span> ${ok ? okText : esc(err)}</li>`;
+  out.innerHTML = `<ul class="mk-test">${r.send ? line(r.send.ok, 'Analytics acepta las ventas que manda Nexo.', r.send.error) : ''}
+    ${r.read ? line(r.read.ok, 'Nexo puede leer tus visitas (' + Number(r.read.sessions || 0).toLocaleString('en-US') + ' en los últimos 7 días).', r.read.error) : ''}</ul>`;
 }
 
 /* ============================ Avisos ============================ */
@@ -4327,6 +4568,9 @@ async function openExpense(edit) {
           <datalist id="supList">${sups.map(s => `<option value="${esc(s.name)}">`).join('')}</datalist></div></div>
       <div><label class="f">Categoría</label>${accSelect('account', e.account || store2.get('nx_fin_cat', ''), isExpenseAcc, 'Elige una categoría…')}
         <div class="hint" id="exCatHint"></div></div>
+      <div id="exMktRow"><label class="f" for="exMkt">Canal de marketing</label><select class="input" id="exMkt" name="mkt_channel">
+        <option value="">No es marketing</option>${(cfg.mkt_channels || []).map(c => `<option value="${c[0]}" ${e.mkt_channel === c[0] ? 'selected' : ''}>${esc(c[1])}</option>`).join('')}</select>
+        <div class="hint">Si es publicidad o promoción, elige el canal: así Marketing → Panorama calcula cuánto te cuesta cada cliente.</div></div>
       <div class="two"><div><label class="f">Documento</label><select class="input" name="doc_type">${Object.keys(cfg.doc_types).map(k => `<option value="${k}" ${docType === k ? 'selected' : ''}>${esc(cfg.doc_types[k])}</option>`).join('')}</select></div>
         <div><label class="f">Número del documento</label><input class="input" name="doc_number" value="${esc(e.doc_number || '')}" placeholder="Código de generación del DTE"></div></div>
       <div id="exCtl"><label class="f">Número de control (DTE)</label><input class="input" name="doc_control" value="${esc(e.doc_control || '')}" placeholder="DTE-03-…"></div>
@@ -4352,7 +4596,7 @@ async function openExpense(edit) {
     const f = $('#exForm');
     const amounts = readAmounts(f);
     const payload = Object.assign({ id: e.id || undefined, date: f.date.value, account: f.account.value, doc_type: f.doc_type.value, doc_number: f.doc_number.value, doc_control: f.doc_control.value,
-      description: f.description.value, due_date: f.due_date.value, exempt: numIn(f.exempt.value), withholding: numIn(f.withholding.value) }, amounts);
+      description: f.description.value, due_date: f.due_date.value, exempt: numIn(f.exempt.value), withholding: numIn(f.withholding.value), mkt_channel: f.mkt_channel.value }, amounts);
     const sup = sups.find(s => s.name.toLowerCase() === f.supplier.value.trim().toLowerCase());
     if (sup) payload.supplier_id = sup.id; else payload.supplier_name = f.supplier.value.trim();
     if (!edit && f.paid_now.checked) payload.pay = { account: f.pay_account.value, date: f.date.value, reference: f.pay_ref.value };
@@ -4394,7 +4638,8 @@ async function openExpense(edit) {
     $('#exCatHint').textContent = a && a.system_key === 'grni' ? 'Para la factura de mercadería que ya registraste como entrada en Inventario.' :
       a && String(a.code).indexOf('12') === 0 ? 'Activo fijo: no es gasto del mes; se deprecia con el tiempo.' : '';
   };
-  f.account.onchange = catHint; catHint();
+  f.account.onchange = () => { catHint(); if (String(f.account.value).indexOf('6103') === 0 && !f.mkt_channel.value && String(f.account.value) === '610301') f.mkt_channel.value = 'otro'; };
+  catHint();
   const sup = () => { const s = sups.find(x => x.name.toLowerCase() === f.supplier.value.trim().toLowerCase()); if (s && s.default_account && !f.account.value) { f.account.value = s.default_account; catHint(); } };
   f.supplier.onchange = sup;
   if (!edit) {
