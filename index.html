@@ -778,6 +778,64 @@
   .mk-bar:focus { outline: none; }
   .mk-bar:focus-visible rect:first-child { stroke: var(--brand-line); stroke-width: 2; }
   .mk-h2 { font-size: 17px; margin: 22px 0 10px; }
+  .cm-edit [hidden], .mk-body [hidden] { display: none !important; }
+  .ag-note { margin-bottom: 12px; }
+  .ag-bar { align-items: center; }
+  .ag-range { font-size: 15px; min-width: 150px; text-transform: capitalize; }
+  .ag-staff { width: auto; min-width: 170px; }
+  .ag-cx { align-self: center; }
+  .ag-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+  .ag-grid.one { grid-template-columns: minmax(0, 640px); }
+  .ag-day { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px; min-height: 160px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .ag-day header { display: flex; justify-content: space-between; align-items: baseline; font-weight: 600; font-size: 13px; text-transform: capitalize; padding: 2px 2px 4px; }
+  .ag-day.today { border-color: var(--brand); }
+  .ag-day.today header span:first-child { color: var(--brand-text); }
+  .ag-day.past { opacity: .72; }
+  .ag-appt { display: grid; gap: 1px; text-align: left; width: 100%; background: var(--raised); border: 1px solid var(--line); border-left: 3px solid var(--brand); border-radius: 8px; padding: 7px 8px; color: var(--ink); cursor: pointer; font: inherit; min-width: 0; }
+  .ag-appt:hover { border-color: var(--line-strong); }
+  .ag-appt:focus-visible { outline: 2px solid var(--brand); outline-offset: 1px; }
+  .ag-appt.pendiente { border-left-color: var(--info); }
+  .ag-appt.completada { border-left-color: var(--line-strong); }
+  .ag-appt.no_asistio, .ag-appt.cancelada { border-left-color: var(--danger); opacity: .7; }
+  .ag-appt.cancelada .ag-c { text-decoration: line-through; }
+  .ag-t { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .ag-c { font-weight: 600; font-size: 13.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ag-s { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ag-appt .tag { justify-self: start; margin-top: 3px; font-size: 11px; }
+  .ag-src { font-size: 11px; color: var(--faint); }
+  .ag-empty { color: var(--faint); font-size: 12.5px; margin: 4px 2px; }
+  .ag-add { margin-top: auto; background: none; border: 1px dashed var(--line-strong); color: var(--muted); border-radius: 8px; padding: 6px; font: inherit; font-size: 12.5px; cursor: pointer; }
+  .ag-add:hover { color: var(--ink); border-color: var(--brand); }
+  .ag-grid.one .ag-appt { grid-template-columns: 110px 1fr; column-gap: 12px; }
+  .ag-grid.one .ag-t { grid-row: span 3; font-size: 14px; color: var(--ink); }
+  .tag.confirmada, .tag.completada { background: var(--brand-soft); color: var(--brand-text); }
+  .tag.no_asistio { background: var(--danger-soft); color: var(--danger); }
+  .ag-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .ag-free { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .ag-pick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .ag-sec { margin-bottom: 12px; }
+  .ag-sec h3 { margin: 0 0 10px; font-size: 15px; }
+  .ag-hours { display: grid; gap: 8px; }
+  .ag-hrow { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; min-height: 40px; }
+  .ag-hrow .chk { width: 130px; align-items: center; }
+  .ag-win { display: inline-flex; gap: 6px; align-items: center; }
+  .ag-win .input { width: 136px; }
+  .ag-sec a.btn { text-decoration: none; }
+  .ag-people { display: flex; flex-wrap: wrap; gap: 10px 22px; }
+  .ag-block { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .ag-block .input { width: auto; min-width: 0; flex: 1 1 140px; }
+  .ag-save { position: sticky; bottom: 0; display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding: 12px 0; background: linear-gradient(transparent, var(--bg) 35%); }
+  .pc-appt { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid var(--line); }
+  #agBody [hidden] { display: none !important; }
+  @media (max-width: 1100px) { .ag-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 760px) { .ag-grid, .ag-grid.one { grid-template-columns: 1fr; } .ag-day { min-height: 0; } .ag-grid .ag-appt { grid-template-columns: 96px 1fr; column-gap: 10px; } .ag-grid .ag-t { grid-row: span 3; } .ag-range { min-width: 0; } }
+  .cm-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+  .cm-grid h3 { margin-top: 0; }
+  .cm-msg { grid-row: span 2; }
+  .cm-count { margin-top: 12px; padding: 10px 12px; border-radius: 8px; background: var(--brand-soft, rgba(59,130,246,.1)); }
+  .cm-tags { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin-bottom: 6px; }
+  .cm-frame { width: 100%; height: 70vh; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  @media (max-width: 860px) { .cm-grid { grid-template-columns: minmax(0, 1fr); } .cm-msg { grid-row: auto; } }
   .cp-pick { max-height: 220px; overflow: auto; display: grid; gap: 4px; margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
   .mono-code { font-variant-numeric: tabular-nums; letter-spacing: .04em; }
   .pc-coupon .btn { margin-left: 6px; padding: 2px 8px; }
@@ -1008,7 +1066,7 @@ const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory'
 const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
   'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing', 'apiFinSettings', 'apiFinChart', 'apiFinSuppliers', 'apiFinExpense', 'apiFinRecurring',
   'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial', 'apiTaxReport', 'apiTaxAnexo',
-  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory', 'apiPanorama', 'apiMktGet', 'apiMetaGet']);
+  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory', 'apiPanorama', 'apiMktGet', 'apiMetaGet', 'apiAgendaGet', 'apiApptList', 'apiApptSlots']);
 
 function swrLoad() {
   if (SWR.mem) return SWR.mem;
@@ -1390,6 +1448,7 @@ function go(view) {
   if (view === 'shipping') return viewShipping();
   if (view === 'notify') return viewNotify();
   if (view === 'marketing') return viewMarketing();
+  if (view === 'agenda') return viewAgenda();
   if (S.boot.entities[view]) return viewEntity(view);
   viewHome();
 }
@@ -1788,6 +1847,212 @@ function resetStep2(r, keepStock) {
 }
 
 
+
+/* ============================ Campañas ============================ */
+
+function debounce(fn, ms) { let h; return function () { const args = arguments; clearTimeout(h); h = setTimeout(() => fn.apply(null, args), ms); }; }
+
+const CMP_ST = { borrador: ['', 'Borrador'], programada: ['pendiente', 'Programada'], enviando: ['pendiente', 'Enviando'], enviada: ['pagada', 'Enviada'], pausada: ['', 'Pausada'], cancelada: ['', 'Detenida'] };
+
+async function mkCampaigns() {
+  let d;
+  try { d = await api('apiCampList', S.token); } catch (e) { $('#mkBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'marketing' || MKT.tab !== 'campanas') return;
+  MKT.camp = d;
+  const cur = S.boot.tenant.currency, ms = d.settings.mail;
+  $('#mkBody').innerHTML = `
+    <div class="toolbar"><p class="muted" style="margin:0;max-width:680px">Correos y mensajes de WhatsApp a tus clientes, prospectos o suscriptores. Se manda por partes: con Gmail unos ${100 - d.settings.reserve} correos al día (se guardan ${d.settings.reserve} para tus pedidos)${ms.provider === 'resend' ? '; estás usando Resend con ' + esc(ms.from_email) + ', sin ese límite' : ''}.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${d.can_edit ? '<button class="btn" id="cmMail">Correo remitente</button><button class="btn primary" id="cmNew">Nueva campaña</button>' : ''}</div></div>
+    <div class="card tablewrap">${d.rows.length ? `<table class="wrap"><thead><tr><th>Campaña</th><th>Canal</th><th>Estado</th><th class="num">Enviados</th><th class="num">Ventas</th><th>Fecha</th></tr></thead><tbody>
+      ${d.rows.map(c => `<tr class="clickable" data-cm="${esc(c.id)}" tabindex="0"><td><b>${esc(c.name)}</b>${c.subject ? '<br><span class="muted sm">' + esc(c.subject) + '</span>' : ''}</td>
+        <td>${c.channel === 'whatsapp' ? 'WhatsApp' : 'Correo'}</td><td><span class="tag ${(CMP_ST[c.status] || [''])[0]}">${esc((CMP_ST[c.status] || ['', c.status])[1])}</span></td>
+        <td class="num">${c.total ? c.sent + ' / ' + c.total : '—'}</td><td class="num">${c.revenue !== undefined ? esc(moneyIn(c.revenue, cur)) + ' <span class="muted">· ' + c.sales + '</span>' : '—'}</td>
+        <td>${esc(fmtDate(c.finished_at || c.started_at || c.scheduled_at || c.created_at))}</td></tr>`).join('')}</tbody></table>`
+      : `<div class="empty">Todavía no tienes campañas.${d.can_edit ? ' Crea la primera: por ejemplo, un correo con cupón para los clientes que no compran hace 60 días.' : ''}</div>`}</div>`;
+  if ($('#cmNew')) $('#cmNew').onclick = async () => {
+    try { const c = await api('apiCampSave', S.token, { name: 'Campaña ' + new Date().toLocaleDateString('es'), channel: 'email', audience: { base: 'clientes' } }); MKT.campId = c.id; viewMarketing(); }
+    catch (e) { toast(e.message, true); }
+  };
+  if ($('#cmMail')) $('#cmMail').onclick = () => openCampMail(d.settings);
+  $('#mkBody').querySelectorAll('[data-cm]').forEach(tr => { const g = () => { MKT.campId = tr.dataset.cm; viewMarketing(); }; tr.onclick = g; tr.onkeydown = e => { if (e.key === 'Enter') g(); }; });
+}
+
+function openCampMail(st) {
+  const m = st.mail;
+  openModal('Correo remitente de las campañas', `<form class="form" id="cmMailF" autocomplete="off">
+    <div class="wide"><label class="f" for="cmProv">Cómo se mandan</label><select class="input" id="cmProv" name="provider">
+      <option value="gmail" ${m.provider === 'gmail' ? 'selected' : ''}>Gmail de la cuenta del sistema (unos ${100 - st.reserve} al día)</option>
+      <option value="resend" ${m.provider === 'resend' ? 'selected' : ''}>Resend con mi dominio (miles al día)</option></select>
+      <div class="hint">Hoy te quedan ${st.gmail_left} correos de Gmail.</div></div>
+    <div><label class="f" for="cmFrom">Nombre del remitente</label><input class="input" id="cmFrom" name="from_name" value="${esc(m.from_name)}" placeholder="${esc(st.business || '')}"></div>
+    <div><label class="f" for="cmReply">Responder a (opcional)</label><input class="input" id="cmReply" name="reply_to" value="${esc(m.reply_to)}" placeholder="hola@tunegocio.com"></div>
+    <div id="cmRs" class="wide"><div class="two"><div><label class="f" for="cmKey">Clave de API de Resend</label><input class="input" id="cmKey" type="password" name="api_key" placeholder="${m.has_key ? 'Guardada. Escribe otra solo para cambiarla.' : 're_…'}"></div>
+      <div><label class="f" for="cmFe">Correo remitente (de tu dominio verificado)</label><input class="input" id="cmFe" name="from_email" value="${esc(m.from_email)}" placeholder="promos@tunegocio.com"></div></div>
+      <p class="muted sm">En resend.com: crea la cuenta, agrega y verifica tu dominio (registros DNS) y crea una clave con permiso de envío.</p></div>
+    <div><label class="f" for="cmDays">Contar ventas durante (días)</label><input class="input" id="cmDays" name="attribution_days" inputmode="numeric" value="${esc(m.attribution_days)}"><div class="hint">Una venta cuenta para la campaña si quien la recibió compra en esos días.</div></div>
+    ${st.address ? '' : '<div class="note wide">Escribe la <b>dirección de tu negocio</b> en Ajustes de empresa: por ley va al pie de cada correo de promoción.</div>'}
+  </form>`, async () => {
+    const f = $('#cmMailF');
+    const data = { provider: f.provider.value, from_name: f.from_name.value.trim(), reply_to: f.reply_to.value.trim(), from_email: f.from_email.value.trim(), attribution_days: numIn(f.attribution_days.value) };
+    if (f.api_key.value.trim()) data.api_key = f.api_key.value.trim();
+    await api('apiCampMailSave', S.token, data); toast('Guardado'); mkCampaigns();
+  }, 'Guardar', true);
+  const sync = () => { $('#cmRs').hidden = $('#cmProv').value !== 'resend'; };
+  $('#cmProv').onchange = sync; sync();
+}
+
+async function mkCampaign(id) {
+  let c, o;
+  try { [c, o] = await Promise.all([api('apiCampGet', S.token, id), api('apiCampOptions', S.token)]); }
+  catch (e) { MKT.campId = null; $('#mkBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'marketing' || MKT.tab !== 'campanas') return;
+  if (['enviando', 'enviada', 'cancelada'].indexOf(c.status) >= 0 || (c.status === 'pausada' && c.total)) return mkCampaignResults(c);
+  const edit = MKT.camp ? MKT.camp.can_edit : true;
+  const a = c.audience || {};
+  const sel = (name, opts, v, extra) => `<select class="input" name="${name}" ${extra || ''}>${opts.map(x => `<option value="${esc(x[0])}" ${String(v || '') === String(x[0]) ? 'selected' : ''}>${esc(x[1])}</option>`).join('')}</select>`;
+  const num = (name, v, ph) => `<input class="input" name="${name}" inputmode="numeric" value="${v ? esc(v) : ''}" placeholder="${esc(ph || 'Cualquiera')}">`;
+  const tplOpts = [['', 'Elige una plantilla aprobada']].concat((o.wa_templates || []).map(t => [t.name + '|' + t.language, t.name + ' (' + t.language + ')']));
+  const curTpl = (o.wa_templates || []).find(t => t.name === c.wa_template) || null;
+  $('#mkBody').innerHTML = `<div class="cm-edit">
+    <div class="toolbar"><button class="btn" id="cmBack">← Campañas</button>
+      <span class="tag ${(CMP_ST[c.status] || [''])[0]}">${esc((CMP_ST[c.status] || ['', c.status])[1])}</span>${c.scheduled_at && c.status === 'programada' ? '<span class="muted">Sale el ' + esc(fmtDate(c.scheduled_at)) + '</span>' : ''}${c.last_error ? '<span class="sm" style="color:var(--danger)">' + esc(c.last_error) + '</span>' : ''}</div>
+    <form id="cmF" class="cm-grid" autocomplete="off">
+      <section class="card pad"><h3>1. Nombre y canal</h3><div class="form fin1">
+        <div><label class="f">Nombre (solo lo ves tú)</label><input class="input" name="name" value="${esc(c.name)}" required></div>
+        <div><label class="f">Canal</label>${sel('channel', [['email', 'Correo'], ['whatsapp', 'WhatsApp']], c.channel)}</div></div></section>
+      <section class="card pad"><h3>2. A quién</h3><div class="form">
+        <div class="wide"><label class="f">Base</label>${sel('base', [['clientes', 'Clientes'], ['prospectos', 'Prospectos (aún no compran)'], ['suscriptores', 'Suscriptores del boletín']], a.base)}</div>
+        <div class="wide cm-email-only"><label class="f">Permiso</label>${sel('consent', [['aceptaron', 'Solo quienes aceptaron promociones'], ['sin_baja', 'Todos los que no se han dado de baja']], a.consent)}
+          <div class="hint">Por correo, en EE. UU. se permite escribir a clientes y prospectos con enlace de baja (va incluido). Por WhatsApp solo a quien aceptó. Hoy aceptaron ${o.consent.si} de ${o.consent.total} clientes.</div></div>
+        <div class="cm-b cm-b-clientes"><label class="f">Compraron en los últimos (días)</label>${num('bought_within', a.bought_within)}</div>
+        <div class="cm-b cm-b-clientes"><label class="f">No compran hace (días)</label>${num('not_bought', a.not_bought)}</div>
+        <div class="cm-b cm-b-clientes"><label class="f">Gastaron al menos</label><input class="input" name="min_spent" inputmode="decimal" value="${a.min_spent ? esc(a.min_spent) : ''}" placeholder="Cualquier monto"></div>
+        <div class="cm-b cm-b-clientes"><label class="f">Compras mínimas</label>${num('min_orders', a.min_orders)}</div>
+        <div class="cm-b cm-b-clientes"><label class="f">Compraron de la categoría</label>${sel('category', [['', 'Cualquiera']].concat(o.categories.map(x => [x, x])), a.category)}</div>
+        <div class="cm-b cm-b-clientes"><label class="f">Segmento</label>${sel('segment', [['', 'Cualquiera']].concat(o.segments.map(x => [x, x])), a.segment)}</div>
+        <div class="cm-b cm-b-clientes"><label class="f">Ciudad contiene</label><input class="input" name="city" value="${esc(a.city || '')}" placeholder="Cualquiera"></div>
+        <div class="cm-b cm-b-clientes cm-b-prospectos"><label class="f">Nuevos en los últimos (días)</label>${num('new_within', a.new_within)}</div>
+        <div class="cm-b cm-b-prospectos"><label class="f">Etapa</label>${sel('stage', [['', 'Cualquiera']].concat(o.stages.map(x => [x, x])), a.stage)}</div>
+        <div class="cm-b cm-b-prospectos"><label class="f">Origen</label>${sel('source', [['', 'Cualquiera']].concat(o.sources.map(x => [x, x])), a.source)}</div>
+        <div class="cm-b cm-b-suscriptores"><label class="f">Lista</label>${sel('list', [['', 'Todas']].concat(o.lists.map(x => [x, x])), a.list)}</div>
+      </div><div class="cm-count" id="cmCount" aria-live="polite">Calculando…</div></section>
+      <section class="card pad cm-msg"><h3>3. Mensaje</h3>
+        <div class="form fin1 cm-email-only">
+          <div><label class="f">Asunto</label><input class="input" name="subject" value="${esc(c.subject || '')}" maxlength="150" placeholder="{nombre}, esto es para ti"></div>
+          <div><label class="f">Texto de vista previa (opcional)</label><input class="input" name="preheader" value="${esc(c.preheader || '')}" maxlength="150" placeholder="Lo que se ve junto al asunto en la bandeja"></div>
+          <div><label class="f">Mensaje</label><div class="cm-tags">${['{nombre}', '{negocio}', '{cupon}'].map(t => `<button type="button" class="btn sm" data-tag="${t}">${t}</button>`).join('')}<span class="muted sm">Deja una línea en blanco entre párrafos. **texto** va en negrita.</span></div>
+            <textarea class="input" name="body" rows="9">${esc(c.body || '')}</textarea></div>
+          <div class="two"><div><label class="f">Texto del botón</label><input class="input" name="button_text" value="${esc(c.button_text || '')}" placeholder="Ver la tienda"></div>
+            <div><label class="f">Enlace del botón</label><input class="input" name="button_url" value="${esc(c.button_url || '')}" placeholder="https:\/\/"><div class="hint">Lleva etiquetas para Google Analytics: campaña <b>${esc(c.utm_campaign)}</b>.</div></div></div>
+        </div>
+        <div class="form fin1 cm-wa-only">
+          ${o.wa_ready ? '' : '<div class="note">Conecta WhatsApp en Ajustes de empresa → Avisos y prospectos.</div>'}
+          <div><label class="f">Plantilla de marketing aprobada por Meta</label>${sel('wa_tpl', tplOpts, c.wa_template ? c.wa_template + '|' + (c.wa_lang || '') : '')}
+            <div class="hint">Las plantillas de promoción se crean en el Administrador de WhatsApp de Meta (categoría Marketing). Cada mensaje tiene costo según el país.</div></div>
+          <div id="cmTplText" class="muted sm"></div><div id="cmTplVars" class="form fin1"></div>
+        </div>
+        <div class="form fin1" style="margin-top:12px"><div><label class="f">Cupón (opcional)</label>${sel('coupon_id', [['', 'Sin cupón']].concat(o.coupons.map(x => [x.id, x.code + ' · ' + x.name])), c.coupon_id)}<div class="hint">En el correo aparece en un recuadro; usa {cupon} para nombrarlo en el texto.</div></div></div>
+      </section>
+      ${edit ? `<section class="card pad"><h3>4. Revisar y enviar</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn" id="cmSave">Guardar</button><button type="button" class="btn cm-email-only" id="cmPrev">Vista previa</button>
+          <button type="button" class="btn" id="cmTest">Mandarme una prueba</button>${c.status === 'borrador' ? '<button type="button" class="btn danger" id="cmDel">Borrar</button>' : ''}</div>
+        <div class="form fin1" style="margin-top:14px"><div><label class="f">Cuándo</label>${sel('when_mode', [['now', 'Enviar ahora'], ['later', 'Programar']], c.status === 'programada' ? 'later' : 'now')}</div>
+          <div id="cmWhen"><input class="input" type="datetime-local" name="when" value="${c.scheduled_at ? esc(new Date(new Date(c.scheduled_at).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)) : ''}"></div></div>
+        <div id="cmEst" class="muted sm" style="margin:8px 0"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">${c.status === 'programada' ? '<button type="button" class="btn" id="cmUnsch">Quitar programación</button>' : ''}<button type="button" class="btn primary" id="cmGo">Enviar campaña</button></div>
+      </section>` : ''}
+    </form></div>`;
+  const f = $('#cmF');
+  const collect = () => {
+    const [tpl, lang] = (f.wa_tpl.value || '|').split('|');
+    const vars = Array.from(document.querySelectorAll('#cmTplVars input')).map(i => i.value);
+    return { id: c.id, name: f.name.value.trim(), channel: f.channel.value,
+      audience: { base: f.base.value, consent: f.consent.value, bought_within: f.bought_within.value, not_bought: f.not_bought.value, min_spent: numIn(f.min_spent.value), min_orders: f.min_orders.value,
+        category: f.category.value, segment: f.segment.value, city: f.city.value.trim(), new_within: f.new_within.value, stage: f.stage.value, source: f.source.value, list: f.list.value },
+      subject: f.subject.value, preheader: f.preheader.value, body: f.body.value, button_text: f.button_text.value.trim(), button_url: f.button_url.value.trim(), coupon_id: f.coupon_id.value,
+      wa_template: tpl || '', wa_lang: lang || '', wa_params: { values: vars } };
+  };
+  let lastCount = 0;
+  const count = debounce(async () => {
+    const d = collect();
+    try {
+      const r = await api('apiCampPreview', S.token, { channel: d.channel, audience: d.audience });
+      lastCount = r.count;
+      $('#cmCount').innerHTML = `<b>${r.count}</b> ${r.count === 1 ? 'persona' : 'personas'}${r.sample.length ? ': ' + r.sample.map(x => esc(x.name || x.address)).join(', ') + (r.count > r.sample.length ? '…' : '') : ''}
+        ${r.other_consent_count !== null && r.other_consent_count !== r.count ? '<br><span class="muted sm">Con la otra opción de permiso serían ' + r.other_consent_count + '.</span>' : ''}`;
+      const e = r.estimate;
+      $('#cmEst').textContent = d.channel === 'email' && e.provider === 'gmail' && r.count > (e.left_today || 0)
+        ? 'Con Gmail salen ' + e.per_day + ' por día: esta campaña tarda unos ' + e.days + ' día(s). Hoy salen ' + (e.left_today || 0) + '.' : '';
+    } catch (er) { $('#cmCount').textContent = er.message; }
+  }, 350);
+  const sync = () => {
+    const ch = f.channel.value, base = f.base.value;
+    document.querySelectorAll('.cm-email-only').forEach(x => { x.hidden = ch !== 'email'; });
+    document.querySelectorAll('.cm-wa-only').forEach(x => { x.hidden = ch !== 'whatsapp'; });
+    document.querySelectorAll('.cm-b').forEach(x => { x.hidden = !x.classList.contains('cm-b-' + base); });
+    if (f.when_mode) $('#cmWhen').hidden = f.when_mode.value !== 'later';
+    const [tpl] = (f.wa_tpl.value || '|').split('|');
+    const t = (o.wa_templates || []).find(x => x.name === tpl);
+    $('#cmTplText').textContent = t ? 'Texto: ' + t.text : '';
+    const vals = (c.wa_params && c.wa_params.values) || [];
+    $('#cmTplVars').innerHTML = t ? Array.from({ length: t.vars }, (_, i) => `<div><label class="f">Variable {{${i + 1}}}</label><input class="input" value="${esc(vals[i] !== undefined ? vals[i] : (i === 0 ? '{nombre}' : ''))}" placeholder="Texto, {nombre} o {cupon}"></div>`).join('') : '';
+    count();
+  };
+  f.addEventListener('change', sync); f.addEventListener('input', e => { if (e.target.closest('.cm-b, [name=consent]')) count(); });
+  sync();
+  $('#cmBack').onclick = () => { MKT.campId = null; viewMarketing(); };
+  document.querySelectorAll('[data-tag]').forEach(b => b.onclick = () => { const ta = f.body; const p = ta.selectionStart || ta.value.length; ta.value = ta.value.slice(0, p) + b.dataset.tag + ta.value.slice(p); ta.focus(); });
+  if (!edit) { f.querySelectorAll('input,select,textarea,button').forEach(x => { if (x.id !== 'cmBack') x.disabled = true; }); return; }
+  const save = async quiet => { const r = await api('apiCampSave', S.token, collect()); if (!quiet) toast('Guardado'); return r; };
+  $('#cmSave').onclick = async () => { try { await save(); } catch (e) { toast(e.message, true); } };
+  $('#cmPrev').onclick = async () => {
+    try { await save(true); const h = await api('apiCampHtml', S.token, c.id);
+      openModal('Vista previa', `<p class="muted" style="margin-top:0">Asunto: <b>${esc(h.subject)}</b></p><iframe class="cm-frame" title="Vista previa del correo" sandbox></iframe>`, null, null, true);
+      document.querySelector('.cm-frame').srcdoc = h.html; } catch (e) { toast(e.message, true); }
+  };
+  $('#cmTest').onclick = async ev => { ev.target.disabled = true; try { await save(true); const r = await api('apiCampTest', S.token, c.id); toast('Prueba enviada a ' + r.to); } catch (e) { toast(e.message, true); } ev.target.disabled = false; };
+  if ($('#cmDel')) $('#cmDel').onclick = async () => { if (!confirm('¿Borrar este borrador?')) return; try { await api('apiCampDelete', S.token, c.id); MKT.campId = null; toast('Borrado'); viewMarketing(); } catch (e) { toast(e.message, true); } };
+  if ($('#cmUnsch')) $('#cmUnsch').onclick = async () => { try { await api('apiCampPause', S.token, c.id); toast('Volvió a borrador'); mkCampaign(c.id); } catch (e) { toast(e.message, true); } };
+  $('#cmGo').onclick = async () => {
+    let when = '';
+    if (f.when_mode.value === 'later') { if (!f.when.value) { toast('Elige la fecha y hora.', true); return; } when = new Date(f.when.value).toISOString(); }
+    try { await save(true); } catch (e) { toast(e.message, true); return; }
+    openModal(when ? 'Programar campaña' : 'Enviar campaña', `<p>${when ? 'Saldrá el <b>' + esc(new Date(when).toLocaleString('es')) + '</b> a' : 'Se enviará ahora a'} <b>${lastCount}</b> ${lastCount === 1 ? 'persona' : 'personas'} por ${f.channel.value === 'whatsapp' ? 'WhatsApp' : 'correo'}.</p>
+      <p class="muted">El público se fija en ese momento. Puedes pausarla mientras se envía.</p>`, async () => {
+      const r = await api('apiCampSchedule', S.token, c.id, when);
+      toast(r.status === 'programada' ? 'Campaña programada' : 'Enviando campaña'); mkCampaign(c.id);
+    }, when ? 'Programar' : 'Enviar');
+  };
+}
+
+function mkCampaignResults(c) {
+  const cur = S.boot.tenant.currency, r = c.results || {};
+  const edit = MKT.camp ? MKT.camp.can_edit : true;
+  const pct = c.total ? Math.round((c.sent + c.failed + c.skipped) / c.total * 100) : 0;
+  $('#mkBody').innerHTML = `<div class="toolbar"><button class="btn" id="cmBack">← Campañas</button>
+      <span class="tag ${(CMP_ST[c.status] || [''])[0]}">${esc((CMP_ST[c.status] || ['', c.status])[1])}</span><b>${esc(c.name)}</b>
+      <span style="margin-left:auto;display:flex;gap:8px">${edit && c.status === 'enviando' ? '<button class="btn" id="cmPause">Pausar</button>' : ''}${edit && c.status === 'pausada' ? '<button class="btn primary" id="cmResume">Reanudar</button>' : ''}
+      ${edit && ['enviando', 'pausada'].indexOf(c.status) >= 0 ? '<button class="btn danger" id="cmStop">Detener</button>' : ''}${edit ? '<button class="btn" id="cmDup">Duplicar</button>' : ''}</span></div>
+    ${c.last_error ? '<div class="note dte-data" style="margin:0 0 12px"><b>Se pausó:</b> ' + esc(c.last_error) + '</div>' : ''}
+    ${c.status === 'enviando' || c.status === 'pausada' ? `<div class="card pad" style="margin-bottom:12px"><div class="mk-bl"><span>Progreso</span><b>${c.sent + c.failed + c.skipped} de ${c.total}</b></div><div class="mk-track"><span style="width:${pct}%"></span></div>
+      ${r.pending ? '<p class="muted sm" style="margin:8px 0 0">Faltan ' + r.pending + '. Se siguen mandando solos cada minuto' + (c.channel === 'email' ? ' (con Gmail, hasta el límite del día)' : '') + '.</p>' : ''}</div>` : ''}
+    <div class="mk-kpis">
+      <div class="card pad kpi mk-kpi"><div class="l">Enviados</div><div class="v m">${c.sent}</div><div class="mk-sub muted">de ${c.total} · ${c.channel === 'whatsapp' ? 'WhatsApp' : 'correo'}</div></div>
+      <div class="card pad kpi mk-kpi"><div class="l">Ventas de quienes la recibieron</div><div class="v m">${esc(moneyIn(r.revenue || 0, cur))}</div><div class="mk-sub muted">${r.sales || 0} venta(s) en ${r.attribution_days || 7} días · ${r.buyers || 0} cliente(s)</div></div>
+      ${c.coupon_code ? `<div class="card pad kpi mk-kpi"><div class="l">Usos del cupón ${esc(c.coupon_code)}</div><div class="v m">${r.coupon_uses || 0}</div><div class="mk-sub muted">${esc(moneyIn(r.coupon_revenue || 0, cur))} en ventas</div></div>` : ''}
+      <div class="card pad kpi mk-kpi"><div class="l">Se dieron de baja</div><div class="v m">${r.optouts || 0}</div><div class="mk-sub muted">${c.skipped} omitido(s) · ${c.failed} fallido(s)</div></div>
+    </div>
+    <p class="muted sm mk-vs">Las visitas al sitio desde esta campaña aparecen en Panorama → Campañas como <b>${esc(c.utm_campaign)}</b> (con Google Analytics conectado).</p>
+    ${(r.failures || []).length ? `<div class="card pad"><h3 style="margin-top:0">No se pudo enviar</h3><ul class="list">${r.failures.map(x => `<li><span>${esc(x.name)} <span class="muted sm">${esc(x.address)}</span></span><span class="sm">${esc(x.error)}</span></li>`).join('')}</ul></div>` : ''}
+    ${c.channel === 'email' ? `<div class="card pad" style="margin-top:12px"><h3 style="margin-top:0">Lo que se mandó</h3><p><b>${esc(c.subject)}</b></p><p class="muted" style="white-space:pre-wrap">${esc(c.body).slice(0, 600)}</p></div>` : ''}`;
+  $('#cmBack').onclick = () => { MKT.campId = null; viewMarketing(); };
+  const act = (fn, msg) => async () => { try { await api(fn, S.token, c.id); toast(msg); mkCampaign(c.id); } catch (e) { toast(e.message, true); } };
+  if ($('#cmPause')) $('#cmPause').onclick = act('apiCampPause', 'Campaña pausada');
+  if ($('#cmResume')) $('#cmResume').onclick = act('apiCampSchedule', 'Campaña reanudada');
+  if ($('#cmStop')) $('#cmStop').onclick = () => openModal('Detener campaña', '<p>Ya no se mandará a quienes faltan. Lo enviado se queda.</p>', async () => { await api('apiCampCancel', S.token, c.id); toast('Campaña detenida'); mkCampaign(c.id); }, 'Detener');
+  if ($('#cmDup')) $('#cmDup').onclick = async () => { try { const d = await api('apiCampDup', S.token, c.id); MKT.campId = d.id; toast('Copia creada'); mkCampaign(d.id); } catch (e) { toast(e.message, true); } };
+}
+
 /* ============================ Cupones ============================ */
 
 const CPN_STATE = { activo: ['pagada', 'Activo'], programado: ['pendiente', 'Programado'], pausado: ['', 'Pausado'], vencido: ['', 'Vencido'], agotado: ['', 'Agotado'] };
@@ -1943,15 +2208,16 @@ async function viewMarketing() {
   const period = MKT.tab === 'panorama' ? `<div class="mk-period" role="group" aria-label="Periodo">${[7, 30, 90].map(d => `<button type="button" class="btn sm ${MKT.days === d ? 'primary' : ''}" data-days="${d}" aria-pressed="${MKT.days === d}">${d} días</button>`).join('')}
     <button type="button" class="btn sm" id="mkFresh" title="Volver a leer Google Analytics">Actualizar</button></div>` : '';
   main.innerHTML = pageHeader('Marketing', period) +
-    `<nav class="fin-tabs" role="tablist" aria-label="Secciones de marketing">${[['panorama', 'Panorama'], ['cupones', 'Cupones'], ['meta', 'Facebook e Instagram'], ['analytics', 'Google Analytics']]
+    `<nav class="fin-tabs" role="tablist" aria-label="Secciones de marketing">${[['panorama', 'Panorama'], ['campanas', 'Campañas'], ['cupones', 'Cupones'], ['meta', 'Facebook e Instagram'], ['analytics', 'Google Analytics']]
       .map(t => `<button role="tab" class="fin-tab ${MKT.tab === t[0] ? 'on' : ''}" aria-selected="${MKT.tab === t[0]}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</nav>
     <div id="mkBody"><div class="empty">Cargando…</div></div>`;
-  main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { MKT.tab = b.dataset.tab; viewMarketing(); });
+  main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { MKT.tab = b.dataset.tab; MKT.campId = null; viewMarketing(); });
   main.querySelectorAll('[data-days]').forEach(b => b.onclick = () => { MKT.days = Number(b.dataset.days); viewMarketing(); });
   if ($('#mkFresh')) $('#mkFresh').onclick = () => mkPanorama(true);
   if (MKT.tab === 'panorama') return mkPanorama(false);
   if (MKT.tab === 'meta') return mkMeta();
   if (MKT.tab === 'cupones') return mkCoupons();
+  if (MKT.tab === 'campanas') return MKT.campId ? mkCampaign(MKT.campId) : mkCampaigns();
   return mkAnalytics();
 }
 
@@ -4271,6 +4537,7 @@ function drawPosCart(flashId) {
       <button class="pc-cust" id="pcCust">${c.customer ? '<b>' + esc(c.customer.name) + '</b>' + (c.doc_type === '03' ? '<span class="muted sm">Crédito fiscal · NRC ' + esc(c.customer_nrc) + '</span>' : c.customer.phone || c.customer.email ? '<span class="muted sm">' + esc(c.customer.phone || c.customer.email) + '</span>' : '') : '<b>Consumidor final</b><span class="muted sm">Toca para elegir cliente</span>'}</button>
       <button class="btn sm pc-close" id="pcHide" aria-label="Volver a productos">✕</button>
     </div>
+    ${c.appointment_id ? `<div class="pc-appt"><span class="muted sm">Cobro de la cita ${esc(c.appointment_label || '')}</span><button class="btn sm" id="pcApptOff">Quitar</button></div>` : ''}
     <div class="pc-lines">${c.items.length ? t.lines.map((l, i) => `<div class="pc-line ${l.p.id === flashId ? 'flash' : ''}" data-i="${i}">
         <button class="pc-name" data-edit="${i}"><b>${esc(l.p.name)}</b><span class="muted sm">${esc(pm(l.unit))}${l.it.discount ? ' · desc. ' + esc(pm(l.it.discount)) : ''}${l.it.price !== undefined && l.it.price !== '' ? ' · precio cambiado' : ''}</span></button>
         <div class="stepper sm"><button type="button" data-d="-1" aria-label="Menos">−</button><input class="input" inputmode="decimal" value="${esc(qtyFmt(l.qty))}" aria-label="Cantidad"><button type="button" data-d="1" aria-label="Más">+</button></div>
@@ -4312,6 +4579,7 @@ function drawPosCart(flashId) {
   if ($('#pcDoc')) $('#pcDoc').onclick = openPosDoc;
   if ($('#pcShip')) $('#pcShip').onclick = openPosShip;
   $('#pcHide').onclick = () => document.body.classList.remove('cart-open');
+  if ($('#pcApptOff')) $('#pcApptOff').onclick = () => { POS.cart.appointment_id = ''; POS.cart.appointment_label = ''; drawPosCart(); };
   if ($('#pcDisc')) $('#pcDisc').onclick = () => {
     openModal('Descuento general', `<form class="form" id="dForm"><div class="wide"><label class="f">Monto a descontar del total</label>
       <input class="input pos-money" name="amount" inputmode="decimal" value="${c.discount ? esc(c.discount) : ''}" placeholder="0.00"></div>
@@ -4408,6 +4676,7 @@ function cartPayload() {
     customer: c.customer && !c.customer.id ? c.customer : undefined,
     doc_type: c.doc_type || '01', customer_nrc: c.doc_type === '03' ? c.customer_nrc : undefined,
     ship: c.ship || undefined, cod: c.ship && c.cod ? true : undefined, coupon: c.coupon || undefined,
+    appointment_id: c.appointment_id || undefined,
   };
 }
 
@@ -6242,6 +6511,320 @@ async function openFseDte(e) {
   }, 'Emitir');
 }
 
+
+/* ============================ Agenda (citas) ============================ */
+
+const AG = { tab: 'agenda', mode: 'semana', from: '', staff: '', cancelled: false, cfg: null, data: null };
+const AG_TAG = { pendiente: 'pendiente', confirmada: 'confirmada', completada: 'completada', no_asistio: 'no_asistio', cancelada: 'cancelada' };
+const AG_DOW = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+const AG_DOWL = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+const AG_MON = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+const agDate = d => new Date(d + 'T12:00:00Z');
+const agAdd = (d, n) => { const x = agDate(d); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+const agMonday = d => agAdd(d, -((agDate(d).getUTCDay() + 6) % 7));
+const agLabel = d => { const x = agDate(d); return AG_DOW[x.getUTCDay()] + ' ' + x.getUTCDate() + ' ' + AG_MON[x.getUTCMonth()]; };
+const agDur = m => m >= 60 ? Math.floor(m / 60) + ' h' + (m % 60 ? ' ' + (m % 60) + ' min' : '') : m + ' min';
+
+function agBase() {
+  if (ON_GOOGLE) return '';
+  return new URL('reservar.html', location.href).href.split('?')[0];
+}
+
+async function agLoadCfg(force) {
+  if (AG.cfg && !force) return AG.cfg;
+  AG.cfg = await api('apiAgendaGet', S.token, agBase());
+  return AG.cfg;
+}
+
+async function viewAgenda() {
+  const main = $('#main');
+  const w = can('appointments:write');
+  const admin = can('appointments:settings');
+  main.innerHTML = pageHeader('Agenda', w && AG.tab === 'agenda' ? '<button class="btn primary" id="agNew">Nueva cita</button>' : '') +
+    (admin ? `<nav class="fin-tabs" role="tablist" aria-label="Secciones de la agenda">${[['agenda', 'Citas'], ['ajustes', 'Horarios y página de reservas']]
+      .map(t => `<button role="tab" class="fin-tab ${AG.tab === t[0] ? 'on' : ''}" aria-selected="${AG.tab === t[0]}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</nav>` : '') +
+    '<div id="agBody"><div class="empty">Cargando…</div></div>';
+  main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { AG.tab = b.dataset.tab; viewAgenda(); });
+  if ($('#agNew')) $('#agNew').onclick = () => openApptForm(null);
+  try { await agLoadCfg(true); } catch (e) { $('#agBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'agenda') return;
+  if (AG.tab === 'ajustes' && admin) return agSettings();
+  agDrawShell();
+}
+
+function agDrawShell() {
+  const c = AG.cfg;
+  const intro = !c.services.length
+    ? `<div class="card pad ag-note">Para agendar, crea tus servicios en <a href="#" id="agGoProd">Productos y servicios</a> con tipo <b>Servicio</b> y su <b>duración en minutos</b>.</div>`
+    : !c.settings.on && can('appointments:settings') ? `<div class="card pad ag-note">Tus clientes todavía no pueden reservar solos. <a href="#" id="agGoSet">Abre tu página de reservas</a> para compartir el enlace.</div>` : '';
+  $('#agBody').innerHTML = intro + `
+    <div class="toolbar ag-bar">
+      <div class="chips" role="group" aria-label="Fechas"><button class="btn sm" id="agPrev" aria-label="Anterior">‹</button><button class="btn sm" id="agToday">Hoy</button><button class="btn sm" id="agNext" aria-label="Siguiente">›</button></div>
+      <b class="ag-range" id="agRange"></b>
+      <div class="chips" role="group" aria-label="Vista">${[['dia', 'Día'], ['semana', 'Semana']].map(m => `<button class="btn sm ${AG.mode === m[0] ? 'primary' : ''}" data-mode="${m[0]}" aria-pressed="${AG.mode === m[0]}">${m[1]}</button>`).join('')}</div>
+      ${c.staff.length > 1 ? `<select class="input ag-staff" id="agStaff" aria-label="Persona"><option value="">Todo el equipo</option>${c.staff.map(u => `<option value="${esc(u.id)}" ${AG.staff === u.id ? 'selected' : ''}>${esc(u.name)}</option>`).join('')}</select>` : ''}
+      <label class="chk ag-cx"><input type="checkbox" id="agCx" ${AG.cancelled ? 'checked' : ''}><span>Ver canceladas</span></label>
+    </div>
+    <div id="agPend"></div>
+    <div id="agCal"><div class="empty">Cargando…</div></div>`;
+  if ($('#agGoProd')) $('#agGoProd').onclick = ev => { ev.preventDefault(); go('products'); };
+  if ($('#agGoSet')) $('#agGoSet').onclick = ev => { ev.preventDefault(); AG.tab = 'ajustes'; viewAgenda(); };
+  const step = () => AG.mode === 'dia' ? 1 : 7;
+  $('#agPrev').onclick = () => { AG.from = agAdd(AG.from, -step()); agDraw(); };
+  $('#agNext').onclick = () => { AG.from = agAdd(AG.from, step()); agDraw(); };
+  $('#agToday').onclick = () => { AG.from = ''; agDraw(); };
+  $('#agBody').querySelectorAll('[data-mode]').forEach(b => b.onclick = () => {
+    const t = AG.data && AG.data.today;
+    if (b.dataset.mode === 'dia' && AG.mode === 'semana' && t && t >= AG.from && t < agAdd(AG.from, 7)) AG.from = t;
+    AG.mode = b.dataset.mode; agDrawShell();
+  });
+  if ($('#agStaff')) $('#agStaff').onchange = () => { AG.staff = $('#agStaff').value; agDraw(); };
+  $('#agCx').onchange = () => { AG.cancelled = $('#agCx').checked; agDraw(); };
+  agDraw();
+}
+
+async function agDraw() {
+  const today = (AG.data && AG.data.today) || new Date().toISOString().slice(0, 10);
+  let from = AG.from || today;
+  if (AG.mode === 'semana') from = agMonday(from);
+  AG.from = from;
+  const days = AG.mode === 'dia' ? 1 : 7;
+  $('#agRange').textContent = days === 1 ? agLabel(from) : agLabel(from) + ' – ' + agLabel(agAdd(from, 6));
+  let d;
+  try { d = await api('apiApptList', S.token, { from, days, staff_id: AG.staff, show_cancelled: AG.cancelled }); }
+  catch (e) { $('#agCal').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'agenda' || AG.from !== from || !$('#agCal')) return;
+  AG.data = d;
+  if (!AG.from) AG.from = d.today;
+  $('#agPend').innerHTML = d.pending ? `<div class="card pad ag-note"><b>${d.pending} ${d.pending === 1 ? 'cita espera' : 'citas esperan'} tu confirmación.</b> Ábrelas y elige Confirmar; el cliente recibe el correo.</div>` : '';
+  const list = [];
+  for (let i = 0; i < days; i++) list.push(agAdd(from, i));
+  const hours = AG.cfg.settings.hours || {};
+  const card = a => `<button class="ag-appt ${esc(a.status)}" data-ap="${esc(a.id)}"><span class="ag-t">${esc(a.time)}–${esc(a.end_time)}</span>
+      <span class="ag-c">${esc(a.customer_name || 'Sin nombre')}</span><span class="ag-s">${esc(a.service)}${a.staff && !AG.staff ? ' · ' + esc(a.staff) : ''}</span>
+      ${a.status !== 'confirmada' ? `<span class="tag ${AG_TAG[a.status] || ''}">${esc(a.status_label)}</span>` : ''}${a.source === 'online' ? '<span class="ag-src">En línea</span>' : ''}</button>`;
+  $('#agCal').innerHTML = `<div class="ag-grid ${days === 1 ? 'one' : ''}">${list.map(day => {
+    const rows = d.rows.filter(a => a.day === day);
+    const closed = !(hours[agDate(day).getUTCDay()] || []).length;
+    return `<section class="ag-day ${day === d.today ? 'today' : ''} ${day < d.today ? 'past' : ''}" aria-label="${esc(agLabel(day))}">
+      <header><span>${esc(agLabel(day))}</span>${rows.length ? `<span class="muted sm">${rows.length}</span>` : ''}</header>
+      ${rows.map(card).join('') || `<p class="ag-empty">${closed ? 'Cerrado' : 'Sin citas'}</p>`}
+      ${can('appointments:write') && day >= d.today ? `<button class="ag-add" data-new="${day}" aria-label="Nueva cita el ${esc(agLabel(day))}">+ Cita</button>` : ''}</section>`;
+  }).join('')}</div>`;
+  $('#agCal').querySelectorAll('[data-ap]').forEach(b => b.onclick = () => openAppt(d.rows.find(a => a.id === b.dataset.ap)));
+  $('#agCal').querySelectorAll('[data-new]').forEach(b => b.onclick = () => openApptForm(null, b.dataset.new));
+}
+
+function openAppt(a) {
+  if (!a) return;
+  const cur = S.boot.tenant.currency;
+  const w = can('appointments:write');
+  const open = ['pendiente', 'confirmada'].indexOf(a.status) >= 0;
+  const digits = String(a.phone || '').replace(/\D/g, '');
+  openModal('Cita ' + a.number, `
+    <p style="margin-top:0"><span class="tag ${AG_TAG[a.status] || ''}">${esc(a.status_label)}</span>${a.source === 'online' ? ' <span class="muted sm">Reservada en línea</span>' : ''}</p>
+    <ul class="list"><li><span>Cliente</span><b>${esc(a.customer_name)}</b></li>
+      ${a.phone ? `<li><span>Teléfono</span><b><a href="tel:${esc(digits)}">${esc(a.phone)}</a>${digits.length >= 8 ? ` · <a href="https:\/\/wa.me/${esc(digits)}" target="_blank" rel="noopener">WhatsApp</a>` : ''}</b></li>` : ''}
+      ${a.email ? `<li><span>Correo</span><b>${esc(a.email)}</b></li>` : ''}
+      <li><span>Servicio</span><b>${esc(a.service)} · ${agDur(a.duration)}</b></li>
+      <li><span>Cuándo</span><b>${esc(agLabel(a.day))}, ${esc(a.time)}–${esc(a.end_time)}</b></li>
+      ${a.staff ? `<li><span>Con</span><b>${esc(a.staff)}</b></li>` : ''}
+      <li><span>Precio</span><b>${esc(moneyIn(a.price, cur))}</b></li>
+      ${a.reminded ? '<li><span>Recordatorio</span><b>Enviado</b></li>' : ''}
+      ${a.cancel_reason && a.status === 'cancelada' ? `<li><span>Motivo</span><b>${esc(a.cancel_reason)}</b></li>` : ''}</ul>
+    ${a.notes ? `<p class="muted" style="white-space:pre-line">${esc(a.notes)}</p>` : ''}
+    ${w ? `<div class="ag-actions">
+      ${a.status === 'pendiente' ? '<button class="btn primary" data-st="confirmada">Confirmar</button>' : ''}
+      ${open && !a.sale_id && can('sales:write') ? '<button class="btn primary" id="apCharge">Cobrar en caja</button>' : ''}
+      ${open && !a.sale_id ? '<button class="btn" data-st="completada">Atendida sin cobrar</button><button class="btn" data-st="no_asistio">No vino</button><button class="btn" id="apMove">Cambiar hora</button><button class="btn danger" id="apCancel">Cancelar cita</button>' : ''}
+      ${a.status === 'no_asistio' || (a.status === 'completada' && !a.sale_id) ? '<button class="btn" data-st="confirmada">Volver a abrir</button>' : ''}
+      ${a.sale_id ? '<button class="btn" id="apSale">Ver la venta</button>' : ''}</div>` : ''}`, null, null, false);
+  const set = async (st, reason) => {
+    try { await api('apiApptStatus', S.token, a.id, st, reason || ''); closeModal(true); toast({ confirmada: 'Cita confirmada', completada: 'Cita atendida', no_asistio: 'Marcada: no vino', cancelada: 'Cita cancelada' }[st] || 'Listo'); agDraw(); }
+    catch (e) { toast(e.message, true); }
+  };
+  document.querySelectorAll('#modal [data-st]').forEach(b => b.onclick = () => set(b.dataset.st));
+  if ($('#apCancel')) $('#apCancel').onclick = () => {
+    const r = prompt('¿Cancelar la cita de ' + a.customer_name + '? ' + (a.email ? 'Le avisamos por correo. ' : '') + 'Motivo (opcional):', '');
+    if (r === null) return;
+    set('cancelada', r.trim());
+  };
+  if ($('#apMove')) $('#apMove').onclick = () => { closeModal(true); openApptForm(a); };
+  if ($('#apSale')) $('#apSale').onclick = () => { closeModal(true); go('sales'); };
+  if ($('#apCharge')) $('#apCharge').onclick = () => {
+    closeModal(true);
+    POS.cart = emptyCart();
+    POS.cart.items = [{ product_id: a.product_id, qty: 1 }];
+    if (a.customer_id) POS.cart.customer = { id: a.customer_id, name: a.customer_name, email: a.email, phone: a.phone };
+    POS.cart.appointment_id = a.id;
+    POS.cart.appointment_label = a.number + ' · ' + a.service;
+    go('pos');
+  };
+}
+
+async function openApptForm(a, day) {
+  const c = AG.cfg;
+  if (!c.services.length) { toast('Primero crea un servicio con duración en Productos y servicios.', true); return; }
+  const v = a || { product_id: c.services[0].id, staff_id: AG.staff || '', day: day || (AG.data && AG.data.today) || '', time: '', notes: '' };
+  const staffOpts = c.staff.length ? `<option value="">${a ? 'Sin asignar' : 'Quien esté libre'}</option>` + c.staff.map(u => `<option value="${esc(u.id)}" ${v.staff_id === u.id ? 'selected' : ''}>${esc(u.name)}</option>`).join('') : '';
+  openModal(a ? 'Cambiar cita ' + a.number : 'Nueva cita', `<form class="form" id="apForm" autocomplete="off">
+    <div class="wide"><label class="f" for="apSvc">Servicio</label><select class="input" id="apSvc" name="service_id">${c.services.map(s => `<option value="${esc(s.id)}" ${v.product_id === s.id ? 'selected' : ''}>${esc(s.name)} · ${agDur(s.duration)} · ${esc(moneyIn(s.price, c.currency))}</option>`).join('')}</select></div>
+    ${staffOpts ? `<div class="wide"><label class="f" for="apStaff">Con</label><select class="input" id="apStaff" name="staff_id">${staffOpts}</select></div>` : ''}
+    <div><label class="f" for="apDay">Día</label><input class="input" type="date" id="apDay" name="day" value="${esc(v.day)}" required></div>
+    <div><label class="f" for="apTime">Hora</label><input class="input" type="time" id="apTime" name="time" value="${esc(v.time)}" step="300" required></div>
+    <div class="wide"><div class="ag-free" id="apFree"></div></div>
+    ${a ? `<div class="wide"><p class="muted" style="margin:0">Cliente: <b>${esc(a.customer_name)}</b>${a.phone ? ' · ' + esc(a.phone) : ''}</p></div>` : `
+    <div class="wide"><label class="f" for="apQ">Cliente</label><input class="input" id="apQ" placeholder="Busca por nombre, teléfono o correo, o escribe uno nuevo" aria-describedby="apQh">
+      <div class="hint" id="apQh">Si no existe, se crea con estos datos.</div><div class="ag-pick" id="apPick"></div></div>
+    <div><label class="f" for="apPhone">Teléfono</label><input class="input" id="apPhone" name="phone" type="tel" inputmode="tel"></div>
+    <div><label class="f" for="apEmail">Correo</label><input class="input" id="apEmail" name="email" type="email" inputmode="email"></div>`}
+    <div class="wide"><label class="f" for="apNotes">Notas (opcional)</label><textarea class="input" id="apNotes" name="notes" rows="2">${esc(v.notes || '')}</textarea></div>
+    <label class="chk wide"><input type="checkbox" name="notify" checked><span>Mandar la confirmación por correo al cliente</span></label>
+  </form>`, async () => {
+    const f = $('#apForm');
+    const data = { id: a ? a.id : undefined, service_id: f.service_id.value, staff_id: f.staff_id ? f.staff_id.value : '', day: f.day.value, time: f.time.value, notes: f.notes.value.trim(), notify: f.notify.checked };
+    if (a) { data.customer_id = a.customer_id; data.customer_name = a.customer_name; data.phone = a.phone; data.email = a.email; }
+    else { data.customer_id = f._cust ? f._cust.id : ''; data.customer_name = $('#apQ').value.trim(); data.phone = f.phone.value.trim(); data.email = f.email.value.trim(); }
+    try { await api('apiApptSave', S.token, data); }
+    catch (e) {
+      if (e.code !== 'SLOT_TAKEN' || !confirm(e.message.replace(' Elige otro o guarda de todos modos.', '') + '\n\n¿Guardar de todos modos?')) throw e;
+      data.force = true; await api('apiApptSave', S.token, data);
+    }
+    toast(a ? 'Cita cambiada' : 'Cita agendada');
+    AG.from = data.day; agDraw();
+  }, a ? 'Guardar' : 'Agendar', false);
+  const f = $('#apForm');
+  const free = async () => {
+    const box = $('#apFree');
+    if (!f.day.value) { box.innerHTML = ''; return; }
+    box.innerHTML = '<span class="muted sm">Buscando horarios libres…</span>';
+    try {
+      const sl = await api('apiApptSlots', S.token, f.service_id.value, f.day.value, f.staff_id ? f.staff_id.value : '', a ? a.id : '');
+      if (!$('#apFree')) return;
+      box.innerHTML = sl.length ? '<span class="muted sm">Libres:</span> ' + sl.map(x => `<button type="button" class="btn sm ${f.time.value === x.time ? 'primary' : ''}" data-tm="${esc(x.time)}">${esc(x.time)}</button>`).join('')
+        : '<span class="muted sm">No hay horarios libres ese día dentro de tu horario. Puedes escribir otra hora.</span>';
+      box.querySelectorAll('[data-tm]').forEach(b => b.onclick = () => { f.time.value = b.dataset.tm; box.querySelectorAll('[data-tm]').forEach(x => x.classList.toggle('primary', x === b)); });
+    } catch (e) { box.innerHTML = '<span class="muted sm">' + esc(e.message) + '</span>'; }
+  };
+  f.service_id.onchange = free; f.day.onchange = free; if (f.staff_id) f.staff_id.onchange = free;
+  free();
+  if (!a && $('#apQ')) {
+    const pick = $('#apPick');
+    $('#apQ').oninput = debounce(async () => {
+      if (!$('#apQ')) return;
+      f._cust = null;
+      const q = $('#apQ').value.trim();
+      if (q.length < 2 || !can('sales:write')) { pick.innerHTML = ''; return; }
+      let r = [];
+      try { r = await api('apiPosCustomers', S.token, q); } catch (e) { r = []; }
+      if (!$('#apPick')) return;
+      pick.innerHTML = r.map((x, i) => `<button type="button" class="btn sm" data-ci="${i}">${esc(x.name)}${x.phone ? ' · ' + esc(x.phone) : ''}</button>`).join('');
+      pick.querySelectorAll('[data-ci]').forEach(b => b.onclick = () => {
+        const x = r[Number(b.dataset.ci)]; f._cust = x;
+        $('#apQ').value = x.name; f.phone.value = x.phone || ''; f.email.value = x.email || ''; pick.innerHTML = '<span class="muted sm">Cliente elegido.</span>';
+      });
+    }, 300);
+  }
+}
+
+/* ---------- Ajustes de la agenda ---------- */
+
+function agSettings() {
+  const c = AG.cfg, s = c.settings;
+  const win = d => (s.hours[d] || []);
+  const hRow = d => {
+    const w = win(d);
+    return `<div class="ag-hrow" data-d="${d}"><label class="chk"><input type="checkbox" name="open" ${w.length ? 'checked' : ''}><span>${AG_DOWL[d]}</span></label>
+      <span class="ag-win"><input class="input" type="time" name="a1" value="${esc((w[0] || [])[0] || '09:00')}" aria-label="${AG_DOWL[d]}: abre"> a <input class="input" type="time" name="b1" value="${esc((w[0] || [])[1] || '18:00')}" aria-label="${AG_DOWL[d]}: cierra"></span>
+      <span class="ag-win ag-w2"><span class="muted sm">y de</span> <input class="input" type="time" name="a2" value="${esc((w[1] || [])[0] || '')}" aria-label="${AG_DOWL[d]}: segundo turno abre"> a <input class="input" type="time" name="b2" value="${esc((w[1] || [])[1] || '')}" aria-label="${AG_DOWL[d]}: segundo turno cierra"></span></div>`;
+  };
+  const num = (name, label, val, hint) => `<div><label class="f" for="ag_${name}">${label}</label><input class="input" id="ag_${name}" name="${name}" inputmode="numeric" value="${esc(val)}">${hint ? `<div class="hint">${hint}</div>` : ''}</div>`;
+  $('#agBody').innerHTML = `
+    <section class="card pad ag-sec">
+      <h3>Página de reservas</h3>
+      <label class="chk"><input type="checkbox" id="agOn" ${s.on ? 'checked' : ''}><span><b>Mis clientes pueden reservar en línea</b><br><span class="muted sm">Eligen servicio, día y hora libres. Quedan como clientes y reciben confirmación y recordatorio por correo.</span></span></label>
+      ${c.link ? `<div class="codebox" style="margin-top:12px"><pre class="code">${esc(c.link)}</pre><button class="btn sm copy">Copiar</button></div>
+        <div class="chips"><a class="btn sm" href="${esc(c.link)}" target="_blank" rel="noopener">Abrir la página</a><button class="btn sm" id="agNewLink">Cambiar el enlace</button></div>
+        <p class="hint">Ponlo en tu Instagram, tu Google Business, tu sitio o mándalo por WhatsApp.</p>` : ''}
+    </section>
+    <form id="agForm" autocomplete="off">
+    <section class="card pad ag-sec"><h3>Lo que ve tu cliente</h3><div class="form">
+      <div class="wide"><label class="f" for="ag_title">Título</label><input class="input" id="ag_title" name="title" maxlength="120" value="${esc(s.title)}" placeholder="Reserva tu cita en ${esc(S.boot.tenant.name || 'tu negocio')}"></div>
+      <div class="wide"><label class="f" for="ag_message">Mensaje (opcional)</label><textarea class="input" id="ag_message" name="message" rows="2" maxlength="500" placeholder="Por ejemplo: llega 5 minutos antes. Estacionamiento al frente.">${esc(s.message)}</textarea></div>
+      <div class="wide"><label class="f" for="ag_location">Dónde atiendes</label><input class="input" id="ag_location" name="location" maxlength="200" value="${esc(s.location)}" placeholder="${esc(S.boot.tenant.address || 'Dirección del local')}"><div class="hint">Si lo dejas vacío, se usa la dirección de la empresa.</div></div>
+    </div></section>
+    <section class="card pad ag-sec"><h3>Horario de atención</h3><p class="muted sm" style="margin-top:0">Horas de ${esc(String(c.tz).replace(/_/g, ' '))}. Usa el segundo turno si cierras a mediodía.</p>
+      <div class="ag-hours">${[1, 2, 3, 4, 5, 6, 0].map(hRow).join('')}</div></section>
+    <section class="card pad ag-sec"><h3>Reglas</h3><div class="form">
+      ${num('slot_min', 'Horarios cada (minutos)', s.slot_min, 'Cada cuánto se ofrece un horario: 15, 30, 60…')}
+      ${num('buffer_min', 'Tiempo entre citas (minutos)', s.buffer_min, 'Para limpiar o prepararte. 0 = seguidas.')}
+      ${num('notice_h', 'Aviso mínimo (horas)', r2(s.notice_min / 60), 'No se puede reservar con menos anticipación.')}
+      ${num('max_days', 'Reservar hasta (días adelante)', s.max_days, '')}
+      ${num('cancel_hours', 'Cancelar en línea hasta (horas antes)', s.cancel_hours, 'Después, el cliente tiene que llamarte.')}
+      ${num('max_per_contact', 'Citas próximas por cliente', s.max_per_contact, 'Evita que alguien acapare horarios.')}
+      <div class="wide"><span class="f">Cómo se confirman</span>
+        <label class="chk"><input type="radio" name="confirm" value="auto" ${s.confirm !== 'manual' ? 'checked' : ''}><span>Al momento: el horario queda apartado y confirmado</span></label>
+        <label class="chk" style="margin-top:8px"><input type="radio" name="confirm" value="manual" ${s.confirm === 'manual' ? 'checked' : ''}><span>Yo las confirmo: el horario se aparta y le avisas al cliente cuando la confirmes</span></label></div>
+    </div></section>
+    <section class="card pad ag-sec"><h3>Quién atiende</h3>
+      <p class="muted sm" style="margin-top:0">Cada persona elegida tiene su propia agenda: dos citas a la misma hora caben si hay dos personas libres. Si no eliges a nadie, se atiende una cita a la vez.</p>
+      <div class="ag-people">${c.users.map(u => `<label class="chk"><input type="checkbox" name="staff" value="${esc(u.id)}" ${s.staff.indexOf(u.id) >= 0 ? 'checked' : ''}><span>${esc(u.name)}</span></label>`).join('')}</div>
+      <label class="chk" style="margin-top:12px"><input type="checkbox" name="staff_choice" ${s.staff_choice ? 'checked' : ''}><span>El cliente puede elegir con quién</span></label></section>
+    <section class="card pad ag-sec"><h3>Recordatorios</h3>
+      ${num('remind_hours', 'Mandar el recordatorio (horas antes)', s.remind_hours, '')}
+      <label class="chk" style="margin-top:12px"><input type="checkbox" name="remind_email" ${s.remind_email ? 'checked' : ''}><span>Por correo</span></label>
+      <label class="chk" style="margin-top:8px"><input type="checkbox" name="remind_wa" ${s.remind_wa ? 'checked' : ''}><span>Por WhatsApp<br><span class="muted sm">Necesita WhatsApp conectado en Avisos y la plantilla <b>nexo_cita</b> aprobada por Meta.</span></span></label></section>
+    <section class="card pad ag-sec"><h3>Días bloqueados</h3><p class="muted sm" style="margin-top:0">Vacaciones, feriados o un día libre de alguien.</p>
+      <div id="agBlocks"></div><button type="button" class="btn sm" id="agAddBlock">Agregar bloqueo</button></section>
+    <section class="card pad ag-sec"><h3>Servicios que se pueden reservar</h3>
+      ${c.services.length ? `<ul class="list">${c.services.map(x => `<li><span>${esc(x.name)}</span><b>${agDur(x.duration)} · ${esc(moneyIn(x.price, c.currency))}</b></li>`).join('')}</ul>` : '<p class="muted">Todavía ninguno.</p>'}
+      <p class="hint">Son tus productos de tipo Servicio con duración. Cámbialos en <a href="#" id="agProd">Productos y servicios</a>.</p></section>
+    <div class="ag-save"><span class="err" id="agErr"></span><button class="btn primary" id="agSave">Guardar</button></div>
+    </form>`;
+  bindCopy($('#agBody'));
+  const blocks = (s.blocks || []).slice();
+  const drawBlocks = () => {
+    $('#agBlocks').innerHTML = blocks.map((b, i) => `<div class="ag-block" data-i="${i}">
+      <input class="input" type="date" name="bf" value="${esc(b.from.slice(0, 10))}" aria-label="Desde"> <span class="muted">a</span> <input class="input" type="date" name="bt" value="${esc(b.to.slice(0, 10))}" aria-label="Hasta">
+      ${c.staff.length ? `<select class="input" name="bs" aria-label="Para quién"><option value="">Todo el negocio</option>${c.staff.map(u => `<option value="${esc(u.id)}" ${b.staff_id === u.id ? 'selected' : ''}>${esc(u.name)}</option>`).join('')}</select>` : ''}
+      <input class="input" name="br" value="${esc(b.reason || '')}" placeholder="Motivo" maxlength="80" aria-label="Motivo"><button type="button" class="btn sm" data-rm="${i}" aria-label="Quitar bloqueo">Quitar</button></div>`).join('') || '<p class="muted sm">Sin bloqueos.</p>';
+    $('#agBlocks').querySelectorAll('[data-rm]').forEach(b => b.onclick = () => { readBlocks(); blocks.splice(Number(b.dataset.rm), 1); drawBlocks(); });
+  };
+  const readBlocks = () => { $('#agBlocks').querySelectorAll('.ag-block').forEach(r => { const b = blocks[Number(r.dataset.i)]; b.from = r.querySelector('[name=bf]').value; b.to = r.querySelector('[name=bt]').value || b.from; b.staff_id = r.querySelector('[name=bs]') ? r.querySelector('[name=bs]').value : ''; b.reason = r.querySelector('[name=br]').value.trim(); }); };
+  drawBlocks();
+  $('#agAddBlock').onclick = () => { readBlocks(); const t = (AG.data && AG.data.today) || new Date().toISOString().slice(0, 10); blocks.push({ from: t, to: t, staff_id: '', reason: '' }); drawBlocks(); };
+  $('#agProd').onclick = ev => { ev.preventDefault(); go('products'); };
+  const syncRows = () => $('#agBody').querySelectorAll('.ag-hrow').forEach(r => { const on = r.querySelector('[name=open]').checked; r.querySelectorAll('.ag-win').forEach(x => { x.hidden = !on; }); });
+  $('#agBody').querySelectorAll('.ag-hrow [name=open]').forEach(x => x.onchange = syncRows); syncRows();
+  const collect = () => {
+    const f = $('#agForm');
+    readBlocks();
+    const hours = {};
+    f.querySelectorAll('.ag-hrow').forEach(r => {
+      const g = n => r.querySelector('[name=' + n + ']').value;
+      const list = [];
+      if (r.querySelector('[name=open]').checked) { list.push([g('a1'), g('b1')]); if (g('a2') || g('b2')) list.push([g('a2'), g('b2')]); }
+      hours[r.dataset.d] = list;
+    });
+    const n = name => f[name].value.trim() === '' ? undefined : Number(f[name].value);
+    return { on: $('#agOn').checked, title: f.title.value.trim(), message: f.message.value.trim(), location: f.location.value.trim(), hours,
+      slot_min: n('slot_min'), buffer_min: n('buffer_min'), notice_min: f.notice_h.value.trim() === '' ? undefined : Math.round(Number(f.notice_h.value) * 60), max_days: n('max_days'),
+      cancel_hours: n('cancel_hours'), max_per_contact: n('max_per_contact'), remind_hours: n('remind_hours'), confirm: f.querySelector('[name=confirm]:checked').value,
+      staff: Array.from(f.querySelectorAll('[name=staff]:checked')).map(x => x.value), staff_choice: f.staff_choice.checked, remind_email: f.remind_email.checked, remind_wa: f.remind_wa.checked,
+      blocks: blocks.filter(b => b.from) };
+  };
+  const save = async (msg) => {
+    $('#agErr').textContent = ''; $('#agSave').disabled = true;
+    try { AG.cfg = await api('apiAgendaSave', S.token, collect()); toast(msg || 'Agenda guardada'); agSettings(); }
+    catch (e) { $('#agErr').textContent = e.message; if ($('#agSave')) $('#agSave').disabled = false; throw e; }
+  };
+  $('#agForm').onsubmit = ev => { ev.preventDefault(); save().catch(() => {}); };
+  $('#agOn').onchange = () => save($('#agOn').checked ? 'Reservas en línea abiertas' : 'Reservas en línea cerradas').catch(() => { $('#agOn').checked = !$('#agOn').checked; });
+  if ($('#agNewLink')) $('#agNewLink').onclick = async () => {
+    if (!confirm('¿Cambiar el enlace? El anterior deja de funcionar (útil si lo compartiste por error). Las citas ya hechas no cambian.')) return;
+    try { await api('apiAgendaNewLink', S.token); AG.cfg = await api('apiAgendaGet', S.token, agBase()); toast('Enlace nuevo listo'); agSettings(); } catch (e) { toast(e.message, true); }
+  };
+}
 
 /* ============================ Envíos ============================ */
 
