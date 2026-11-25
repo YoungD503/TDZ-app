@@ -778,6 +778,13 @@
   .mk-bar:focus { outline: none; }
   .mk-bar:focus-visible rect:first-child { stroke: var(--brand-line); stroke-width: 2; }
   .mk-h2 { font-size: 17px; margin: 22px 0 10px; }
+  .cp-pick { max-height: 220px; overflow: auto; display: grid; gap: 4px; margin-top: 8px; border: 1px solid var(--line); border-radius: 8px; padding: 8px; }
+  .mono-code { font-variant-numeric: tabular-nums; letter-spacing: .04em; }
+  .pc-coupon .btn { margin-left: 6px; padding: 2px 8px; }
+  .pc-coupon.bad { color: var(--danger); }
+  .mk-posts li b { font-weight: 600; text-align: right; }
+  .mk-posts a { color: inherit; }
+  .mk-camp td:first-child { max-width: 220px; }
   .mk-funnel { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
   .mk-pc { margin-top: 3px; }
   .mk-h2 { font-size: 17px; margin: 22px 0 10px; }
@@ -1001,7 +1008,7 @@ const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory'
 const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
   'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing', 'apiFinSettings', 'apiFinChart', 'apiFinSuppliers', 'apiFinExpense', 'apiFinRecurring',
   'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial', 'apiTaxReport', 'apiTaxAnexo',
-  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory', 'apiPanorama', 'apiMktGet']);
+  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory', 'apiPanorama', 'apiMktGet', 'apiMetaGet']);
 
 function swrLoad() {
   if (SWR.mem) return SWR.mem;
@@ -1780,6 +1787,148 @@ function resetStep2(r, keepStock) {
   setTimeout(() => { const c = $('#rs2') && $('#rs2').code; if (c) c.focus(); }, 60);
 }
 
+
+/* ============================ Cupones ============================ */
+
+const CPN_STATE = { activo: ['pagada', 'Activo'], programado: ['pendiente', 'Programado'], pausado: ['', 'Pausado'], vencido: ['', 'Vencido'], agotado: ['', 'Agotado'] };
+function cpnValue(c, cur) { return c.kind === 'envio' ? 'Envío gratis' : c.kind === 'porcentaje' ? c.value + '%' + (c.max_discount ? ' (máx. ' + moneyIn(c.max_discount, cur) + ')' : '') : moneyIn(c.value, cur); }
+
+async function mkCoupons() {
+  let d;
+  try { d = await api('apiCouponList', S.token); } catch (e) { $('#mkBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'marketing' || MKT.tab !== 'cupones') return;
+  MKT.cpn = d;
+  const cur = S.boot.tenant.currency;
+  const rows = d.rows;
+  const used = rows.filter(c => c.uses);
+  $('#mkBody').innerHTML = `
+    <div class="toolbar"><p class="muted" style="margin:0;max-width:640px">Funcionan en la caja y en tu tienda en línea. En Shopify, WooCommerce o Stripe crea el mismo código allá: aquí se mide cuánto vendió.</p>
+      ${d.can_edit ? '<button class="btn primary" id="cpNew">Nuevo cupón</button>' : ''}</div>
+    ${used.length ? `<div class="mk-kpis" style="margin-bottom:12px">
+      <div class="card pad kpi mk-kpi"><div class="l">Ventas con cupón</div><div class="v m">${moneyIn(used.reduce((a, c) => a + c.revenue, 0), cur)}</div><div class="mk-sub muted">${(n => n + (n === 1 ? ' uso' : ' usos'))(used.reduce((a, c) => a + c.uses, 0))}</div></div>
+      <div class="card pad kpi mk-kpi"><div class="l">Descuento dado</div><div class="v m">${moneyIn(used.reduce((a, c) => a + c.discount_given, 0), cur)}</div><div class="mk-sub muted">lo que dejaste de cobrar</div></div>
+      <div class="card pad kpi mk-kpi"><div class="l">Clientes que lo usaron</div><div class="v m">${used.reduce((a, c) => a + c.customers, 0)}</div><div class="mk-sub muted">con ficha de cliente</div></div></div>` : ''}
+    <div class="card tablewrap">${rows.length ? `<table class="wrap"><thead><tr><th>Código</th><th>Descuento</th><th>Estado</th><th class="num">Usos</th><th class="num">Ventas</th><th class="num">Descuento dado</th><th>Vence</th></tr></thead><tbody>
+      ${rows.map(c => `<tr class="clickable" data-cp="${esc(c.id)}" tabindex="0"><td><b class="mono-code">${esc(c.code)}</b><br><span class="muted sm">${esc(c.name)}</span></td>
+        <td>${esc(cpnValue(c, cur))}${c.min_amount ? '<br><span class="muted sm">desde ' + esc(moneyIn(c.min_amount, cur)) + '</span>' : ''}</td>
+        <td><span class="tag ${(CPN_STATE[c.state] || [''])[0]}">${esc((CPN_STATE[c.state] || ['', c.state])[1])}</span></td>
+        <td class="num">${c.uses}${c.max_uses ? ' / ' + c.max_uses : ''}</td><td class="num">${esc(moneyIn(c.revenue, cur))}</td><td class="num">${esc(moneyIn(c.discount_given, cur))}</td>
+        <td>${c.ends_on ? esc(c.ends_on) : '<span class="muted">Sin fecha</span>'}</td></tr>`).join('')}</tbody></table>`
+      : `<div class="empty">Todavía no tienes cupones.${d.can_edit ? ' Crea el primero: por ejemplo, 10% en la primera compra o envío gratis desde $50.' : ''}</div>`}</div>`;
+  if ($('#cpNew')) $('#cpNew').onclick = () => openCouponForm(null);
+  $('#mkBody').querySelectorAll('[data-cp]').forEach(tr => { const go2 = () => openCoupon(tr.dataset.cp); tr.onclick = go2; tr.onkeydown = e => { if (e.key === 'Enter') go2(); }; });
+}
+
+async function openCoupon(id) {
+  let c;
+  try { c = await api('apiCouponGet', S.token, id); } catch (e) { toast(e.message, true); return; }
+  const cur = S.boot.tenant.currency, can_edit = MKT.cpn && MKT.cpn.can_edit;
+  const rules = [
+    c.min_amount ? 'Compra mínima de ' + moneyIn(c.min_amount, cur) : '',
+    c.scope === 'productos' ? 'Solo ' + c.product_ids.length + ' producto(s)' : c.scope === 'categorias' ? 'Solo categorías: ' + c.categories.join(', ') : '',
+    c.channels === 'pos' ? 'Solo en la tienda física' : c.channels === 'online' ? 'Solo en línea' : '',
+    c.first_order ? 'Solo primera compra' : '', c.max_per_customer ? c.max_per_customer + ' vez/veces por cliente' : '',
+    c.max_uses ? 'Máximo ' + c.max_uses + ' usos' : '', c.starts_on ? 'Desde ' + c.starts_on : '', c.ends_on ? 'Hasta ' + c.ends_on : '',
+  ].filter(Boolean);
+  openModal('Cupón ' + c.code, `
+    <p style="margin-top:0"><span class="tag ${(CPN_STATE[c.state] || [''])[0]}">${esc((CPN_STATE[c.state] || ['', c.state])[1])}</span> <b>${esc(cpnValue(c, cur))}</b> · ${esc(c.name)}</p>
+    ${rules.length ? '<p class="muted">' + rules.map(esc).join(' · ') + '</p>' : '<p class="muted">Sin condiciones: aplica a todo.</p>'}
+    <ul class="list"><li><span>Usos</span><b>${c.uses}${c.max_uses ? ' de ' + c.max_uses : ''}</b></li><li><span>Ventas con este cupón</span><b>${esc(moneyIn(c.revenue, cur))}</b></li>
+      <li><span>Descuento dado</span><b>${esc(moneyIn(c.discount_given, cur))}</b></li><li><span>Clientes distintos</span><b>${c.customers}</b></li></ul>
+    ${c.sales.length ? `<h3 style="margin:16px 0 6px">Últimas ventas</h3><ul class="list">${c.sales.slice(0, 10).map(x => `<li><span>${esc(x.external_number || x.number)} · ${esc(x.customer || 'Consumidor final')}<br><span class="muted sm">${esc(fmtDate(x.at))} · ${x.source === 'pos' ? 'Caja' : esc(x.source)}</span></span><b>${esc(moneyIn(x.total, cur))} <span class="muted">−${esc(moneyIn(x.discount, cur))}</span></b></li>`).join('')}</ul>` : ''}
+    ${c.notes ? '<p class="muted sm">' + esc(c.notes) + '</p>' : ''}
+    ${can_edit ? `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn" id="cpEdit">Editar</button>
+      <button class="btn" id="cpPause">${c.status === 'activo' ? 'Pausar' : 'Activar'}</button><button class="btn danger" id="cpDel">${c.uses ? 'Archivar' : 'Borrar'}</button></div>` : ''}`, null, null, true);
+  if (!can_edit) return;
+  $('#cpEdit').onclick = () => { closeModal(true); openCouponForm(c); };
+  $('#cpPause').onclick = async () => { try { await api('apiCouponSave', S.token, { id: c.id, status: c.status === 'activo' ? 'pausado' : 'activo' }); closeModal(true); toast(c.status === 'activo' ? 'Cupón pausado' : 'Cupón activo'); mkCoupons(); } catch (e) { toast(e.message, true); } };
+  $('#cpDel').onclick = async () => {
+    if (!confirm(c.uses ? '¿Archivar el cupón ' + c.code + '? Deja de funcionar; las ventas conservan el código.' : '¿Borrar el cupón ' + c.code + '?')) return;
+    try { const r = await api('apiCouponDelete', S.token, c.id); closeModal(true); toast(r.archived ? 'Cupón archivado' : 'Cupón borrado'); mkCoupons(); } catch (e) { toast(e.message, true); }
+  };
+}
+
+async function openCouponForm(c) {
+  let prods = [];
+  try { prods = (await api('apiList', S.token, 'products')).filter(p => p.status !== 'inactivo'); } catch (e) { prods = []; }
+  const cats = (MKT.cpn && MKT.cpn.categories) || [];
+  const v = c || { kind: 'porcentaje', value: '', scope: 'todo', channels: 'todos', product_ids: [], categories: [], status: 'activo' };
+  openModal(c ? 'Editar cupón ' + c.code : 'Nuevo cupón', `<form class="form" id="cpForm" autocomplete="off">
+    <div><label class="f" for="cpCode">Código</label><div class="cash-row"><input class="input mono-code" id="cpCode" name="code" value="${esc(v.code || '')}" placeholder="VERANO10" maxlength="30" style="text-transform:uppercase" required>
+      <button class="btn" type="button" id="cpGen">Generar</button></div><div class="hint">Lo que el cliente escribe o dice en caja. Letras y números, sin espacios.</div></div>
+    <div><label class="f" for="cpKind">Tipo</label><select class="input" id="cpKind" name="kind">${[['porcentaje', 'Porcentaje'], ['monto', 'Monto fijo'], ['envio', 'Envío gratis']].map(o => `<option value="${o[0]}" ${v.kind === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+    <div id="cpValRow"><label class="f" for="cpVal" id="cpValLbl">Descuento</label><input class="input" id="cpVal" name="value" inputmode="decimal" value="${esc(v.value || '')}"></div>
+    <div id="cpMaxRow"><label class="f" for="cpMax">Descuento máximo (opcional)</label><input class="input" id="cpMax" name="max_discount" inputmode="decimal" value="${v.max_discount ? esc(v.max_discount) : ''}" placeholder="Sin tope"></div>
+    <div><label class="f" for="cpMin">Compra mínima (opcional)</label><input class="input" id="cpMin" name="min_amount" inputmode="decimal" value="${v.min_amount ? esc(v.min_amount) : ''}" placeholder="Cualquier monto"></div>
+    <div><label class="f" for="cpCh">Dónde se puede usar</label><select class="input" id="cpCh" name="channels">${[['todos', 'Caja y en línea'], ['pos', 'Solo en la caja'], ['online', 'Solo en línea']].map(o => `<option value="${o[0]}" ${v.channels === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+    <div><label class="f" for="cpFrom">Desde (opcional)</label><input class="input" type="date" id="cpFrom" name="starts_on" value="${esc(v.starts_on || '')}"></div>
+    <div><label class="f" for="cpTo">Hasta (opcional)</label><input class="input" type="date" id="cpTo" name="ends_on" value="${esc(v.ends_on || '')}"></div>
+    <div><label class="f" for="cpUses">Usos en total (opcional)</label><input class="input" id="cpUses" name="max_uses" inputmode="numeric" value="${v.max_uses ? esc(v.max_uses) : ''}" placeholder="Sin límite"></div>
+    <div><label class="f" for="cpPer">Usos por cliente (opcional)</label><input class="input" id="cpPer" name="max_per_customer" inputmode="numeric" value="${v.max_per_customer ? esc(v.max_per_customer) : ''}" placeholder="Sin límite"></div>
+    <label class="chk wide"><input type="checkbox" name="first_order" ${v.first_order ? 'checked' : ''}><span>Solo para la primera compra<br><span class="muted sm">En la caja hay que elegir al cliente para usarlo.</span></span></label>
+    <div class="wide"><label class="f" for="cpScope">Aplica a</label><select class="input" id="cpScope" name="scope">${[['todo', 'Toda la compra'], ['productos', 'Solo ciertos productos'], ['categorias', 'Solo ciertas categorías']].map(o => `<option value="${o[0]}" ${v.scope === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+    <div class="wide" id="cpProds"><input class="input" id="cpPq" placeholder="Buscar producto" aria-label="Buscar producto"><div class="cp-pick">${prods.map(p => `<label class="chk"><input type="checkbox" name="pid" value="${esc(p.id)}" ${(v.product_ids || []).indexOf(p.id) >= 0 ? 'checked' : ''}> <span>${esc(p.name)}${p.sku ? ' <span class="muted sm">' + esc(p.sku) + '</span>' : ''}</span></label>`).join('') || '<p class="muted">No hay productos.</p>'}</div></div>
+    <div class="wide" id="cpCats"><div class="cp-pick">${cats.map(x => `<label class="chk"><input type="checkbox" name="cat" value="${esc(x)}" ${(v.categories || []).map(y => y.toLowerCase()).indexOf(x.toLowerCase()) >= 0 ? 'checked' : ''}> ${esc(x)}</label>`).join('') || '<p class="muted">Tus productos no tienen categorías todavía.</p>'}</div></div>
+    <div class="wide"><label class="f" for="cpName">Nombre interno (opcional)</label><input class="input" id="cpName" name="name" value="${esc(c ? c.name : '')}" placeholder="Por ejemplo: Black Friday 2026"></div>
+  </form>`, async () => {
+    const f = $('#cpForm');
+    const data = { id: c ? c.id : undefined, code: f.code.value.trim(), kind: f.kind.value, value: numIn(f.value.value), max_discount: numIn(f.max_discount.value), min_amount: numIn(f.min_amount.value),
+      channels: f.channels.value, starts_on: f.starts_on.value, ends_on: f.ends_on.value, max_uses: numIn(f.max_uses.value), max_per_customer: numIn(f.max_per_customer.value),
+      first_order: f.first_order.checked, scope: f.scope.value, name: f.name.value.trim(),
+      product_ids: Array.from(f.querySelectorAll('[name=pid]:checked')).map(x => x.value), categories: Array.from(f.querySelectorAll('[name=cat]:checked')).map(x => x.value) };
+    const r = await api('apiCouponSave', S.token, data);
+    toast(c ? 'Cupón guardado' : 'Cupón ' + r.code + ' creado'); mkCoupons();
+  }, c ? 'Guardar' : 'Crear cupón', true);
+  const f = $('#cpForm');
+  const sync = () => {
+    const k = f.kind.value;
+    $('#cpValRow').hidden = k === 'envio'; $('#cpMaxRow').hidden = k !== 'porcentaje';
+    $('#cpValLbl').textContent = k === 'porcentaje' ? 'Porcentaje de descuento' : 'Monto de descuento';
+    $('#cpVal').placeholder = k === 'porcentaje' ? '10' : '5.00';
+    $('#cpProds').hidden = f.scope.value !== 'productos'; $('#cpCats').hidden = f.scope.value !== 'categorias';
+  };
+  f.kind.onchange = sync; f.scope.onchange = sync; sync();
+  $('#cpPq').oninput = () => { const q = $('#cpPq').value.toLowerCase(); f.querySelectorAll('#cpProds label').forEach(l => { l.hidden = q && l.textContent.toLowerCase().indexOf(q) < 0; }); };
+  $('#cpGen').onclick = async () => { try { $('#cpCode').value = (await api('apiCouponCode', S.token, '')).code; } catch (e) { toast(e.message, true); } };
+}
+
+/** Caja: mismo cálculo que el servidor (Coupons.applyTo). Devuelve el descuento o el motivo por el que no aplica. */
+function posCouponApply(c, lines, fee) {
+  const code = c.coupon; if (!code) return null;
+  const rule = (POS.cat.coupons || []).find(x => x.code === code);
+  if (!rule) return { code: code, amount: 0, ship: 0, error: '' };   // el servidor decide (no estaba en el catálogo guardado)
+  const applies = p => rule.scope === 'productos' ? rule.product_ids.indexOf(p.id) >= 0 : rule.scope === 'categorias' ? rule.categories.map(x => x.toLowerCase()).indexOf(String(p.category || '').toLowerCase()) >= 0 : true;
+  const gross = r2(lines.reduce((a, l) => a + l.unit * l.qty - l.disc, 0));
+  if (rule.min_amount > 0 && gross < rule.min_amount) return { code: code, amount: 0, ship: 0, error: 'Pide una compra mínima de ' + pm(rule.min_amount) + '.' };
+  if (rule.kind === 'envio') return fee > 0 ? { code: code, amount: 0, ship: fee, rule: rule } : { code: code, amount: 0, ship: 0, error: 'Es de envío gratis: agrega el envío.' };
+  const elig = lines.filter(l => applies(l.p));
+  if (!elig.length) return { code: code, amount: 0, ship: 0, error: 'No aplica a los productos del carrito.' };
+  const base = r2(elig.reduce((a, l) => a + l.unit * l.qty - l.disc, 0));
+  let amt = rule.kind === 'porcentaje' ? r2(base * rule.value / 100) : Math.min(r2(rule.value), base);
+  if (rule.kind === 'porcentaje' && rule.max_discount > 0) amt = Math.min(amt, rule.max_discount);
+  amt = r2(amt);
+  let left = amt;
+  elig.forEach((l, i) => { const b = l.unit * l.qty - l.disc; const share = i === elig.length - 1 ? left : r2(base ? amt * b / base : 0); l.disc = r2(l.disc + share); left = r2(left - share); });
+  return { code: code, amount: amt, ship: 0, rule: rule };
+}
+
+function openPosCoupon() {
+  const c = POS.cart;
+  openModal('Cupón', `<form class="form" id="pcCpForm" autocomplete="off"><div class="wide"><label class="f" for="pcCpIn">Código del cupón</label>
+    <input class="input mono-code" id="pcCpIn" value="${esc(c.coupon || '')}" placeholder="VERANO10" style="text-transform:uppercase" autocapitalize="characters" spellcheck="false"></div></form>`, async () => {
+    const code = $('#pcCpIn').value.trim().toUpperCase().replace(/\s+/g, '');
+    if (!code) { c.coupon = ''; drawPosCart(); return; }
+    const known = (POS.cat.coupons || []).some(x => x.code === code);
+    if (POS.offline || !navigator.onLine) {
+      if (!known) throw new Error('Sin conexión solo funcionan los cupones que estaban guardados en este dispositivo.');
+    } else {
+      await api('apiCouponCheck', S.token, code, Object.assign(cartPayload(), { coupon: code }));
+    }
+    c.coupon = code; drawPosCart(); toast('Cupón ' + code + ' aplicado');
+  }, 'Aplicar');
+  setTimeout(() => { const i = $('#pcCpIn'); if (i) i.focus(); }, 50);
+}
+
 /* ============================ Marketing: Panorama y Google Analytics ============================ */
 
 const MKT = { tab: 'panorama', days: 30, data: null, cfg: null };
@@ -1794,13 +1943,15 @@ async function viewMarketing() {
   const period = MKT.tab === 'panorama' ? `<div class="mk-period" role="group" aria-label="Periodo">${[7, 30, 90].map(d => `<button type="button" class="btn sm ${MKT.days === d ? 'primary' : ''}" data-days="${d}" aria-pressed="${MKT.days === d}">${d} días</button>`).join('')}
     <button type="button" class="btn sm" id="mkFresh" title="Volver a leer Google Analytics">Actualizar</button></div>` : '';
   main.innerHTML = pageHeader('Marketing', period) +
-    `<nav class="fin-tabs" role="tablist" aria-label="Secciones de marketing">${[['panorama', 'Panorama'], ['analytics', 'Google Analytics']]
+    `<nav class="fin-tabs" role="tablist" aria-label="Secciones de marketing">${[['panorama', 'Panorama'], ['cupones', 'Cupones'], ['meta', 'Facebook e Instagram'], ['analytics', 'Google Analytics']]
       .map(t => `<button role="tab" class="fin-tab ${MKT.tab === t[0] ? 'on' : ''}" aria-selected="${MKT.tab === t[0]}" data-tab="${t[0]}">${t[1]}</button>`).join('')}</nav>
     <div id="mkBody"><div class="empty">Cargando…</div></div>`;
   main.querySelectorAll('[data-tab]').forEach(b => b.onclick = () => { MKT.tab = b.dataset.tab; viewMarketing(); });
   main.querySelectorAll('[data-days]').forEach(b => b.onclick = () => { MKT.days = Number(b.dataset.days); viewMarketing(); });
   if ($('#mkFresh')) $('#mkFresh').onclick = () => mkPanorama(true);
   if (MKT.tab === 'panorama') return mkPanorama(false);
+  if (MKT.tab === 'meta') return mkMeta();
+  if (MKT.tab === 'cupones') return mkCoupons();
   return mkAnalytics();
 }
 
@@ -1881,7 +2032,9 @@ async function mkPanorama(fresh) {
     ${gaBlock}
     <div class="mk-grid">
       ${funnel ? card('Embudo', funnel) : ''}
-      ${ef && n.spend && n.spend.by_channel.length ? card('Inversión por canal', bars(n.spend.by_channel, r => r.amount, v => fm(v), 'Inversión por canal')) : ''}
+      ${ef && n.spend && n.spend.by_channel.length ? card('Inversión por canal', bars(n.spend.by_channel.map(c => Object.assign({}, c, { name: c.name + (c.auto ? ' · automático' : '') })), r => r.amount, v => fm(v), 'Inversión por canal') +
+          (n.spend.meta_auto ? '<p class="muted sm" style="margin:10px 0 0">La inversión en Meta se toma de tu cuenta de anuncios' + (n.spend.meta_manual_ignored ? '; no se suman los ' + fm(n.spend.meta_manual_ignored) + ' que registraste a mano en ese canal' : '') + '.</p>' : '') +
+          (n.spend.currency_note ? '<p class="muted sm" style="margin:6px 0 0">' + esc(n.spend.currency_note) + '</p>' : '')) : ''}
       ${n.can.sales ? card('Ventas por día', dayChart(n.daily, 'revenue', fm, 'Ventas por día'), 'mk-wide') : ''}
       ${ga ? card('Visitas por día', dayChart(ga.daily, 'sessions', intf, 'Visitas por día'), 'mk-wide') : ''}
       ${ga ? card('De dónde llegan las visitas', bars(ch, r => r.sessions, v => intf(v), 'Visitas por canal')) : ''}
@@ -1901,9 +2054,161 @@ async function mkPanorama(fresh) {
           <li><span>Ventas menos gastos</span><b class="${k.revenue - n.finance.expenses < 0 ? 'neg' : ''}">${fm(k.revenue - n.finance.expenses)}</b></li>
           <li><span>Te deben (por cobrar)</span><b>${fm(n.finance.receivable)}</b></li></ul>`) : ''}
     </div>
+    ${mkMetaSection(d, fm, intf, delta, tile, card, bars)}
     ${ga ? `<p class="muted sm" style="margin-top:12px">Google Analytics: datos leídos ${esc(fmtDate(ga.at))}. Se guardan 30 minutos; usa "Actualizar" para leerlos de nuevo.</p>` : ''}`;
   if ($('#mkGoFin')) $('#mkGoFin').onclick = () => go('finance');
+  if ($('#mkGoMeta')) $('#mkGoMeta').onclick = () => { MKT.tab = 'meta'; viewMarketing(); };
   if ($('#mkGoGa')) $('#mkGoGa').onclick = () => { MKT.tab = 'analytics'; viewMarketing(); };
+}
+
+
+/** Sección "Facebook e Instagram" y "Anuncios de Meta" del Panorama. */
+function mkMetaSection(d, fm, intf, delta, tile, card, bars) {
+  if (!d.meta_connected) {
+    return `<div class="card pad mk-cta" style="margin-top:12px"><div><h3 style="margin-top:0">Agrega Facebook e Instagram</h3>
+      <p class="muted" style="margin:0">Conecta tu página, tu Instagram y tu cuenta de anuncios para ver seguidores, vistas, tus mejores publicaciones y cuánto te devuelven tus anuncios. La inversión en anuncios entra sola al costo por cliente.</p></div>
+      ${can('marketing:write') ? '<button class="btn" id="mkGoMeta">Conectar Meta</button>' : ''}</div>`;
+  }
+  const m = d.meta;
+  if (!m) return `<div class="note dte-data" style="margin-top:12px"><b>No pude leer Meta.</b> ${esc(d.meta_error || '')}</div>`;
+  const nz = v => v === null || v === undefined ? '—' : intf(v);
+  const dl = (a, b) => (a === null || a === undefined || b === null || b === undefined) ? '' : delta(a, b);
+  const errs = Object.keys(m.errors || {}).map(k => `<div class="note dte-data" style="margin:12px 0 0"><b>${{ ads: 'Anuncios', ig: 'Instagram', page: 'Página de Facebook' }[k] || k}:</b> ${esc(m.errors[k])}${m.auth ? ' <button class="btn sm" id="mkGoMeta">Reconectar</button>' : ''}</div>`).join('');
+  const posts = (list, extra) => list && list.length ? `<ul class="list mk-posts">${list.map(p => `<li><span><a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.caption || '(sin texto)')}</a><br>
+      <span class="muted sm">${esc(p.type ? p.type + ' · ' : '')}${esc(p.date)}</span></span><b>${intf(p.likes)} <span class="muted">me gusta · ${intf(p.comments)} coment.${extra && p.shares ? ' · ' + intf(p.shares) + ' compart.' : ''}</span></b></li>`).join('')}</ul>`
+    : '<p class="muted" style="margin:0">No publicaste en este periodo.</p>';
+  let html = errs;
+  if (m.ig || m.page) {
+    const ig = m.ig, pg = m.page;
+    html += `<h2 class="mk-h2">Facebook e Instagram</h2><div class="mk-kpis">
+      ${ig ? tile('Seguidores en Instagram', intf(ig.followers), ig.new_followers ? '<span class="mk-d up">+' + intf(ig.new_followers) + '</span>' : '', ig.new_followers ? 'últimos 30 días' : '@' + esc(ig.username)) : ''}
+      ${ig ? tile('Vistas en Instagram', nz(ig.views), dl(ig.views, ig.prev.views)) : ''}
+      ${ig ? tile('Interacciones', nz(ig.interactions), dl(ig.interactions, ig.prev.interactions), 'me gusta, comentarios, guardados y compartidos') : ''}
+      ${ig ? tile('Visitas al perfil', nz(ig.profile_views), dl(ig.profile_views, ig.prev.profile_views)) : ''}
+      ${ig ? tile('Clics a tu sitio', nz(ig.website_clicks), dl(ig.website_clicks, ig.prev.website_clicks), 'desde tu perfil') : ''}
+      ${pg ? tile('Seguidores en Facebook', intf(pg.followers), pg.new_follows ? '<span class="mk-d up">+' + intf(pg.new_follows) + '</span>' : '', pg.new_follows ? 'en el periodo' : '') : ''}
+      ${pg && pg.views !== null ? tile('Vistas en Facebook', nz(pg.views), dl(pg.views, pg.prev.views)) : ''}
+      ${pg && pg.engagements !== null ? tile('Interacciones en Facebook', nz(pg.engagements), dl(pg.engagements, pg.prev.engagements)) : ''}
+    </div><div class="mk-grid">
+      ${ig ? card('Lo mejor de Instagram', posts(ig.top_posts)) : ''}
+      ${pg ? card('Lo mejor de Facebook', posts(pg.top_posts, true)) : ''}
+    </div>`;
+  }
+  const ads = m.ads;
+  if (ads) {
+    const a = ads.totals, p = ads.prev, fa = v => fmtMoney(v, ads.currency || d.currency);
+    html += `<h2 class="mk-h2">Anuncios de Meta</h2><div class="mk-kpis">
+      ${tile('Inversión en anuncios', fa(a.spend), delta(a.spend, p.spend))}
+      ${tile('Compras que Meta atribuye', intf(a.purchases), delta(a.purchases, p.purchases), a.purchase_value ? 'por ' + fa(a.purchase_value) : '')}
+      ${tile('Retorno según Meta', a.roas === null ? '—' : fa(a.roas), a.roas !== null && p.roas !== null ? delta(a.roas, p.roas) : '', 'ROAS: vendido por cada $1')}
+      ${tile('Costo por compra', a.cpa === null ? '—' : fa(a.cpa), a.cpa !== null && p.cpa !== null ? delta(a.cpa, p.cpa, true) : '')}
+      ${tile('Clics al enlace', intf(a.link_clicks), delta(a.link_clicks, p.link_clicks), a.ctr !== null ? a.ctr + '% de quienes lo vieron' : '')}
+      ${a.leads ? tile('Prospectos de anuncios', intf(a.leads), delta(a.leads, p.leads)) : ''}
+    </div>
+    <p class="muted sm mk-vs">Meta cuenta como suyas las compras de quien vio o tocó un anuncio, aunque haya comprado por otro lado. Compáralo con "Ventas por cada $1", que usa tus ventas reales.</p>
+    <div class="mk-grid">
+      ${card('Inversión por día', dayChart(ads.daily, 'spend', fa, 'Inversión en anuncios por día'))}
+      ${card('Campañas', ads.campaigns.length ? `<div class="tablewrap"><table class="wrap mk-camp"><thead><tr><th>Campaña</th><th class="num">Inversión</th><th class="num">Clics</th><th class="num">Compras</th><th class="num">ROAS</th></tr></thead><tbody>
+          ${ads.campaigns.map(c => `<tr><td>${esc(c.name)}</td><td class="num">${fa(c.spend)}</td><td class="num">${intf(c.link_clicks)}</td><td class="num">${intf(c.purchases)}</td><td class="num">${c.roas === null ? '—' : fa(c.roas)}</td></tr>`).join('')}
+        </tbody></table></div>` : '<p class="muted" style="margin:0">Sin campañas con inversión en este periodo.</p>')}
+    </div>`;
+  }
+  if ((m.skipped || []).length) html += `<p class="muted sm" style="margin-top:10px">Meta ya no entrega algunas métricas (${esc(m.skipped.join(', '))}); se omiten.</p>`;
+  html += `<p class="muted sm" style="margin-top:6px">Meta: datos leídos ${esc(fmtDate(m.at))}. Se guardan 30 minutos.</p>`;
+  return html;
+}
+
+async function mkMeta() {
+  let v;
+  try { v = await api('apiMetaGet', S.token); } catch (e) { $('#mkBody').innerHTML = '<div class="card empty">' + esc(e.message) + '</div>'; return; }
+  if (S.view !== 'marketing' || MKT.tab !== 'meta') return;
+  const m = v.meta, w = v.can_edit;
+  const SL = { enviado: ['pagada', 'Enviado'], pendiente: ['pendiente', 'Reintentando'], fallido: ['fallido', 'Error'] };
+  const steps = `<ol class="nt-steps">
+      <li>Entra a <a href="https:\/\/business.facebook.com/settings/system-users" target="_blank" rel="noopener">Configuración del negocio → Usuarios del sistema</a> y crea uno con rol <b>Administrador</b> (si ya tienes el de WhatsApp, puedes usar ese).</li>
+      <li><b>Asignar activos:</b> tu página de Facebook, tu cuenta de Instagram, tu cuenta publicitaria y tu conjunto de datos (píxel).</li>
+      <li><b>Generar token:</b> elige tu app (si no tienes, crea una de tipo Empresa en <a href="https:\/\/developers.facebook.com/apps" target="_blank" rel="noopener">developers.facebook.com</a>), vencimiento <b>Nunca</b>, y marca estos permisos: <code>pages_read_engagement</code>, <code>read_insights</code>, <code>instagram_basic</code>, <code>instagram_manage_insights</code>, <code>ads_read</code>, <code>ads_management</code> y <code>business_management</code>.</li>
+      <li>Pega el token aquí. Se guarda en tu servidor de Google y no se vuelve a mostrar.</li></ol>`;
+  if (!m.has_token) {
+    $('#mkBody').innerHTML = `<div class="dte-cfg">
+      <div class="card pad"><h3>Conecta tu cuenta de Meta</h3>
+        <form class="form fin1" id="mtConn" autocomplete="off"><div><label class="f" for="mtTok">Token de acceso del usuario del sistema</label><input class="input" id="mtTok" type="password" name="token" placeholder="EAA…" ${w ? '' : 'disabled'}></div>
+        ${w ? '<div style="display:flex;justify-content:flex-end"><button class="btn primary" type="submit">Conectar</button></div>' : ''}</form>
+        <p class="muted sm" style="margin-bottom:0">Con un solo token Nexo encuentra tu página, tu Instagram y tu cuenta de anuncios. Tu Instagram tiene que ser cuenta profesional y estar vinculado a tu página.</p></div>
+      <div class="card pad"><h3>Cómo consigo el token</h3>${steps}</div></div>`;
+    if (w) $('#mtConn').onsubmit = async ev => {
+      ev.preventDefault(); const btn = ev.target.querySelector('button'); btn.disabled = true; btn.textContent = 'Buscando tus cuentas…';
+      try { const r = await api('apiMetaConnect', S.token, { token: ev.target.token.value.trim() }); MKT.metaFound = r; toast('Meta conectado'); mkMeta(); }
+      catch (e) { toast(e.message, true); btn.disabled = false; btn.textContent = 'Conectar'; }
+    };
+    return;
+  }
+  $('#mkBody').innerHTML = '<div class="empty">Buscando tus páginas y cuentas…</div>';
+  let f = MKT.metaFound;
+  if (!f && w) { try { f = await api('apiMetaConnect', S.token, {}); } catch (e) { f = { error: e.message }; } }
+  MKT.metaFound = null;
+  if (S.view !== 'marketing' || MKT.tab !== 'meta') return;
+  const found = (f && f.found) || { pages: [], ad_accounts: [] };
+  const missing = (f && f.missing) || [];
+  $('#mkBody').innerHTML = `<div class="dte-cfg">
+    ${f && f.error ? `<div class="note dte-data" style="margin:0"><b>No pude leer tu cuenta de Meta.</b> ${esc(f.error)}</div>` : ''}
+    ${missing.length ? `<div class="note dte-data" style="margin:0"><b>A tu token le faltan permisos:</b> ${missing.map(x => '<code>' + esc(x.id) + '</code> (' + esc(x.label) + ')').join(', ')}. Genera uno nuevo con esos permisos y pégalo abajo.</div>` : ''}
+    <div class="card pad"><h3>Qué conectar</h3>
+      <p class="muted" style="margin-top:0">Conectado como <b>${esc(m.user_name || 'usuario del sistema')}</b>.</p>
+      <form class="form fin1" id="mtPick">
+        <div><label class="f" for="mtPage">Página de Facebook</label><select class="input" id="mtPage" name="page_id" ${w ? '' : 'disabled'}><option value="">Ninguna</option>
+          ${found.pages.map(p => `<option value="${esc(p.id)}" ${m.page_id === p.id ? 'selected' : ''}>${esc(p.name)}${p.ig_username ? ' · Instagram @' + esc(p.ig_username) : ' · sin Instagram vinculado'}</option>`).join('')}
+          ${m.page_id && !found.pages.some(p => p.id === m.page_id) ? `<option value="${esc(m.page_id)}" selected>${esc(m.page_name)}</option>` : ''}</select>
+          <div class="hint">${m.ig_username ? 'Instagram: @' + esc(m.ig_username) : 'Para ver Instagram, vincúlalo a tu página como cuenta profesional.'}</div></div>
+        <div><label class="f" for="mtAds">Cuenta de anuncios</label><select class="input" id="mtAds" name="ad_account_id" ${w ? '' : 'disabled'}><option value="">Ninguna</option>
+          ${found.ad_accounts.map(a => `<option value="${esc(a.id)}" ${m.ad_account_id === a.id ? 'selected' : ''}>${esc(a.name)} · ${esc(a.currency)}${a.active ? '' : ' · inactiva'}</option>`).join('')}
+          ${m.ad_account_id && !found.ad_accounts.some(a => a.id === m.ad_account_id) ? `<option value="${esc(m.ad_account_id)}" selected>${esc(m.ad_account_name)}</option>` : ''}</select>
+          <div class="hint">Su inversión entra sola al costo por cliente del Panorama.</div></div>
+        ${w ? '<div style="display:flex;justify-content:flex-end"><button class="btn primary" type="submit">Guardar</button></div>' : ''}
+      </form></div>
+    <div class="card pad"><h3>API de Conversiones</h3>
+      <p class="muted" style="margin-top:0">Le manda a Meta tus ventas y prospectos para que mida y optimice tus anuncios. Nombre, correo, teléfono y ciudad van cifrados (SHA-256); Meta los usa para reconocer a la persona sin verlos.</p>
+      <form class="form fin1" id="mtCapi" autocomplete="off">
+        <div><label class="f" for="mtDs">ID del conjunto de datos (píxel)</label><input class="input" id="mtDs" name="dataset_id" inputmode="numeric" value="${esc(m.dataset_id)}" placeholder="1234567890123456" ${w ? '' : 'disabled'}>
+          <div class="hint">Administrador de eventos → Conjuntos de datos → tu píxel. Es un número de 15 o 16 dígitos.</div></div>
+        <div><label class="f" for="mtSend">Qué ventas mandar</label><select class="input" id="mtSend" name="send" ${w ? '' : 'disabled'}>
+          ${[['pos', 'Solo punto de venta (recomendado si tu tienda en línea ya tiene píxel)'], ['all', 'Todas (en línea y punto de venta)'], ['none', 'Ninguna']].map(o => `<option value="${o[0]}" ${m.send === o[0] ? 'selected' : ''}>${o[1]}</option>`).join('')}</select></div>
+        <label class="chk"><input type="checkbox" name="leads" ${m.leads ? 'checked' : ''} ${w ? '' : 'disabled'}> Mandar también los prospectos nuevos</label>
+        <details class="exp-more" ${m.test_code || m.has_capi_token ? 'open' : ''}><summary>Código de prueba y token aparte</summary>
+          <div><label class="f" for="mtTest">Código de prueba</label><input class="input" id="mtTest" name="test_code" value="${esc(m.test_code)}" placeholder="TEST12345" ${w ? '' : 'disabled'}>
+            <div class="hint">Mientras esté escrito, las ventas llegan a "Probar eventos" y no cuentan en tus anuncios. Bórralo cuando termines de probar.</div></div>
+          <div><label class="f" for="mtCt">Token de la API de Conversiones (opcional)</label><input class="input" id="mtCt" type="password" name="capi_token" placeholder="${m.has_capi_token ? 'Guardado. Escribe uno nuevo solo para cambiarlo.' : 'Si lo dejas vacío, se usa el token principal'}" ${w ? '' : 'disabled'}></div>
+        </details>
+        ${w ? '<div style="display:flex;justify-content:flex-end"><button class="btn primary" type="submit">Guardar</button></div>' : ''}
+      </form></div>
+    <div class="card pad"><h3>Probar y cambiar</h3>
+      ${w ? `<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="mtTestBtn">Probar conexión</button><button class="btn danger" id="mtOff">Desconectar</button></div>
+        <div id="mtTestOut"></div>
+        <form class="cash-row" id="mtNewTok" autocomplete="off" style="margin-top:14px"><input class="input" type="password" name="token" placeholder="Pegar un token nuevo" aria-label="Token nuevo de Meta"><button class="btn" type="submit">Cambiar token</button></form>` : '<p class="muted">Solo un administrador puede cambiar la conexión.</p>'}
+    </div>
+    <div class="card pad dte-data"><h3>Últimos envíos a Meta</h3>
+      ${v.recent.length ? `<ul class="list">${v.recent.map(r => `<li><span>${esc(r.subject)}<br><span class="muted sm">${esc(fmtDate(r.at))}${r.error ? ' · ' + esc(r.error) : ''}</span></span><span class="tag ${(SL[r.status] || [''])[0]}">${esc((SL[r.status] || ['', r.status])[1])}</span></li>`).join('')}</ul>`
+        : '<p class="muted" style="margin:0">Aquí verás cada venta y prospecto que se manda a Meta.</p>'}</div>
+  </div>`;
+  if (!w) return;
+  $('#mtPick').onsubmit = async ev => { ev.preventDefault(); const b = ev.target.querySelector('button'); b.disabled = true;
+    try { await api('apiMetaSave', S.token, { page_id: ev.target.page_id.value, ad_account_id: ev.target.ad_account_id.value }); toast('Guardado'); mkMeta(); } catch (e) { toast(e.message, true); b.disabled = false; } };
+  $('#mtCapi').onsubmit = async ev => { ev.preventDefault(); const fm2 = ev.target, b = fm2.querySelector('button[type=submit]'); b.disabled = true;
+    const data = { dataset_id: fm2.dataset_id.value.trim(), send: fm2.send.value, leads: fm2.leads.checked, test_code: fm2.test_code.value.trim() };
+    if (fm2.capi_token.value.trim()) data.capi_token = fm2.capi_token.value.trim();
+    try { await api('apiMetaSave', S.token, data); toast('Guardado'); mkMeta(); } catch (e) { toast(e.message, true); b.disabled = false; } };
+  $('#mtTestBtn').onclick = async () => {
+    const out = $('#mtTestOut'); out.innerHTML = '<p class="muted">Probando…</p>';
+    let r; try { r = await api('apiMetaTest', S.token); } catch (e) { out.innerHTML = '<div class="note">' + esc(e.message) + '</div>'; return; }
+    const line = (x, okText) => x ? `<li><span class="tag ${x.ok ? 'pagada' : 'fallido'}">${x.ok ? 'Listo' : 'Revisar'}</span> ${x.ok ? okText(x) : esc(x.error)}</li>` : '';
+    const lines = line(r.page, x => 'Página de Facebook: ' + Number(x.followers).toLocaleString('en-US') + ' seguidores.') + line(r.ig, x => 'Instagram @' + esc(x.username) + ': ' + Number(x.followers).toLocaleString('en-US') + ' seguidores.') +
+      line(r.ads, x => 'Cuenta de anuncios "' + esc(x.name) + '"' + (x.active ? '.' : ' (inactiva).')) + line(r.capi, () => 'Meta recibió un evento de prueba; aparece en Administrador de eventos → Probar eventos.');
+    out.innerHTML = lines ? `<ul class="mk-test">${lines}</ul>` : '<p class="muted">Elige una página, una cuenta de anuncios o el conjunto de datos para probar.</p>';
+  };
+  $('#mtOff').onclick = () => openModal('Desconectar Meta', '<p>Se borran los tokens y Nexo deja de leer tus estadísticas y de mandar ventas a Meta. Tus datos en Meta no cambian.</p>',
+    async () => { await api('apiMetaOff', S.token); toast('Meta desconectado'); mkMeta(); }, 'Desconectar');
+  $('#mtNewTok').onsubmit = async ev => { ev.preventDefault(); const b = ev.target.querySelector('button'); b.disabled = true;
+    try { MKT.metaFound = await api('apiMetaConnect', S.token, { token: ev.target.token.value.trim() }); toast('Token cambiado'); mkMeta(); } catch (e) { toast(e.message, true); b.disabled = false; } };
 }
 
 /** Barras por día, una sola serie. Cada barra tiene su valor al pasar el cursor o con el teclado. */
@@ -3761,6 +4066,8 @@ function posTotals() {
     const share = i === lines.length - 1 ? left : r2(gross ? orderDisc * base / gross : 0);
     l.disc = r2(l.disc + share); left = r2(left - share);
   });
+  const fee = c.ship ? r2(c.ship.fee || 0) : 0;
+  const coupon = posCouponApply(c, lines, fee);
   lines.forEach(l => {
     const net = r2(l.unit * l.qty - l.disc);
     if (st.prices_include_tax) { l.tax = r2(net - net / (1 + l.rate)); l.total = net; }
@@ -3768,15 +4075,15 @@ function posTotals() {
   });
   // Envío a domicilio: una línea de servicio con el IVA general (igual que el servidor).
   let ship = null;
-  const fee = c.ship ? r2(c.ship.fee || 0) : 0;
   if (fee > 0) {
     const rate = st.tax_rate / 100;
-    const tx = st.prices_include_tax ? r2(fee - fee / (1 + rate)) : r2(fee * rate);
-    ship = { fee: fee, tax: tx, total: st.prices_include_tax ? fee : r2(fee + tx) };
+    const net = r2(fee - (coupon && coupon.ship ? coupon.ship : 0));
+    const tx = st.prices_include_tax ? r2(net - net / (1 + rate)) : r2(net * rate);
+    ship = { fee: fee, tax: tx, total: st.prices_include_tax ? net : r2(net + tx) };
   }
   const total = r2(lines.reduce((a, l) => a + l.total, 0) + (ship ? ship.total : 0)), tax = r2(lines.reduce((a, l) => a + l.tax, 0) + (ship ? ship.tax : 0));
   return { lines: lines, total: total, tax: tax, subtotal: r2(total - tax), discount: r2(lines.reduce((a, l) => a + l.disc, 0)),
-           units: lines.reduce((a, l) => a + l.qty, 0), ship: ship };
+           units: lines.reduce((a, l) => a + l.qty, 0), ship: ship, coupon: coupon };
 }
 
 const pm = v => moneyIn(v, POS.cat ? POS.cat.settings.currency : undefined);
@@ -3970,7 +4277,8 @@ function drawPosCart(flashId) {
         <b class="pc-total">${esc(pm(l.total))}</b>
       </div>`).join('') : '<div class="empty pc-empty">Toca un producto o escanea su código.</div>'}</div>
     <div class="pc-sum">
-      ${t.discount ? `<div><span>Descuento</span><span>−${esc(pm(t.discount))}</span></div>` : ''}
+      ${t.coupon ? `<div class="pc-coupon ${t.coupon.error ? 'bad' : ''}"><span>Cupón <b>${esc(t.coupon.code)}</b>${t.coupon.error ? '<br><span class="sm">' + esc(t.coupon.error) + '</span>' : ''} <button type="button" class="btn sm" id="pcCpOff" aria-label="Quitar cupón">Quitar</button></span><span>${t.coupon.error ? '' : '−' + esc(pm(r2(t.coupon.amount + t.coupon.ship)))}</span></div>` : ''}
+      ${r2(t.discount - (t.coupon && !t.coupon.error ? t.coupon.amount : 0)) > 0 ? `<div><span>Descuento</span><span>−${esc(pm(r2(t.discount - (t.coupon && !t.coupon.error ? t.coupon.amount : 0))))}</span></div>` : ''}
       ${c.ship ? `<div><span>Envío${c.cod ? ' · contra entrega' : ''}</span><span>${esc(pm(t.ship ? t.ship.total : 0))}</span></div>` : ''}
       <div><span>${st.prices_include_tax ? 'IVA incluido' : 'Subtotal'}</span><span>${esc(pm(st.prices_include_tax ? t.tax : t.subtotal))}</span></div>
       ${st.prices_include_tax ? '' : `<div><span>Impuesto</span><span>${esc(pm(t.tax))}</span></div>`}
@@ -3978,6 +4286,7 @@ function drawPosCart(flashId) {
     </div>
     <div class="pc-acts">
       ${POS.cat.can_discount ? '<button class="btn" id="pcDisc">Descuento</button>' : ''}
+      <button class="btn ${c.coupon ? 'primary' : ''}" id="pcCoupon">${c.coupon ? 'Cupón ✓' : 'Cupón'}</button>
       <button class="btn" id="pcNote">${c.notes ? 'Nota ✓' : 'Nota'}</button>
       ${can('shipping:write') ? `<button class="btn ${c.ship ? 'primary' : ''}" id="pcShip">${c.ship ? 'Envío ✓' : 'Envío'}</button>` : ''}
       ${st.prices_include_tax ? `<button class="btn ${c.doc_type && c.doc_type !== '01' ? 'primary' : ''}" id="pcDoc">${esc(DOC_NAMES[c.doc_type || '01'])}</button>` : ''}
@@ -4017,6 +4326,8 @@ function drawPosCart(flashId) {
       $('#dForm').amount.value = r2(gross * Number(b.dataset.pct) / 100).toFixed(2);
     });
   };
+  $('#pcCoupon').onclick = openPosCoupon;
+  if ($('#pcCpOff')) $('#pcCpOff').onclick = () => { c.coupon = ''; drawPosCart(); };
   $('#pcNote').onclick = () => openModal('Nota de la venta', `<textarea class="input" id="nText" rows="3" maxlength="400">${esc(c.notes)}</textarea>`, async () => { c.notes = $('#nText').value.trim(); drawPosCart(); }, 'Guardar');
   $('#pcClear').onclick = () => { if (confirm('¿Vaciar el carrito?')) { POS.cart = emptyCart(); drawPosCart(); drawPosGrid(); } };
   $('#pcPay').onclick = openPayment;
@@ -4096,7 +4407,7 @@ function cartPayload() {
     customer_id: c.customer && c.customer.id ? c.customer.id : undefined,
     customer: c.customer && !c.customer.id ? c.customer : undefined,
     doc_type: c.doc_type || '01', customer_nrc: c.doc_type === '03' ? c.customer_nrc : undefined,
-    ship: c.ship || undefined, cod: c.ship && c.cod ? true : undefined,
+    ship: c.ship || undefined, cod: c.ship && c.cod ? true : undefined, coupon: c.coupon || undefined,
   };
 }
 
