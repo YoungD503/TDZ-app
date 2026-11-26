@@ -1,6 +1,6 @@
 /* Nexo ERP: guarda la app en el dispositivo para que abra sin señal.
    Los datos nunca se guardan aquí: las llamadas al sistema (script.google.com) siempre van a la red. */
-const CACHE = 'nexo-0.21.0';
+const CACHE = 'nexo-0.22.0';
 const SHELL = ['./', './index.html', './recibo.html', './contacto.html'];
 
 self.addEventListener('install', e => {
