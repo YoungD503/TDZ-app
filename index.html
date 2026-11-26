@@ -825,6 +825,20 @@
   .ag-block { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
   .ag-block .input { width: auto; min-width: 0; flex: 1 1 140px; }
   .ag-save { position: sticky; bottom: 0; display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding: 12px 0; background: linear-gradient(transparent, var(--bg) 35%); }
+  .btc-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #F7931A; margin-right: 8px; vertical-align: 1px; }
+  .btc-provs { display: grid; gap: 10px; }
+  .btc-prov { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; }
+  .btc-prov > div:first-child { flex: 1 1 260px; min-width: 0; }
+  .btc-prov.main { border-color: #F7931A; }
+  .btc-wallet { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .btc-wallet .input { width: auto; min-height: 34px; padding: 4px 8px; }
+  .btc-block { margin: 0 0 12px; }
+  .btc-block a.btn { text-decoration: none; }
+  .btc-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .btc-qr { background: #fff; }
+  .btc-sats { font-variant-numeric: tabular-nums; margin: 4px 0 10px; }
+  .steps-list { margin: 0 0 14px; padding-left: 20px; line-height: 1.55; }
+  .steps-list li { margin-bottom: 4px; }
   .pc-appt { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 12px; border-bottom: 1px solid var(--line); }
   #agBody [hidden] { display: none !important; }
   @media (max-width: 1100px) { .ag-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
@@ -1066,7 +1080,7 @@ const SWR_READS = new Set(['apiDashboard', 'apiList', 'apiSales', 'apiInventory'
 const NO_SIDE_EFFECTS = new Set(['apiLeadSources', 'apiQrList', 'apiInventoryLookup', 'apiInventoryProduct', 'apiInventoryHistory', 'apiSale',
   'apiSaleRefundInfo', 'apiStockSyncStatus', 'apiBoot', 'apiPing', 'apiFinSettings', 'apiFinChart', 'apiFinSuppliers', 'apiFinExpense', 'apiFinRecurring',
   'apiFinIncome', 'apiFinBalance', 'apiFinCashFlow', 'apiFinJournal', 'apiFinLedger', 'apiFinTrial', 'apiTaxReport', 'apiTaxAnexo',
-  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory', 'apiPanorama', 'apiMktGet', 'apiMetaGet', 'apiAgendaGet', 'apiApptList', 'apiApptSlots']);
+  'apiDteSettings', 'apiDteList', 'apiDteGet', 'apiDteDownload', 'apiShipList', 'apiShipGet', 'apiNotifyGet', 'apiNotifyHistory', 'apiPanorama', 'apiMktGet', 'apiMetaGet', 'apiAgendaGet', 'apiApptList', 'apiApptSlots', 'apiBtcGet', 'apiBtcForSale', 'apiBtcList']);
 
 function swrLoad() {
   if (SWR.mem) return SWR.mem;
@@ -2925,6 +2939,7 @@ async function showSale(id) {
         ${can('sales:write') && s.is_test !== true ? ' <button class="btn sm" id="saleFiscal">Datos fiscales</button>' : ''}</p>
       ${s.currency === 'USD' ? '<div id="saleDte"></div>' : ''}
       ${can('shipping:read') ? '<div id="saleShip"></div>' : ''}
+      <div id="saleBtc"></div>
       <div class="card tablewrap"><table><thead><tr><th>Artículo</th><th>SKU</th><th class="num">Cant.</th><th class="num">Precio</th><th class="num">Total</th></tr></thead>
         <tbody>${d.items.map(i => `<tr><td>${esc(i.description)}${i.product_id ? '' : ' <span class="tag">fuera de catálogo</span>'}</td><td>${esc(i.sku || '')}</td>
           <td class="num">${esc(i.qty)}${Number(i.refunded_qty) ? '<br><span class="muted sm">' + esc(i.refunded_qty) + ' reembolsada(s)</span>' : ''}</td><td class="num">${m(i.unit_price)}</td><td class="num">${m(i.total)}</td></tr>`).join('')}</tbody></table></div>
@@ -2943,7 +2958,47 @@ async function showSale(id) {
     if ($('#saleFiscal')) $('#saleFiscal').onclick = () => openSaleFiscal(s, () => showSale(id));
     if ($('#saleDte')) saleDteBlock(s, () => showSale(id));
     if ($('#saleShip')) saleShipBlock(s);
+    if ($('#saleBtc')) saleBtcBlock(s);
   } catch (e) { toast(e.message, true); }
+}
+
+/* ---------- Enlace de pago en bitcoin (venta con saldo) ---------- */
+
+function payBase() {
+  if (ON_GOOGLE) return '';
+  return new URL('pagar.html', location.href).href.split('?')[0] + '?t=';
+}
+
+async function saleBtcBlock(s) {
+  const box = $('#saleBtc');
+  let list = [];
+  try { list = await api('apiBtcForSale', S.token, s.id); } catch (e) { list = []; }
+  if (!$('#saleBtc')) return;
+  const open = list.find(c => c.status === 'pendiente' && c.url);
+  const paid = list.filter(c => c.status === 'pagado');
+  const bal = Number(s.balance) > 0.004 && ['cancelada', 'reembolsada'].indexOf(s.status) < 0;
+  if (!bal && !paid.length) { box.innerHTML = ''; return; }
+  box.innerHTML = `<div class="card pad btc-block"><div class="btc-head"><b><span class="btc-dot" aria-hidden="true"></span>Bitcoin</b>
+      ${bal && !open && can('sales:write') ? '<button class="btn sm primary" id="btcMake">Crear enlace de pago</button>' : ''}</div>
+    ${open ? `<p class="muted sm" style="margin:6px 0">Enlace por ${esc(moneyIn(open.amount, open.currency))} con ${esc(open.provider_label)} · ${esc(open.status_label)}</p>
+      <div class="codebox"><pre class="code">${esc(open.url)}</pre><button class="btn sm copy">Copiar</button></div>
+      <div class="chips"><button class="btn sm" id="btcWa">Mandar por WhatsApp</button><a class="btn sm" href="${esc(open.url)}" target="_blank" rel="noopener">Abrir</a><button class="btn sm" id="btcOff">Anular enlace</button></div>` : ''}
+    ${paid.map(c => `<p class="muted sm" style="margin:6px 0 0">Pagado ${esc(moneyIn(c.amount, c.currency))}${c.sats ? ' · ' + Number(c.sats).toLocaleString('en-US') + ' sats' : ''} con ${esc(c.provider_label)} · ${fmtDate(c.paid_at)}</p>`).join('')}
+    ${bal && !open && !paid.length ? '<p class="muted sm" style="margin:6px 0 0">El cliente paga el saldo desde su billetera Lightning; la venta se marca pagada sola.</p>' : ''}</div>`;
+  bindCopy(box);
+  if ($('#btcMake')) $('#btcMake').onclick = async ev => {
+    ev.target.disabled = true; ev.target.textContent = 'Creando…';
+    try { await api('apiBtcGet', S.token, payBase()); await api('apiBtcLink', S.token, s.id); saleBtcBlock(s); }
+    catch (e) { toast(e.message, true); ev.target.disabled = false; ev.target.textContent = 'Crear enlace de pago'; }
+  };
+  if ($('#btcWa')) $('#btcWa').onclick = () => {
+    const text = 'Hola' + (s.customer_name ? ' ' + s.customer_name.split(' ')[0] : '') + ', aquí puedes pagar tu pedido ' + s.number + ' (' + moneyIn(open.amount, open.currency) + ') con bitcoin: ' + open.url;
+    window.open('https:\/\/wa.me/?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  };
+  if ($('#btcOff')) $('#btcOff').onclick = async () => {
+    if (!confirm('¿Anular este enlace de pago? Si el cliente ya lo abrió, ya no podrá pagar con él.')) return;
+    try { const r = await api('apiBtcCancel', S.token, open.id); toast(r && r.status === 'pagado' ? 'Ese enlace ya se había pagado.' : 'Enlace anulado'); saleBtcBlock(s); } catch (e) { toast(e.message, true); }
+  };
 }
 
 async function openRefund(id) {
@@ -4700,7 +4755,8 @@ function openPayment() {
     <div class="pay-total"><span class="muted">Total</span><b>${esc(pm(t.total))}</b><span class="muted" id="payLeft"></span></div>
     ${POS.cart.cod ? '<div class="note">Contra entrega: puedes finalizar sin cobrar; lo que falte lo cobra quien entrega y lo registras en Envíos.</div>' : ''}
     <div class="pay-methods" role="tablist">${methods.map(m => `<button type="button" class="btn ${m === 'efectivo' ? 'primary' : ''}" data-m="${m}">${esc(M[m])}</button>`).join('')}
-      ${POS.cat.stripe_qr && !offline && !POS.cart.cod ? `<button type="button" class="btn" data-m="stripe_qr">QR Stripe${POS.cat.stripe_qr.mode === 'test' ? ' (prueba)' : ''}</button>` : ''}</div>
+      ${POS.cat.stripe_qr && !offline && !POS.cart.cod ? `<button type="button" class="btn" data-m="stripe_qr">QR Stripe${POS.cat.stripe_qr.mode === 'test' ? ' (prueba)' : ''}</button>` : ''}
+      ${POS.cat.bitcoin && !offline && !POS.cart.cod ? '<button type="button" class="btn" data-m="bitcoin">Bitcoin</button>' : ''}</div>
     <div id="payPanel"></div>
     <div id="payList"></div>`, async () => {
     if (remaining() > 0.009 && !POS.cart.cod) throw new Error('Falta cobrar ' + pm(remaining()) + '.');
@@ -4735,6 +4791,8 @@ function openPayment() {
     document.querySelectorAll('[data-m]').forEach(b => { b.classList.toggle('primary', b.dataset.m === method); b.disabled = left <= 0.009 && b.dataset.m !== method; });
     const qr = document.querySelector('[data-m=stripe_qr]');
     if (qr) qr.disabled = pays.length > 0;
+    const bq = document.querySelector('[data-m=bitcoin]');
+    if (bq) bq.disabled = pays.length > 0;
     const panel = $('#payPanel');
     if (left <= 0.009) { panel.innerHTML = ''; return; }
     if (method === 'efectivo') {
@@ -4755,6 +4813,10 @@ function openPayment() {
       inp.onkeydown = ev => { if (ev.key === 'Enter') { ev.preventDefault(); apply(Number(inp.value.replace(',', '.'))); } };
       panel.querySelectorAll('[data-q]').forEach(b => b.onclick = () => apply(Number(b.dataset.q)));
       setTimeout(() => inp.select(), 30);
+    } else if (method === 'bitcoin') {
+      panel.innerHTML = `<p class="muted">Se crea un cobro Lightning por <b>${esc(pm(t.total))}</b> con ${esc(POS.cat.bitcoin.provider)}. El cliente escanea el QR con su billetera (Strike, Blink, Wallet of Satoshi…) y la venta se confirma sola.</p>
+        <button type="button" class="btn primary pos-big" id="btcGo">Mostrar QR de bitcoin</button>`;
+      $('#btcGo').onclick = () => startBtcQr(t);
     } else if (method === 'stripe_qr') {
       panel.innerHTML = `<p class="muted">Se crea un cobro de Stripe por <b>${esc(pm(t.total))}</b> y se muestra un QR. El cliente lo escanea con su teléfono y paga; la venta se confirma sola.</p>
         <button type="button" class="btn primary pos-big" id="qrGo">Mostrar QR de pago</button>`;
@@ -4807,6 +4869,60 @@ async function startStripeQr(t) {
       if (st.status === 'cancelada') { alive = false; closeModal(true); toast('El cobro con QR se canceló.', true); return; }
     } catch (e) { /* reintenta */ }
     timer = setTimeout(poll, 3000);
+  };
+  timer = setTimeout(poll, 3000);
+  $('#qrCancel').onclick = async () => {
+    const b = $('#qrCancel'); b.disabled = true;
+    try {
+      const r = await api('apiPosCancelPending', S.token, pend.id);
+      alive = false; closeModal(true);
+      if (r.status === 'pagada') { posFinished(r); return; }
+      toast('Cobro cancelado. El carrito sigue listo.');
+      POS.cart.ref = newRef();
+    } catch (e) { toast(e.message, true); b.disabled = false; }
+  };
+}
+
+async function startBtcQr(t) {
+  let pend;
+  const go = $('#btcGo'); if (go) { go.disabled = true; go.textContent = 'Creando el cobro…'; }
+  try { pend = await apiT(25000, 'apiPosBtc', S.token, Object.assign(cartPayload(), { receipt_base: receiptBase() })); }
+  catch (e) { toast(e.message, true); if ($('#btcGo')) { $('#btcGo').disabled = false; $('#btcGo').textContent = 'Mostrar QR de bitcoin'; } return; }
+  if (pend.status === 'pagada') return posFinished(pend);
+  let alive = true, timer = null, tick = null, shown = '', left = 0;
+  openModal('Paga con bitcoin', `
+    <div class="qr-pay">
+      <div class="qr-box btc-qr" id="btcQr"></div>
+      <div><div class="pay-total"><span class="muted">Total</span><b>${esc(pm(pend.total))}</b></div>
+        <p class="muted btc-sats" id="btcSats"></p>
+        <p class="muted">El cliente escanea el código con su billetera Lightning y paga. Esta pantalla se actualiza sola.</p>
+        <p class="qr-wait" aria-live="polite"><span class="dot-pulse" aria-hidden="true"></span> Esperando el pago… <span class="muted sm">${esc(pend.number)}</span><span class="muted sm" id="btcTtl"></span></p>
+        <div class="chips"><button type="button" class="btn" id="btcCopy">Copiar código</button><button type="button" class="btn danger" id="qrCancel">Cancelar cobro</button></div></div>
+    </div>`, null, null, true);
+  const draw = b => {
+    if (!b || !b.ln) return;
+    left = b.expires_in || 0;
+    if (b.ln === shown) return;
+    shown = b.ln;
+    $('#btcQr').innerHTML = qrSvg('lightning:' + b.ln.toUpperCase(), 'min(72vw, 300px)');
+    $('#btcSats').textContent = (b.sats ? Number(b.sats).toLocaleString('en-US') + ' sats · ' : '') + 'con ' + b.provider_label;
+  };
+  draw(pend.btc);
+  tick = setInterval(() => { if (left > 0) left--; const el = $('#btcTtl'); if (el) el.textContent = left > 0 && left < 600 ? ' · el código se renueva en ' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0') : ''; }, 1000);
+  const modal = $('#modal');
+  modal._guard = () => !alive || confirm('Si cierras, el cobro sigue abierto: si el cliente paga, la venta se confirma sola en unos minutos. ¿Cerrar de todos modos?');
+  modal._onClose = () => { alive = false; clearTimeout(timer); clearInterval(tick); };
+  $('#btcCopy').onclick = () => { if (navigator.clipboard && shown) navigator.clipboard.writeText(shown).then(() => toast('Código copiado'), () => {}); };
+  const poll = async () => {
+    if (!alive) return;
+    try {
+      const st = await api('apiPosSaleStatus', S.token, pend.id);
+      if (!alive) return;
+      if (st.status === 'pagada') { alive = false; clearInterval(tick); beep(true); closeModal(true); posFinished(st, true); return; }
+      if (st.status === 'cancelada') { alive = false; closeModal(true); toast('El cobro en bitcoin se canceló.', true); return; }
+      draw(st.btc);
+    } catch (e) { /* reintenta */ }
+    timer = setTimeout(poll, left > 0 && left < 6 ? 1500 : 3000);
   };
   timer = setTimeout(poll, 3000);
   $('#qrCancel').onclick = async () => {
@@ -5834,7 +5950,7 @@ function acClose() {
 
 function acSettings() {
   const cfg = FIN.cfg;
-  const labels = { efectivo: 'Efectivo', tarjeta: 'Tarjeta (terminal)', transferencia: 'Transferencia', wompi: 'Wompi', n1co: 'N1co', stripe: 'Stripe', stripe_qr: 'QR de Stripe', otro: 'Otro', shopify: 'Shopify', woocommerce: 'WooCommerce', online: 'Otras tiendas en línea' };
+  const labels = { efectivo: 'Efectivo', tarjeta: 'Tarjeta (terminal)', transferencia: 'Transferencia', wompi: 'Wompi', n1co: 'N1co', stripe: 'Stripe', stripe_qr: 'QR de Stripe', bitcoin: 'Bitcoin (Lightning)', otro: 'Otro', shopify: 'Shopify', woocommerce: 'WooCommerce', online: 'Otras tiendas en línea' };
   const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   $('#acBody').innerHTML = `<form class="form fin1 card pad" id="fsForm" style="max-width:720px">
     <h4 style="margin-top:0">¿A qué cuenta entra cada forma de cobro?</h4>
@@ -8136,6 +8252,8 @@ function drawIntegrations() {
           ${i.is_pull ? '' : `<button class="btn sm" data-rotate="${esc(i.id)}">Nueva clave</button>`}<button class="btn sm danger" data-del="${esc(i.id)}">Eliminar</button>` : ''}</td></tr>`).join('')}</tbody></table>`
       : `<div class="empty">Conecta tu primer formulario, tienda o plataforma de pagos.<br><br>${w ? '<button class="btn primary" id="newInt2">+ Conectar plataforma</button>' : ''}</div>`}</div>
 
+    <div class="section card pad" id="btcSec"><h3><span><span class="btc-dot" aria-hidden="true"></span>Cobros en bitcoin (Lightning)</span></h3><p class="muted">Cargando…</p></div>
+
     <div class="section card pad">
       <h3>Relevo para Shopify, WooCommerce, Stripe, Wompi y N1co</h3>
       <p class="muted" style="margin-top:0">Estas plataformas no aceptan la redirección que hace Google ni dejan leer sus firmas. Un pequeño relevo gratuito en Cloudflare recibe sus avisos y los pasa a tu sistema. ${needsRelay && !d.relayUrl ? '<b style="color:var(--warn)">Tienes integraciones que lo necesitan.</b>' : ''}</p>
@@ -8188,6 +8306,69 @@ function drawIntegrations() {
   if ($('#relaySave')) $('#relaySave').onclick = async () => { try { S.int.relayUrl = await api('apiRelaySave', S.token, $('#relayUrl').value); toast('Relevo guardado'); } catch (e) { toast(e.message, true); } };
   $('#relayGuide').onclick = () => openModal('Instalar el relevo en Cloudflare (gratis, 5 minutos)', relayGuideHtml(), null, null, true);
   $('#hookGuide').onclick = ev => { ev.preventDefault(); openModal('Webhooks de salida', hookGuideHtml(), null, null, true); };
+  btcSection();
+}
+
+/* ---------- Cobros en bitcoin: conectar Strike, Blink o BTCPay ---------- */
+
+const BTC_GUIDE = {
+  strike: `<ol class="steps-list"><li>Entra a <b>dashboard.strike.me</b> con tu cuenta de negocio de Strike.</li><li>Ve a <b>API keys</b> y crea una clave nueva.</li>
+    <li>Dale solo estos permisos: crear facturas, generar cotización y leer facturas (<i>invoice create, quote generate, invoice read</i>).</li><li>Cópiala y pégala aquí. Lo que cobres llega a tu cuenta de Strike, en dólares o en bitcoin según la tengas configurada.</li></ol>`,
+  blink: `<ol class="steps-list"><li>Entra a <b>dashboard.blink.sv</b> con el mismo teléfono o correo de tu app Blink.</li><li>Ve a <b>API Keys</b> y toca <b>+</b>.</li>
+    <li>Marca solo <b>Read</b> y <b>Receive</b>. No marques Write: así la clave no puede sacar dinero.</li><li>Cópiala y pégala aquí. Elige si cobras a tu billetera de <b>dólares (Stablesats)</b>, sin cambios de precio, o a la de <b>bitcoin</b>.</li></ol>`,
+  btcpay: `<ol class="steps-list"><li>Necesitas un BTCPay Server (propio o de un proveedor) con <b>Lightning activo</b> en tu tienda.</li><li>Copia la <b>dirección</b> (https:\/\/…) y el <b>ID de la tienda</b> (Ajustes de la tienda → General).</li>
+    <li>En tu cuenta → <b>API keys</b>, crea una clave con los permisos para crear facturas y ver facturas de esa tienda.</li><li>El dinero llega directo a tu nodo o billetera, sin intermediarios.</li></ol>`,
+};
+
+async function btcSection() {
+  const box = $('#btcSec');
+  if (!box) return;
+  let d;
+  try { d = await api('apiBtcGet', S.token, payBase()); } catch (e) { box.innerHTML = '<p class="muted">' + esc(e.message) + '</p>'; return; }
+  if (!$('#btcSec')) return;
+  const w = d.can_edit;
+  box.innerHTML = `<h3><span><span class="btc-dot" aria-hidden="true"></span>Cobros en bitcoin (Lightning)</span>${d.ready ? '<span class="tag activo">Activo con ' + esc(d.provider_label) + '</span>' : ''}</h3>
+    <p class="muted" style="margin-top:0">Cobra en la caja con un QR y manda enlaces de pago para pedidos con saldo. La venta se confirma sola cuando llega el pago. Conecta uno o varios y elige cuál usar.</p>
+    <div class="btc-provs">${d.providers.map(p => `<div class="btc-prov ${p.connected ? 'on' : ''} ${d.provider === p.id ? 'main' : ''}">
+        <div><b>${esc(p.label)}</b>${d.provider === p.id ? ' <span class="tag activo">En uso</span>' : p.connected ? ' <span class="tag">Conectado</span>' : ''}
+          <div class="muted sm">${p.connected ? esc(p.detail || 'Conectado') : esc(p.help)}</div>
+          ${p.id === 'blink' && p.connected ? `<label class="muted sm btc-wallet">Cobrar a <select class="input" data-btc-wallet ${w ? '' : 'disabled'}>
+            ${d.blink.has_usd ? `<option value="USD" ${d.blink.wallet === 'USD' ? 'selected' : ''}>Dólares (Stablesats)</option>` : ''}${d.blink.has_btc ? `<option value="BTC" ${d.blink.wallet === 'BTC' ? 'selected' : ''}>Bitcoin</option>` : ''}</select></label>` : ''}</div>
+        ${w ? `<div class="chips">${p.connected && d.provider !== p.id ? `<button class="btn sm primary" data-btc-use="${p.id}">Usar este</button>` : ''}
+          <button class="btn sm ${p.connected ? '' : 'primary'}" data-btc-conn="${p.id}">${p.connected ? 'Cambiar datos' : 'Conectar'}</button>
+          ${p.connected ? `<button class="btn sm" data-btc-off="${p.id}">Desconectar</button>` : ''}</div>` : ''}</div>`).join('')}</div>
+    ${d.ready ? `<label class="chk" style="margin-top:12px"><input type="checkbox" id="btcPos" ${d.pos ? 'checked' : ''} ${w ? '' : 'disabled'}><span>Mostrar el botón <b>Bitcoin</b> en la caja</span></label>` : ''}`;
+  const act = async (fn, args, msg) => { try { await api.apply(null, [fn, S.token].concat(args)); toast(msg); btcSection(); } catch (e) { toast(e.message, true); } };
+  box.querySelectorAll('[data-btc-use]').forEach(b => b.onclick = () => act('apiBtcDefault', [b.dataset.btcUse], 'Ahora cobras con ' + d.providers.find(p => p.id === b.dataset.btcUse).label));
+  box.querySelectorAll('[data-btc-off]').forEach(b => b.onclick = () => {
+    const p = d.providers.find(x => x.id === b.dataset.btcOff);
+    if (confirm('¿Desconectar ' + p.label + '? Se borra la clave. Los cobros ya hechos no cambian.')) act('apiBtcDisconnect', [p.id], p.label + ' desconectado');
+  });
+  box.querySelectorAll('[data-btc-wallet]').forEach(sel => sel.onchange = () => act('apiBtcDefault', [null, { blink_wallet: sel.value }], sel.value === 'USD' ? 'Blink cobra a tu billetera de dólares' : 'Blink cobra a tu billetera de bitcoin'));
+  if ($('#btcPos')) $('#btcPos').onchange = () => act('apiBtcDefault', [null, { pos: $('#btcPos').checked }], $('#btcPos').checked ? 'Botón Bitcoin visible en la caja' : 'Botón Bitcoin oculto en la caja');
+  box.querySelectorAll('[data-btc-conn]').forEach(b => b.onclick = () => openBtcConnect(d, d.providers.find(p => p.id === b.dataset.btcConn)));
+}
+
+function openBtcConnect(d, p) {
+  openModal('Conectar ' + p.label, `${BTC_GUIDE[p.id]}
+    <form class="form" id="btcForm" autocomplete="off">
+      ${p.id === 'btcpay' ? `<div class="wide"><label class="f" for="btcUrl">Dirección de tu BTCPay Server</label><input class="input" id="btcUrl" name="url" placeholder="https:\/\/pay.tunegocio.com" value="${esc(d.btcpay.url)}" inputmode="url"></div>
+        <div class="wide"><label class="f" for="btcStore">ID de la tienda</label><input class="input" id="btcStore" name="store_id" value="${esc(d.btcpay.store_id)}" spellcheck="false"></div>` : ''}
+      <div class="wide"><label class="f" for="btcKey">Clave de API${p.connected ? ' (déjala vacía para conservar la actual)' : ''}</label><input class="input" id="btcKey" name="key" type="password" autocomplete="off" spellcheck="false"></div>
+      ${p.id === 'blink' ? `<div class="wide"><label class="f" for="btcWal">Cobrar a</label><select class="input" id="btcWal" name="wallet"><option value="USD">Mi billetera de dólares (Stablesats)</option><option value="BTC">Mi billetera de bitcoin</option></select></div>` : ''}
+      ${d.ready && d.provider !== p.id ? `<label class="chk wide"><input type="checkbox" name="make_default"><span>Usar ${esc(p.label)} para los cobros nuevos</span></label>` : ''}
+      <p class="hint wide">La clave se guarda cifrada en tu proyecto de Google (no en la hoja) y no vuelve a mostrarse.</p>
+    </form>`, async () => {
+    const f = $('#btcForm');
+    const data = { key: f.key.value.trim() };
+    if (f.url) { data.url = f.url.value.trim(); data.store_id = f.store_id.value.trim(); }
+    if (f.wallet) data.wallet = f.wallet.value;
+    if (f.make_default) data.make_default = f.make_default.checked;
+    const r = await api('apiBtcConnect', S.token, p.id, data);
+    toast(p.label + ' conectado' + (r.provider === p.id ? ' y en uso' : ''));
+    POS.cat = null;
+    btcSection();
+  }, p.connected ? 'Guardar' : 'Conectar', true);
 }
 
 function integrationFields(rec) {
