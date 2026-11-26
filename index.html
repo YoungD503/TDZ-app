@@ -298,6 +298,8 @@
   .cash-quick .btn { min-height: 44px; min-width: 76px; }
   .change { margin-top: 10px; font-size: 18px; min-height: 26px; }
   .pay-list { margin-top: 14px; }
+  .pay-share { margin: 4px 0 12px; }
+  .pay-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
   .qr-pay { display: grid; grid-template-columns: auto 1fr; gap: 20px; align-items: center; }
   .qr-box { background: #fff; padding: 12px; border-radius: 14px; line-height: 0; }
   .qr-wait { display: flex; align-items: center; gap: 8px; }
@@ -4814,13 +4816,15 @@ function openPayment() {
       panel.querySelectorAll('[data-q]').forEach(b => b.onclick = () => apply(Number(b.dataset.q)));
       setTimeout(() => inp.select(), 30);
     } else if (method === 'bitcoin') {
-      panel.innerHTML = `<p class="muted">Se crea un cobro Lightning por <b>${esc(pm(t.total))}</b> con ${esc(POS.cat.bitcoin.provider)}. El cliente escanea el QR con su billetera (Strike, Blink, Wallet of Satoshi…) y la venta se confirma sola.</p>
-        <button type="button" class="btn primary pos-big" id="btcGo">Mostrar QR de bitcoin</button>`;
+      panel.innerHTML = `<p class="muted">Cobro Lightning por <b>${esc(pm(t.total))}</b> con ${esc(POS.cat.bitcoin.provider)}. Muestra el QR si el cliente está aquí, o mándale un enlace si está a distancia. En los dos casos la venta se confirma sola cuando paga.</p>
+        <div class="pay-two"><button type="button" class="btn primary pos-big" id="btcGo">Mostrar QR</button><button type="button" class="btn pos-big" id="btcLink">Mandar enlace</button></div>`;
       $('#btcGo').onclick = () => startBtcQr(t);
+      $('#btcLink').onclick = () => sendPayLink('bitcoin', t);
     } else if (method === 'stripe_qr') {
-      panel.innerHTML = `<p class="muted">Se crea un cobro de Stripe por <b>${esc(pm(t.total))}</b> y se muestra un QR. El cliente lo escanea con su teléfono y paga; la venta se confirma sola.</p>
-        <button type="button" class="btn primary pos-big" id="qrGo">Mostrar QR de pago</button>`;
+      panel.innerHTML = `<p class="muted">Cobro de Stripe por <b>${esc(pm(t.total))}</b>. Muestra el QR si el cliente está aquí, o mándale un enlace si está a distancia (dura 23 horas). En los dos casos la venta se confirma sola cuando paga.</p>
+        <div class="pay-two"><button type="button" class="btn primary pos-big" id="qrGo">Mostrar QR</button><button type="button" class="btn pos-big" id="qrLink">Mandar enlace</button></div>`;
       $('#qrGo').onclick = () => startStripeQr(t);
+      $('#qrLink').onclick = () => sendPayLink('stripe', t);
     } else {
       const refLabel = { tarjeta: 'Número de aprobación (opcional)', transferencia: 'Referencia de la transferencia', wompi: 'ID de la transacción de Wompi', n1co: 'ID de la transacción de N1co', otro: 'Detalle' }[method];
       panel.innerHTML = `<div class="form">
@@ -4842,6 +4846,61 @@ function openPayment() {
   drawPanel(); drawList();
 }
 
+/** Enlace de pago desde la caja (Stripe o bitcoin): la venta queda pendiente y se confirma sola cuando el cliente paga. */
+async function sendPayLink(kind, t) {
+  const btn = $(kind === 'stripe' ? '#qrLink' : '#btcLink');
+  if (btn) { btn.disabled = true; btn.textContent = 'Creando el enlace…'; }
+  const cust = POS.cart.customer || null;
+  let pend;
+  try {
+    const payload = Object.assign(cartPayload(), { receipt_base: receiptBase(), link: true });
+    if (kind === 'bitcoin') payload.pay_base = payBase();
+    pend = kind === 'stripe' ? await api('apiPosStripeQr', S.token, payload) : await apiT(25000, 'apiPosBtc', S.token, payload);
+  } catch (e) { toast(e.message, true); if (btn) { btn.disabled = false; btn.textContent = 'Mandar enlace'; } return; }
+  if (pend.status === 'pagada') return posFinished(pend);
+  const url = kind === 'stripe' ? pend.url : (pend.btc && pend.btc.url);
+  if (!url) { toast('No se pudo crear el enlace. Intenta con el QR.', true); return; }
+  const biz = (S.boot.tenant && S.boot.tenant.name) || '';
+  const first = cust && cust.name ? ' ' + String(cust.name).split(/\s+/)[0] : '';
+  const msg = 'Hola' + first + ', aquí puedes pagar tu compra ' + pend.number + (biz ? ' en ' + biz : '') + ' por ' + pm(pend.total) + (kind === 'bitcoin' ? ' con bitcoin' : '') + ': ' + url;
+  const digits = cust && cust.phone ? String(cust.phone).replace(/\D/g, '') : '';
+  POS.cart = emptyCart();
+  document.body.classList.remove('cart-open');
+  swrClear();
+  closeModal(true);
+  setTimeout(() => viewPos().then(() => {
+    openModal('Enlace de pago listo', `
+      <p style="margin-top:0">Venta <b>${esc(pend.number)}</b> por <b>${esc(pm(pend.total))}</b>${kind === 'bitcoin' ? ' en bitcoin' : ' con Stripe'}${pend.is_test ? ' <span class="tag prueba">PRUEBA</span>' : ''}. Mándale este enlace al cliente; cuando pague, la venta se confirma sola y te llega el aviso.</p>
+      <div class="codebox"><pre class="code">${esc(url)}</pre><button class="btn sm copy">Copiar</button></div>
+      <div class="chips" style="margin-top:12px">
+        <button type="button" class="btn primary" id="plWa">${digits.length >= 8 ? 'Mandar por WhatsApp a ' + esc(cust.name) : 'Mandar por WhatsApp'}</button>
+        <button type="button" class="btn" id="plCopyMsg">Copiar mensaje</button></div>
+      <p class="muted sm">La venta queda como <b>pendiente</b> en Ventas mientras tanto${kind === 'stripe' ? ' y el enlace vence en 23 horas' : ''}. Si ya no la va a pagar, cancélala desde Ventas.</p>
+      <button type="button" class="btn" data-close style="width:100%;margin-top:6px">Seguir vendiendo</button>`, null, null, false);
+    $('#plWa').onclick = () => window.open('https:\/\/wa.me/' + (digits.length >= 8 ? digits : '') + '?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+    $('#plCopyMsg').onclick = () => { if (navigator.clipboard) navigator.clipboard.writeText(msg).then(() => toast('Mensaje copiado'), () => toast('No se pudo copiar', true)); };
+  }), 0);
+}
+
+/** Botones para compartir el enlace de un cobro (desde la ventana del QR). */
+function payShareHtml() {
+  return '<div class="chips pay-share"><button type="button" class="btn sm" data-ps="copy">Copiar enlace</button><button type="button" class="btn sm" data-ps="wa">WhatsApp</button>' +
+    (navigator.share ? '<button type="button" class="btn sm" data-ps="share">Compartir</button>' : '') + '</div>';
+}
+function bindPayShare(getUrl, number, total, isBtc) {
+  const cust = POS.cart.customer || null;
+  const digits = cust && cust.phone ? String(cust.phone).replace(/\D/g, '') : '';
+  const biz = (S.boot.tenant && S.boot.tenant.name) || '';
+  const msg = () => 'Hola' + (cust && cust.name ? ' ' + String(cust.name).split(/\s+/)[0] : '') + ', aquí puedes pagar tu compra ' + number + (biz ? ' en ' + biz : '') + ' por ' + pm(total) + (isBtc ? ' con bitcoin' : '') + ': ' + getUrl();
+  document.querySelectorAll('#modal [data-ps]').forEach(b => b.onclick = () => {
+    const url = getUrl();
+    if (!url) { toast('El enlace todavía no está listo.', true); return; }
+    if (b.dataset.ps === 'copy') { if (navigator.clipboard) navigator.clipboard.writeText(url).then(() => toast('Enlace copiado'), () => toast('No se pudo copiar', true)); }
+    else if (b.dataset.ps === 'wa') window.open('https:\/\/wa.me/' + (digits.length >= 8 ? digits : '') + '?text=' + encodeURIComponent(msg()), '_blank', 'noopener');
+    else navigator.share({ title: 'Pago ' + number, text: msg() }).catch(() => {});
+  });
+}
+
 async function startStripeQr(t) {
   let pend;
   try { pend = await api('apiPosStripeQr', S.token, Object.assign(cartPayload(), { receipt_base: receiptBase() })); }
@@ -4853,10 +4912,12 @@ async function startStripeQr(t) {
       <div class="qr-box">${qrSvg(pend.url, 'min(72vw, 300px)')}</div>
       <div><div class="pay-total"><span class="muted">Total</span><b>${esc(pm(pend.total))}</b></div>
         ${pend.is_test ? '<p><span class="tag prueba">PRUEBA</span> Usa la tarjeta 4242 4242 4242 4242.</p>' : ''}
-        <p class="muted">El cliente escanea el código con la cámara, paga en la página segura de Stripe y esta pantalla se actualiza sola.</p>
+        <p class="muted">El cliente escanea el código con la cámara, paga en la página segura de Stripe y esta pantalla se actualiza sola. ¿No está aquí? Mándale el enlace (vence en 30 minutos).</p>
         <p class="qr-wait" aria-live="polite"><span class="dot-pulse" aria-hidden="true"></span> Esperando el pago… <span class="muted sm">${esc(pend.number)}</span></p>
+        ${payShareHtml()}
         <button type="button" class="btn danger" id="qrCancel">Cancelar cobro</button></div>
     </div>`, null, null, true);
+  bindPayShare(() => pend.url, pend.number, pend.total, false);
   const modal = $('#modal');
   modal._guard = () => !alive || confirm('Si cierras, el cobro sigue abierto en Stripe hasta que lo canceles o expire (30 min). ¿Cerrar de todos modos?');
   modal._onClose = () => { alive = false; clearTimeout(timer); };
@@ -4886,7 +4947,7 @@ async function startStripeQr(t) {
 async function startBtcQr(t) {
   let pend;
   const go = $('#btcGo'); if (go) { go.disabled = true; go.textContent = 'Creando el cobro…'; }
-  try { pend = await apiT(25000, 'apiPosBtc', S.token, Object.assign(cartPayload(), { receipt_base: receiptBase() })); }
+  try { pend = await apiT(25000, 'apiPosBtc', S.token, Object.assign(cartPayload(), { receipt_base: receiptBase(), pay_base: payBase() })); }
   catch (e) { toast(e.message, true); if ($('#btcGo')) { $('#btcGo').disabled = false; $('#btcGo').textContent = 'Mostrar QR de bitcoin'; } return; }
   if (pend.status === 'pagada') return posFinished(pend);
   let alive = true, timer = null, tick = null, shown = '', left = 0;
@@ -4897,8 +4958,10 @@ async function startBtcQr(t) {
         <p class="muted btc-sats" id="btcSats"></p>
         <p class="muted">El cliente escanea el código con su billetera Lightning y paga. Esta pantalla se actualiza sola.</p>
         <p class="qr-wait" aria-live="polite"><span class="dot-pulse" aria-hidden="true"></span> Esperando el pago… <span class="muted sm">${esc(pend.number)}</span><span class="muted sm" id="btcTtl"></span></p>
+        ${payShareHtml()}
         <div class="chips"><button type="button" class="btn" id="btcCopy">Copiar código</button><button type="button" class="btn danger" id="qrCancel">Cancelar cobro</button></div></div>
     </div>`, null, null, true);
+  bindPayShare(() => pend.btc && pend.btc.url, pend.number, pend.total, true);
   const draw = b => {
     if (!b || !b.ln) return;
     left = b.expires_in || 0;
