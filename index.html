@@ -1,278 +1,46 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="robots" content="noindex">
-<meta name="referrer" content="no-referrer">
-<meta name="theme-color" content="#000000">
-<title>Contacto</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..800&family=Michroma&display=swap" rel="stylesheet">
-<script>window.NEXO_API_URL = 'https://script.google.com/macros/s/AKfycby5LWM73dCEKGmDvc1LJBrw_eQYuLRLcZUCm_XJwXJt365-TEtkeKhr1N4GfkWFfiLT/exec';</script>
-<style>
-  :root {
-    color-scheme: dark;
-    --bg: #000000; --panel: #141414; --raised: #1C1C1C; --line: #262626; --ink: #F5F5F5; --muted: #9B9B9B;
-    --brand: #2F6FE4; --brand-ink: #FFFFFF; --brand-text: #7DB2FF; --sand: #E2C08A; --danger: #F87171;
-    --font: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    --display: "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--font); -webkit-font-smoothing: antialiased; }
-  :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
-  .wrap { max-width: 460px; margin: 0 auto; padding: max(28px, env(safe-area-inset-top)) 20px 44px; }
+/* Nexo ERP: guarda la app en el dispositivo para que abra sin señal.
+   Los datos nunca se guardan aquí: las llamadas al sistema (script.google.com) siempre van a la red. */
+const CACHE = 'nexo-0.23.0';
+const SHELL = ['./', './index.html', './recibo.html', './contacto.html'];
 
-  /* Tarjeta */
-  .card { padding: 6px 0 22px; }
-  .who { display: flex; align-items: center; gap: 16px; }
-  .avatar { flex: none; width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; background: var(--sand); color: #2a1f0c;
-            font: 700 26px var(--display); letter-spacing: -.02em; }
-  .name { font: 700 clamp(28px, 8.5vw, 36px)/1.05 var(--display); letter-spacing: -.025em; margin: 0; text-wrap: balance; }
-  .role { color: var(--muted); margin: 4px 0 0; }
-  /* El horizonte: una línea de arena bajo la tarjeta */
-  .horizon { height: 3px; width: 64px; background: var(--sand); border-radius: 2px; margin: 20px 0 16px; }
-  .event { color: var(--sand); font-weight: 500; margin: 0 0 16px; }
-  .save { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 58px; border: 0; border-radius: 14px;
-          background: var(--brand); color: var(--brand-ink); font: 700 18px var(--font); cursor: pointer; text-decoration: none; }
-  .save:active { transform: scale(.99); }
-  .save-hint { color: var(--muted); font-size: 13px; text-align: center; margin: 8px 0 0; min-height: 18px; }
-  .quick { display: grid; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; margin-top: 16px; }
-  .quick a { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 6px; border-radius: 12px; border: 1px solid var(--line);
-             background: var(--panel); color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 500; }
-  .quick a:active { background: var(--raised); }
-  .quick svg { color: var(--brand-text); }
-  .details { margin: 16px 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 14px; }
-  .details li { padding: 3px 0; overflow-wrap: anywhere; }
-  .details b { color: var(--ink); font-weight: 500; }
+self.addEventListener('install', e => {
+  e.waitUntil(caches.open(CACHE).then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => null)))).then(() => self.skipWaiting()));
+});
 
-  /* Formulario (opcional) */
-  .ask { border-top: 1px solid var(--line); padding-top: 22px; margin-top: 6px; }
-  .ask h2 { font: 700 22px/1.15 var(--display); letter-spacing: -.015em; margin: 0 0 6px; }
-  .ask p { color: var(--muted); margin: 0 0 14px; }
-  .open-form { width: 100%; min-height: 52px; border-radius: 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 16px var(--font); cursor: pointer; }
-  form { display: none; gap: 16px; margin-top: 4px; }
-  body.form-open form { display: grid; }
-  body.form-open .open-form { display: none; }
-  label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 6px; }
-  label small { color: var(--muted); font-weight: 400; }
-  input, textarea { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #0D0D0D; border: 1px solid #333333;
-                    border-radius: 10px; padding: 13px 14px; min-height: 50px; }
-  textarea { min-height: 92px; resize: vertical; }
-  input:focus, textarea:focus { outline: none; border-color: var(--brand); box-shadow: 0 0 0 3px rgba(47, 111, 228, .18); }
-  .two { display: grid; gap: 16px; }
-  .consent { display: flex; gap: 12px; align-items: flex-start; font-size: 14px; color: var(--muted); font-weight: 400; margin: 0; }
-  .consent input { width: 22px; height: 22px; min-height: 0; margin: 1px 0 0; accent-color: var(--brand); flex: none; }
-  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-  .send { font: 600 17px var(--font); width: 100%; min-height: 54px; border: 0; border-radius: 12px; background: var(--brand); color: var(--brand-ink); cursor: pointer; }
-  .send[disabled] { opacity: .6; cursor: progress; }
-  .err { color: var(--danger); font-size: 14px; min-height: 20px; margin: -4px 0 0; }
-  .hint { color: var(--muted); font-size: 13px; margin: 0; }
-  .done { display: none; padding-top: 8px; }
-  .done h2 { font: 700 26px/1.1 var(--display); letter-spacing: -.02em; margin: 0 0 8px; }
-  .done p { color: var(--muted); margin: 0 0 18px; }
-  .again { width: 100%; min-height: 50px; border-radius: 12px; background: transparent; color: var(--ink); border: 1px solid var(--line); font: 600 15px var(--font); cursor: pointer; }
-  body.sent form, body.sent .ask-intro { display: none; }
-  body.sent .done { display: block; }
-  .bad { text-align: center; padding-top: 30vh; color: var(--muted); }
-  .skeleton { color: transparent; background: var(--panel); border-radius: 8px; }
-  @media (min-width: 520px) { .two { grid-template-columns: 1fr 1fr; } }
-</style>
-</head>
-<body>
-<main class="wrap" id="app">
-  <section class="card" id="card" aria-live="polite">
-    <div class="who">
-      <div class="avatar" id="avatar" aria-hidden="true"></div>
-      <div><h1 class="name" id="name"></h1><p class="role" id="role"></p></div>
-    </div>
-    <div class="horizon" aria-hidden="true"></div>
-    <p class="event" id="event" hidden></p>
-    <div id="cardActions">
-      <a class="save" id="save" href="#" role="button">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21a7 7 0 0 1 14 0M19 8v6M16 11h6"/></svg>
-        Guardar mi contacto</a>
-      <p class="save-hint" id="saveHint">Se abre tu agenda con mis datos listos para guardar.</p>
-      <nav class="quick" id="quick" aria-label="Contactar"></nav>
-      <ul class="details" id="details"></ul>
-    </div>
-  </section>
+self.addEventListener('activate', e => {
+  e.waitUntil(caches.keys()
+    .then(keys => Promise.all(keys.filter(k => k.indexOf('nexo-') === 0 && k !== CACHE).map(k => caches.delete(k))))
+    .then(() => self.clients.claim()));
+});
 
-  <section class="ask">
-    <div class="ask-intro">
-      <h2>¿Quieres que te contactemos?</h2>
-      <p>Si prefieres, déjanos tus datos y te escribimos nosotros.</p>
-      <button class="open-form" id="openForm" type="button">Dejar mis datos</button>
-    </div>
-    <form id="f" novalidate>
-      <div><label for="fname">Tu nombre</label><input id="fname" name="name" autocomplete="name" required maxlength="120"></div>
-      <div class="two">
-        <div><label for="phone">WhatsApp o teléfono</label><input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40"></div>
-        <div><label for="email">Correo</label><input id="email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="160"></div>
-      </div>
-      <div><label for="company">Empresa <small>(opcional)</small></label><input id="company" name="company" autocomplete="organization" maxlength="120"></div>
-      <div><label for="message">¿Qué te interesa? <small>(opcional)</small></label><textarea id="message" name="message" maxlength="1500"></textarea></div>
-      <div class="hp" aria-hidden="true"><label for="_hp">No llenar</label><input id="_hp" name="_hp" tabindex="-1" autocomplete="off"></div>
-      <label class="consent"><input type="checkbox" id="consent" checked> <span>Acepto que me contacten por WhatsApp, llamada o correo.</span></label>
-      <p class="err" id="err" role="alert"></p>
-      <button class="send" id="send" type="submit">Enviar mis datos</button>
-      <p class="hint">Solo usaremos tus datos para contactarte.</p>
-    </form>
-    <div class="done" aria-live="polite">
-      <h2 id="thanks">¡Gracias!</h2>
-      <p>Recibimos tus datos. Te contactaremos pronto.</p>
-      <button class="again" id="again" type="button">Registrar a otra persona</button>
-    </div>
-  </section>
-</main>
+function withTimeout(p, ms) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('timeout')), ms);
+    p.then(v => { clearTimeout(t); resolve(v); }, err => { clearTimeout(t); reject(err); });
+  });
+}
 
-<script>
-(function () {
-  var q = new URLSearchParams(location.search);
-  var key = q.get('k') || '', event = q.get('e') || '', biz = q.get('b') || '';
-  var $ = function (id) { return document.getElementById(id); };
-  if (!key || window.NEXO_API_URL.indexOf('http') !== 0) {
-    $('app').innerHTML = '<p class="bad">Este enlace no está completo. Pide que te muestren el código QR de nuevo.</p>';
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  if (/(^|\.)google\.com$|googleusercontent\.com$/.test(url.hostname)) return; // el sistema: siempre en vivo
+
+  if (url.origin === self.location.origin) {
+    // Primero la red (para recibir actualizaciones); sin señal, la copia guardada.
+    e.respondWith(withTimeout(fetch(req), 6000).then(res => {
+      if (res && res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+      return res;
+    }).catch(() => caches.match(req, { ignoreSearch: true })
+      .then(hit => hit || (req.mode === 'navigate' ? caches.match('./index.html') : Response.error()))));
     return;
   }
-  var api = function (fn, args) {
-    return fetch(window.NEXO_API_URL + '?rpc=1', { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ fn: fn, args: args }) })
-      .then(function (r) { return r.json(); });
-  };
-  var initials = function (s) { return String(s || '').split(/\s+/).filter(Boolean).slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase() || '·'; };
-  var digits = function (p) { return String(p || '').replace(/\D/g, ''); };
-  // 8 dígitos = El Salvador (+503); 10 = EE. UU. (+1); si ya trae código de país, se respeta.
-  var intl = function (p) {
-    var raw = String(p || '').trim(), d = digits(raw);
-    if (!d) return '';
-    if (raw.charAt(0) === '+') return '+' + d;
-    if (d.length === 8) return '+503' + d;
-    if (d.length === 10) return '+1' + d;
-    return '+' + d;
-  };
-  var ICON = {
-    wa: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3z"/><path d="M9 9.5c.3 1.6 1.9 3.6 3.6 4.4l1.2-1.1 2 .9c-.2 1.3-1.2 2-2.4 1.8-3-.5-5.6-3-6.2-6-.2-1.2.6-2.2 1.8-2.4l.9 2z"/></svg>',
-    call: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>',
-    mail: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>',
-    map: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
-    web: '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>'
-  };
-  var esc = function (v) { return String(v === undefined || v === null ? '' : v).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
-  var safeUrl = function (u) { return /^https:\/\/[^\s"<>]+$/i.test(String(u || '')) ? u : ''; };
 
-  /** vCard 3.0: la versión que mejor abren iPhone y Android. */
-  function vcard(c) {
-    var e = function (s) { return String(s || '').replace(/\\/g, '\\\\').replace(/\r?\n/g, '\\n').replace(/([,;])/g, '\\$1'); };
-    var L = ['BEGIN:VCARD', 'VERSION:3.0'];
-    if (c.personal) {
-      var parts = String(c.name || '').trim().split(/\s+/);
-      var last = parts.length > 1 ? parts.pop() : '', first = parts.join(' ');
-      L.push('N:' + e(last) + ';' + e(first) + ';;;', 'FN:' + e(c.name));
-    } else {
-      L.push('N:;;;;', 'FN:' + e(c.company || c.name), 'X-ABShowAs:COMPANY');
-    }
-    if (c.company) L.push('ORG:' + e(c.company));
-    if (c.title) L.push('TITLE:' + e(c.title));
-    if (c.phone) L.push('TEL;TYPE=CELL,VOICE:' + intl(c.phone));
-    if (c.whatsapp && digits(c.whatsapp) !== digits(c.phone)) L.push('TEL;TYPE=CELL:' + intl(c.whatsapp));
-    if (c.email) L.push('EMAIL;TYPE=INTERNET,WORK:' + c.email);
-    if (c.website) L.push('URL:' + c.website);
-    if (c.address) L.push('ADR;TYPE=WORK:;;' + e(c.address) + ';;;;');
-    if (c.lat !== null && c.lat !== undefined) L.push('GEO:' + c.lat + ';' + c.lng);
-    var note = [c.note, c.event ? 'Nos conocimos en ' + c.event : '', mapLink(c) ? 'Ubicación: ' + mapLink(c) : ''].filter(Boolean).join(' · ');
-    if (note) L.push('NOTE:' + e(note));
-    L.push('END:VCARD');
-    return L.join('\r\n') + '\r\n';
+  if (/fonts\.googleapis\.com$|fonts\.gstatic\.com$|cdn\.jsdelivr\.net$|fastly\.jsdelivr\.net$/.test(url.hostname)) {
+    // Letras y el lector de códigos: la copia guardada primero.
+    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
+      if (res && (res.ok || res.type === 'opaque')) { const copy = res.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+      return res;
+    })));
   }
-  function mapLink(c) {
-    if (safeUrl(c.maps_url)) return c.maps_url;
-    if (c.lat !== null && c.lat !== undefined) return 'https://www.google.com/maps/search/?api=1&query=' + c.lat + ',' + c.lng;
-    if (c.address) return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(c.address);
-    return '';
-  }
-
-  function render(c) {
-    $('avatar').textContent = initials(c.personal ? c.name : (c.company || c.name));
-    $('name').textContent = c.personal ? c.name : (c.company || c.name);
-    $('role').textContent = c.personal ? [c.title, c.company].filter(Boolean).join(' · ') : (c.title || '');
-    if (!$('role').textContent) $('role').hidden = true;
-    document.title = ($('name').textContent || 'Contacto') + ' · Guardar contacto';
-    if (c.event) { $('event').textContent = c.event; $('event').hidden = false; }
-    var vcf = vcard(c);
-    var save = $('save');
-    save.href = 'data:text/vcard;charset=utf-8,' + encodeURIComponent(vcf);
-    save.setAttribute('download', (($('name').textContent || 'contacto').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^\w]+/g, '-').replace(/^-|-$/g, '') || 'contacto') + '.vcf');
-    save.onclick = function () {
-      $('saveHint').textContent = /Android/i.test(navigator.userAgent)
-        ? 'Si no se abre solo, toca el archivo descargado para agregarlo a tus contactos.'
-        : 'Toca "Crear contacto nuevo" para guardarlo.';
-    };
-    var links = [];
-    var wa = digits(intl(c.whatsapp || c.phone));
-    if (wa) links.push(['https://wa.me/' + wa + '?text=' + encodeURIComponent('¡Hola' + (c.personal ? ' ' + String(c.name).split(' ')[0] : '') + '! ' + (c.event ? 'Nos conocimos en ' + c.event + '.' : '')), 'WhatsApp', ICON.wa]);
-    if (c.phone) links.push(['tel:' + intl(c.phone), 'Llamar', ICON.call]);
-    if (c.email) links.push(['mailto:' + c.email, 'Correo', ICON.mail]);
-    if (mapLink(c)) links.push([mapLink(c), 'Ubicación', ICON.map]);
-    if (safeUrl(c.website) || /^http:\/\//.test(c.website || '')) links.push([c.website, 'Sitio web', ICON.web]);
-    $('quick').innerHTML = links.map(function (l) {
-      var ext = /^https?:/.test(l[0]);
-      return '<a href="' + esc(l[0]) + '"' + (ext ? ' target="_blank" rel="noopener"' : '') + '>' + l[2] + '<span>' + esc(l[1]) + '</span></a>';
-    }).join('');
-    var rows = [];
-    if (c.phone) rows.push('<li><b>' + esc(c.phone) + '</b></li>');
-    if (c.email) rows.push('<li>' + esc(c.email) + '</li>');
-    if (c.address) rows.push('<li>' + esc(c.address) + '</li>');
-    $('details').innerHTML = rows.join('');
-  }
-
-  // Primero algo visible al instante (del enlace); luego la tarjeta completa.
-  $('name').textContent = biz || 'Contacto';
-  $('avatar').textContent = initials(biz);
-  $('role').textContent = '';
-  if (event) { $('event').textContent = event; $('event').hidden = false; }
-  $('cardActions').style.visibility = 'hidden';
-  api('apiPublicCard', [key]).then(function (r) {
-    if (!r.ok) throw new Error(r.error);
-    render(r.data);
-    $('cardActions').style.visibility = '';
-  }).catch(function (e) {
-    // Sin tarjeta (servidor sin actualizar o sin conexión): queda el formulario.
-    try { console.warn('Tarjeta no disponible:', e && e.message); } catch (x) {}
-    var why = document.createElement('p'); why.className = 'save-hint'; why.id = 'cardWhy';
-    why.textContent = 'Tarjeta no disponible: ' + ((e && e.message) || 'sin conexión');
-    $('card').querySelector('.horizon').after(why);
-    $('card').querySelector('.horizon').hidden = false;
-    $('cardActions').remove();
-    document.body.classList.add('form-open');
-  });
-
-  $('openForm').onclick = function () { document.body.classList.add('form-open'); setTimeout(function () { $('fname').focus(); }, 50); };
-
-  var f = $('f'), err = $('err'), send = $('send');
-  f.addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    err.textContent = '';
-    var name = f.name.value.trim(), phone = f.phone.value.trim(), email = f.email.value.trim();
-    if (!name) { err.textContent = 'Escribe tu nombre.'; f.name.focus(); return; }
-    if (!phone && !email) { err.textContent = 'Escribe tu WhatsApp o tu correo para poder contactarte.'; f.phone.focus(); return; }
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Revisa tu correo: parece incompleto.'; f.email.focus(); return; }
-    var data = { name: name, phone: phone, email: email, company: f.company.value.trim(), message: f.message.value.trim(),
-                 _hp: f._hp.value, acepta_contacto: $('consent').checked ? 'Sí' : 'No',
-                 utm_source: 'qr', utm_campaign: event, page_url: location.href.split('?')[0] };
-    Object.keys(data).forEach(function (k) { if (!data[k] && k !== '_hp') delete data[k]; });
-    send.disabled = true; send.textContent = 'Enviando…';
-    api('apiPublicLead', [key, data]).then(function (r) {
-      if (!r.ok) throw new Error(r.error || 'No se pudo enviar.');
-      $('thanks').textContent = '¡Gracias, ' + name.split(' ')[0] + '!';
-      document.body.classList.add('sent');
-    }).catch(function (e) {
-      err.textContent = e.message && e.message !== 'Failed to fetch' ? e.message : 'No hay conexión. Revisa tu internet e inténtalo de nuevo.';
-    }).then(function () { send.disabled = false; send.textContent = 'Enviar mis datos'; });
-  });
-  $('again').onclick = function () { f.reset(); $('consent').checked = true; document.body.classList.remove('sent'); f.name.focus(); };
-})();
-</script>
-</body>
-</html>
+});
